@@ -143,7 +143,13 @@ async function saveProperty() {
                 throw error;
             }
             
-            alert('매물이 성공적으로 수정되었습니다.');
+            // 수정 완료 후 확인 시 목록으로 이동
+            if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
+                window.location.href = 'index.html';
+            } else {
+                // 취소를 눌러도 목록으로 이동
+                window.location.href = 'index.html';
+            }
         } else {
             // 등록 모드: 새 매물 추가
             const result = await insertProperty(formData);
@@ -154,11 +160,17 @@ async function saveProperty() {
                 throw error;
             }
             
-            alert('매물이 성공적으로 등록되었습니다.');
+            // alert 확인 후 목록으로 이동하는 방식으로 변경
+            if (confirm('매물이 성공적으로 등록되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
+                window.location.href = 'index.html';
+            } else {
+                // 취소를 눌러도 목록으로 이동
+                window.location.href = 'index.html';
+            }
+        } else {
+            // 수정 모드가 아닌 경우에도 동일하게 처리
+            window.location.href = 'index.html';
         }
-        
-        // 목록 페이지로 이동
-        window.location.href = 'index.html';
         
     } catch (error) {
         console.error('저장 오류:', error);
@@ -349,8 +361,13 @@ async function updatePropertyData(propertyId) {
             throw error;
         }
 
-        alert('매물이 성공적으로 수정되었습니다.');
-        window.location.href = 'index.html';
+        // 수정 완료 후 확인 시 목록으로 이동
+        if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
+            window.location.href = 'index.html';
+        } else {
+            // 취소를 눌러도 목록으로 이동
+            window.location.href = 'index.html';
+        }
         
     } catch (error) {
         console.error('수정 오류:', error);
