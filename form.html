@@ -5,13 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>더부동산 매물등록</title>
     
+    <!-- SEO 메타 태그 -->
+    <meta name="description" content="더부동산중개법인 - 매물 등록 페이지. 1999년부터 신뢰받는 부동산 전문 중개 서비스.">
+    <meta name="keywords" content="더부동산, 부동산, 매물등록, 전세, 월세, 매매, 원룸, 투룸, 아파트, 오피스텔">
+    <meta name="author" content="더부동산중개법인">
+    
+    <!-- Open Graph 메타 태그 (카카오톡, 페이스북 등) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="더부동산중개법인 - 매물 등록">
+    <meta property="og:description" content="1999년부터 신뢰받는 부동산 전문 중개 서비스. 매물 등록 페이지입니다.">
+    <meta property="og:image" content="./logo_square_white_bg.png">
+    <meta property="og:url" content="">
+    <meta property="og:site_name" content="더부동산중개법인">
+    <meta property="og:locale" content="ko_KR">
+    
+    <!-- Twitter Card 메타 태그 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="더부동산중개법인 - 매물 등록">
+    <meta name="twitter:description" content="1999년부터 신뢰받는 부동산 전문 중개 서비스. 매물 등록 페이지입니다.">
+    <meta name="twitter:image" content="./logo_square_white_bg.png">
+    
     <!-- PWA 메타 태그 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="더부동산">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png">
+    
+    <!-- Microsoft -->
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
     
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="form-styles.css">
@@ -19,8 +52,12 @@
     <link rel="stylesheet" href="no-select-styles.css">
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 설정 파일 (API 키 포함) -->
+    <script src="config.js"></script>
     <!-- Supabase 설정 -->
     <script src="supabase-config.js"></script>
+    <!-- 보안 유틸리티 -->
+    <script src="security-utils.js"></script>
 </head>
 <body>
     <div class="container">
@@ -30,15 +67,15 @@
                     <path d="M15 18l-6-6 6-6"/>
                 </svg>
             </button>
-            <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
-                <!-- 배경 -->
-                <rect width="240" height="45" fill="black" rx="4"/>
-                <!-- SINCE 1999 -->
-                <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
-                
-                <!-- 더부동산중개법인 -->
-                <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
-            </svg>
+            <img src="logo_white@2x.png" alt="더부동산중개법인" class="logo" style="height: 45px; width: auto; object-fit: contain;">
+            <style>
+                @media (max-width: 768px) {
+                    .logo { height: 35px !important; }
+                }
+                @media (max-width: 480px) {
+                    .logo { height: 30px !important; }
+                }
+            </style>
             <div class="page-title">매물등록</div>
         </div>
 

@@ -1,9 +1,23 @@
 // Supabase 설정 및 초기화
-// 주의: 실제 배포시 환경변수로 관리해야 함
+// ⚠️ 보안 개선: API 키를 config.js에서 가져옴
 
-// Supabase 프로젝트 정보
-const SUPABASE_URL = 'https://gojajqzajzhqkhmubpql.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvamFqcXphanpocWtobXVicHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MjMwODEsImV4cCI6MjA3MDk5OTA4MX0.JPlgJpdA-xVLogQHf1A0a_9qyES8qH3lK1aOLBxXe2A';
+// config.js에서 설정 가져오기
+let SUPABASE_URL = '';
+let SUPABASE_ANON_KEY = '';
+
+// config.js 로드 시도
+if (window.__CONFIG__) {
+    SUPABASE_URL = window.__CONFIG__.supabase.url;
+    SUPABASE_ANON_KEY = window.__CONFIG__.supabase.anonKey;
+} else {
+    // config.js가 없는 경우 경고
+    console.error('⚠️ config.js 파일이 없습니다. config.example.js를 참고하여 config.js를 생성하세요.');
+    console.warn('임시로 기본값을 사용합니다. 프로덕션에서는 반드시 config.js를 사용하세요.');
+    
+    // 개발용 임시값 (프로덕션에서는 사용 금지)
+    SUPABASE_URL = 'https://gojajqzajzhqkhmubpql.supabase.co';
+    SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvamFqcXphanpocWtobXVicHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MjMwODEsImV4cCI6MjA3MDk5OTA4MX0.JPlgJpdA-xVLogQHf1A0a_9qyES8qH3lK1aOLBxXe2A';
+}
 
 // Supabase 클라이언트 초기화
 let supabaseClient;
@@ -28,6 +42,54 @@ function initSupabase() {
 
 // 데이터베이스 작업 함수들
 
+// 유니크한 매물번호 생성 (중복 방지)
+async function generateUniquePropertyNumber() {
+    const maxAttempts = 10;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const date = new Date();
+        const dateStr = date.getFullYear().toString() + 
+                      (date.getMonth() + 1).toString().padStart(2, '0') + 
+                      date.getDate().toString().padStart(2, '0');
+        const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        const propertyNumber = dateStr + randomNum;
+        
+        // 중복 확인
+        try {
+            const { data: existingProperty } = await supabaseClient
+                .from('properties')
+                .select('property_number')
+                .eq('property_number', propertyNumber)
+                .single();
+                
+            if (!existingProperty) {
+                // 중복되지 않으면 사용
+                console.log(`매물번호 생성 성공 (${attempt + 1}번째 시도): ${propertyNumber}`);
+                return propertyNumber;
+            }
+            
+            console.log(`매물번호 중복 발견, 재시도 (${attempt + 1}/${maxAttempts}): ${propertyNumber}`);
+        } catch (error) {
+            // 존재하지 않으면 사용 가능
+            if (error.code === 'PGRST116') {
+                console.log(`매물번호 생성 성공 (${attempt + 1}번째 시도): ${propertyNumber}`);
+                return propertyNumber;
+            }
+            throw error;
+        }
+    }
+    
+    // 최대 시도 횟수 초과 시 타임스탬프 추가
+    const timestamp = Date.now().toString().slice(-4);
+    const date = new Date();
+    const dateStr = date.getFullYear().toString() + 
+                  (date.getMonth() + 1).toString().padStart(2, '0') + 
+                  date.getDate().toString().padStart(2, '0');
+    const fallbackNumber = dateStr + timestamp;
+    console.log(`매물번호 생성 fallback 사용: ${fallbackNumber}`);
+    return fallbackNumber;
+}
+
 // 매물 목록 조회 (전체 데이터 가져오기)
 async function getProperties(limit = null, offset = 0) {
     try {
@@ -50,41 +112,29 @@ async function getProperties(limit = null, offset = 0) {
             console.log(`매물 ${data.length}개 조회 완료`);
             return { data, error: null, count };
         } else {
-            // 전체 데이터를 가져오기 위해 페이지네이션 사용
-            let allData = [];
-            let currentOffset = 0;
-            const pageSize = 1000; // Supabase 최대 한계
+            // 성능 최적화: 필요한 필드만 선택하고 제한 적용
+            const { data, error, count } = await supabaseClient
+                .from('properties')
+                .select(`
+                    id, property_number, register_date, manager, 
+                    property_name, property_type, trade_type, 
+                    price, address, district, building, status,
+                    area_supply, area_exclusive, floor_info,
+                    completion_date, direction, room_count,
+                    management_fee, special_notes, 
+                    created_at
+                `, { count: 'exact' })
+                .order('register_date', { ascending: false })
+                .order('created_at', { ascending: false })
+                .limit(2000); // 성능을 위해 제한
             
-            while (true) {
-                const { data, error, count } = await supabaseClient
-                    .from('properties')
-                    .select('*', { count: 'exact' })
-                    .order('register_date', { ascending: false })
-                    .order('created_at', { ascending: false })
-                    .range(currentOffset, currentOffset + pageSize - 1);
-                
-                if (error) {
-                    console.error('매물 조회 오류:', error);
-                    return { data: allData, error, count: allData.length };
-                }
-                
-                if (!data || data.length === 0) {
-                    break;
-                }
-                
-                allData = allData.concat(data);
-                console.log(`${currentOffset + 1}-${currentOffset + data.length}번째 매물 로드`);
-                
-                // 더 이상 데이터가 없으면 종료
-                if (data.length < pageSize) {
-                    break;
-                }
-                
-                currentOffset += pageSize;
+            if (error) {
+                console.error('매물 조회 오류:', error);
+                return { data: [], error, count: 0 };
             }
             
-            console.log(`전체 매물 ${allData.length}개 조회 완료`);
-            return { data: allData, error: null, count: allData.length };
+            console.log(`매물 ${data?.length || 0}개 조회 완료 (최적화됨)`);
+            return { data: data || [], error: null, count: count || 0 };
         }
     } catch (err) {
         console.error('매물 조회 중 예외 발생:', err);
@@ -113,6 +163,35 @@ async function getPropertyById(id) {
     }
 }
 
+// 매물 ID로 단일 조회 (최적화됨)
+async function getPropertyById(id) {
+    try {
+        console.log('getPropertyById 함수 시작, ID:', id);
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+        }
+
+        const { data, error } = await supabaseClient
+            .from('properties')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            console.error('매물 조회 오류:', error);
+            return { success: false, error, data: null };
+        }
+
+        console.log('매물 조회 완료:', data?.property_number || 'Unknown');
+        return { success: true, error: null, data };
+    } catch (err) {
+        console.error('매물 조회 중 예외 발생:', err);
+        return { success: false, error: err, data: null };
+    }
+}
+
 // 매물 등록
 async function insertProperty(propertyData) {
     try {
@@ -128,6 +207,12 @@ async function insertProperty(propertyData) {
         for (const [key, value] of Object.entries(propertyData)) {
             cleanedData[key] = value === '' ? null : value;
         }
+        
+        // 매물번호 자동 생성 (중복 방지 포함)
+        if (!cleanedData.property_number) {
+            cleanedData.property_number = await generateUniquePropertyNumber();
+            console.log('매물번호 자동 생성:', cleanedData.property_number);
+        }
 
         const { data, error } = await supabaseClient
             .from('properties')
@@ -140,6 +225,17 @@ async function insertProperty(propertyData) {
         }
 
         console.log('매물 등록 완료:', data[0]);
+        
+        // 슬랙 알림 전송 (새 매물 등록)
+        try {
+            if (window.notifyNewProperty) {
+                await window.notifyNewProperty(data[0]);
+                console.log('새 매물 등록 슬랙 알림 전송 완료');
+            }
+        } catch (slackError) {
+            console.warn('슬랙 알림 전송 실패 (무시됨):', slackError);
+        }
+        
         return { success: true, error: null, data: data[0] };
     } catch (err) {
         console.error('매물 등록 중 예외 발생:', err);
@@ -155,6 +251,15 @@ async function updateProperty(id, propertyData) {
         if (!supabaseClient) {
             console.error('Supabase 클라이언트가 초기화되지 않음');
             return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+        }
+
+        // 이전 상태 조회 (상태 변경 감지용)
+        let oldStatus = null;
+        try {
+            const { data: oldProperty } = await getPropertyById(id);
+            oldStatus = oldProperty?.status;
+        } catch (error) {
+            console.warn('이전 상태 조회 실패:', error);
         }
 
         // 데이터 정리
@@ -175,6 +280,19 @@ async function updateProperty(id, propertyData) {
         }
 
         console.log('매물 수정 완료:', data[0]);
+        
+        // 상태 변경 시 슬랙 알림 전송
+        if (oldStatus && oldStatus !== data[0].status) {
+            try {
+                if (window.notifyStatusChange) {
+                    await window.notifyStatusChange(data[0], oldStatus, data[0].status);
+                    console.log('매물 상태 변경 슬랙 알림 전송 완료');
+                }
+            } catch (slackError) {
+                console.warn('슬랙 알림 전송 실패 (무시됨):', slackError);
+            }
+        }
+        
         return { success: true, error: null, data: data[0] };
     } catch (err) {
         console.error('매물 수정 중 예외 발생:', err);
@@ -195,16 +313,15 @@ async function deleteProperty(id) {
         const { data, error } = await supabaseClient
             .from('properties')
             .update({ status: '삭제됨' })
-            .eq('id', id)
-            .select();
+            .eq('id', id);
 
         if (error) {
             console.error('매물 삭제 오류:', error);
             return { success: false, error };
         }
 
-        console.log('매물 삭제 완료 (상태 변경):', data[0]);
-        return { success: true, error: null, data };
+        console.log('매물 삭제 완료 (상태 변경), ID:', id);
+        return { success: true, error: null, data: { id } };
     } catch (err) {
         console.error('매물 삭제 중 예외 발생:', err);
         return { success: false, error: err };

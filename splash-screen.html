@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>더부동산중개법인</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
     <style>
         * {
             margin: 0;
@@ -12,68 +17,68 @@
         }
         
         body {
-            width: 100vw;
+            background: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             height: 100vh;
-            background: #ffffff;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
         
         .splash-container {
             text-align: center;
-            animation: fadeIn 0.8s ease-in-out;
+            padding: 20px;
         }
         
         .logo-wrapper {
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
             position: relative;
-        }
-        
-        .logo-main {
-            font-size: 80px;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #000;
-            margin-bottom: 20px;
-            position: relative;
+            animation: fadeIn 1s ease-out;
         }
         
         .diamonds {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             gap: 120px;
+            position: absolute;
         }
         
         .diamond {
             width: 12px;
             height: 12px;
-            background: #000;
+            background: #fff;
             transform: rotate(45deg);
-            animation: twinkle 2s infinite;
+            animation: twinkle 2s ease-in-out infinite;
         }
         
         .diamond:nth-child(2) {
-            animation-delay: 0.5s;
+            animation-delay: 1s;
+        }
+        
+        .logo-main {
+            font-size: 80px;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
         }
         
         .since {
             font-size: 18px;
             letter-spacing: 8px;
-            margin-bottom: 15px;
-            color: #000;
+            color: #fff;
             font-weight: 300;
+            margin-bottom: 8px;
+            animation: fadeIn 1.2s ease-out;
         }
         
         .company-name {
             font-size: 32px;
             letter-spacing: 12px;
-            color: #000;
+            color: #fff;
             font-weight: 400;
             margin-top: 30px;
         }
@@ -81,7 +86,7 @@
         .loading-bar {
             width: 200px;
             height: 2px;
-            background: #f0f0f0;
+            background: #333;
             margin: 40px auto 0;
             position: relative;
             overflow: hidden;
@@ -93,7 +98,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            background: #000;
+            background: #fff;
             animation: loading 2s ease-in-out infinite;
         }
         
@@ -122,11 +127,11 @@
         @keyframes loading {
             0% {
                 width: 0%;
-                left: 0;
+                left: 0%;
             }
             50% {
-                width: 40%;
-                left: 30%;
+                width: 100%;
+                left: 0%;
             }
             100% {
                 width: 0%;
@@ -177,7 +182,7 @@
             }
             
             .company-name {
-                font-size: 18px;
+                font-size: 20px;
                 letter-spacing: 6px;
             }
         }
@@ -186,16 +191,7 @@
 <body>
     <div class="splash-container">
         <div class="logo-wrapper">
-            <div class="diamonds">
-                <div class="diamond"></div>
-                <div class="diamond"></div>
-            </div>
-            <div class="logo-main">THE</div>
-        </div>
-        <div class="since">SINCE 1999</div>
-        <div class="company-name">더부동산중개법인</div>
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
+            <img src="logo_white@2x.png" alt="더부동산중개법인" style="max-width: 80%; height: auto; opacity: 0; animation: fadeIn 1s ease-out forwards;">
         </div>
     </div>
     

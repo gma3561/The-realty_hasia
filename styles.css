@@ -976,6 +976,25 @@ body {
     background-color: #e5e7eb;
 }
 
+/* 알림 버튼 특별 스타일 */
+.btn-secondary[title="알림 설정"] {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+    font-size: 14px;
+    padding: 8px 12px;
+    height: 32px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary[title="알림 설정"]:hover {
+    background-color: #fde68a;
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 
 .detail-grid {
     display: grid;
@@ -1315,7 +1334,7 @@ body {
     }
 
     .logo {
-        height: 48px;
+        height: 35px;
     }
 
     .page-title {
@@ -1550,7 +1569,7 @@ body {
     }
 
     .logo {
-        height: 42px;
+        height: 30px;
     }
 
     .page-title {
