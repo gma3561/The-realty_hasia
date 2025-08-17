@@ -1,0 +1,18 @@
+{
+  "name": "final_the_realty",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "playwright": "^1.54.2"
+  }
+}

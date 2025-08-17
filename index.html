@@ -9,65 +9,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase 설정 -->
     <script src="supabase-config.js"></script>
+    <!-- 슬랙 설정 -->
+    <script src="slack-config.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-left">
-                <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
-                    <!-- 배경 -->
-                    <rect width="240" height="45" fill="black" rx="4"/>
-                    <!-- SINCE 1999 -->
-                    <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
-                    
-                    <!-- 더부동산중개법인 -->
-                    <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
-                </svg>
-            </div>
+            <div class="btn-spacer"></div>
+            <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
+                <!-- 배경 -->
+                <rect width="240" height="45" fill="black" rx="4"/>
+                <!-- SINCE 1999 -->
+                <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
+                
+                <!-- 더부동산중개법인 -->
+                <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
+            </svg>
+            <div class="header-title">팀매물장</div>
         </div>
 
         <div class="filter-bar">
             <div class="filter-left">
-                <select class="filter-select" id="propertyTypeFilter" onchange="applyFilters()">
-                    <option value="">매물종류</option>
-                    <option>아파트</option>
-                    <option>주상복합</option>
-                    <option>빌라/연립</option>
-                    <option>오피스텔</option>
-                    <option>단독주택</option>
-                    <option>타운하우스</option>
-                    <option>빌딩/건물</option>
-                    <option>사무실/상가</option>
-                    <option>상가주택</option>
-                    <option>원룸</option>
-                    <option>다가구</option>
-                    <option>한옥</option>
-                    <option>숙박/콘도</option>
-                    <option>전원/농가</option>
-                    <option>공장/창고</option>
-                    <option>재개발</option>
-                    <option>재건축</option>
-                    <option>아파트분양권</option>
-                    <option>주상복합분양권</option>
-                    <option>오피스텔분양권</option>
-                    <option>지식산업센터</option>
-                    <option>기타</option>
-                </select>
-                <select class="filter-select" id="tradeTypeFilter" onchange="applyFilters()">
-                    <option value="">거래유형</option>
-                    <option>분양</option>
-                    <option>매매</option>
-                    <option>전세</option>
-                    <option>월세/렌트</option>
-                    <option>단기</option>
-                </select>
-                <select class="filter-select" id="statusFilter" onchange="applyFilters()">
-                    <option value="">매물상태</option>
-                    <option>거래가능</option>
-                    <option>거래완료</option>
-                    <option>거래철회</option>
-                </select>
-                <input type="text" class="search-input" placeholder="검색어를 입력하세요" onkeyup="searchProperties(event)">
+                <input type="text" class="search-input" placeholder="주소 또는 매물명으로 검색하세요" onkeyup="searchProperties(event)">
             </div>
             <div class="filter-right">
                 <button class="reset-btn" onclick="resetFilters()">초기화</button>
@@ -82,11 +45,18 @@
                     <tr>
                         <th class="sortable">등록일 <span class="sort-arrow">↓</span></th>
                         <th>매물번호</th>
-                        <th>공유여부</th>
-                        <th>담당자</th>
-                        <th>매물상태</th>
-                        <th>매물종류</th>
-                        <th>거래유형</th>
+                        <th class="filterable" onclick="showFilterMenu(event, 'status')">
+                            매물상태
+                            <span class="filter-icon">↓</span>
+                        </th>
+                        <th class="filterable" onclick="showFilterMenu(event, 'type')">
+                            매물종류
+                            <span class="filter-icon">↓</span>
+                        </th>
+                        <th class="filterable" onclick="showFilterMenu(event, 'trade')">
+                            거래유형
+                            <span class="filter-icon">↓</span>
+                        </th>
                         <th>금액</th>
                         <th>매물명</th>
                         <th>동</th>
@@ -94,19 +64,37 @@
                         <th>공급/전용 (㎡)</th>
                         <th>공급/전용 (평)</th>
                         <th>해당층/총층</th>
+                        <th>공유여부</th>
+                        <th>담당자</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                 </tbody>
             </table>
         </div>
+        
+        <!-- 페이지네이션 -->
+        <div class="pagination-container">
+            <div class="pagination-info">
+                <span id="paginationInfo">전체 0건</span>
+            </div>
+            <div class="pagination-controls">
+                <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">이전</button>
+                <div class="pagination-numbers" id="paginationNumbers"></div>
+                <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">다음</button>
+            </div>
+        </div>
     </div>
 
     <!-- 사이드 패널 상세 뷰 (데스크톱용) -->
     <div id="sidePanel" class="side-panel">
-        <div class="side-panel-header">
-            <h2 id="sidePanelTitle">롯데캐슬스톤돔</h2>
-            <button class="close-panel" onclick="closeSidePanel()">&times;</button>
+        <div class="side-panel-header" style="background: black; color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; margin: -20px -20px 20px -20px;">
+            <div style="display: flex; align-items: center; gap: 0;">
+                <div style="color: white; font-size: 12px; font-weight: 400; margin-right: 15px; letter-spacing: 1px;">SINCE 1999</div>
+                <div style="color: white; font-size: 18px; font-weight: 600; margin-right: 30px;">더부동산중개법인</div>
+                <div style="color: white; font-size: 18px; font-weight: 500;">매물 상세</div>
+            </div>
+            <button class="close-panel" onclick="closeSidePanel()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
         
         <div class="side-panel-content">
@@ -256,6 +244,7 @@
                 </div>
             </div>
 
+
             <!-- 특이사항 -->
             <div class="special-section">
                 <h4>특이사항</h4>
@@ -269,40 +258,21 @@
                 </div>
             </div>
 
-            <!-- 댓글 섹션 -->
-            <div class="comments-section">
-                <div class="comments-header">
-                    <span class="comment-icon">💬</span>
-                    <span class="comment-text">Add a comment...</span>
-                    <span class="no-comments">No comments yet</span>
-                </div>
-                
-                <div class="comment-input-area" style="display: none;">
-                    <div class="comment-user">
-                        <div class="user-avatar">Y</div>
-                        <div class="comment-input-wrapper">
-                            <textarea id="commentInput" placeholder="댓글을 입력하세요..." rows="3"></textarea>
-                            <div class="comment-actions">
-                                <button class="btn-cancel" onclick="cancelComment()">취소</button>
-                                <button class="btn-submit" onclick="submitComment()">댓글 작성</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="comments-list" id="commentsList">
-                    <!-- 댓글들이 여기에 동적으로 추가됩니다 -->
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- 모바일용 모달 (기존 모달을 모바일에서만 사용) -->
     <div id="detailModal" class="modal mobile-only">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">매물 상세 정보</h2>
-                <span class="close">&times;</span>
+            <div class="modal-header" style="background: black; color: white; padding: 15px 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0; min-height: 60px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%;">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div style="color: white; font-size: 11px; font-weight: 400; letter-spacing: 1px;">SINCE 1999</div>
+                        <div style="color: white; font-size: 15px; font-weight: 600;">더부동산중개법인</div>
+                        <div style="color: white; font-size: 15px; font-weight: 500;">매물 상세</div>
+                    </div>
+                    <span class="close" style="color: white; font-size: 24px; cursor: pointer; flex-shrink: 0;">&times;</span>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="mobile-property-details">
@@ -418,21 +388,8 @@
                     </div>
                 </div>
 
-                <!-- 모바일 댓글 섹션 -->
-                <div class="mobile-comments-section">
-                    <h3>댓글</h3>
-                    <div class="mobile-comment-input">
-                        <textarea id="mobileCommentInput" placeholder="댓글을 입력하세요..." rows="2"></textarea>
-                        <button class="btn-primary" onclick="submitMobileComment()">댓글 작성</button>
-                    </div>
-                    <div class="mobile-comments-list" id="mobileCommentsList">
-                        <!-- 모바일 댓글들이 여기에 표시됩니다 -->
-                    </div>
-                </div>
-
                 <div class="modal-actions">
                     <button class="btn-secondary" onclick="closeModal()">닫기</button>
-                    <button class="btn-primary" onclick="editCurrentProperty()">수정</button>
                 </div>
             </div>
         </div>
@@ -441,6 +398,27 @@
     <!-- 배경 오버레이 -->
     <div id="overlay" class="overlay"></div>
 
+    <!-- 필터 메뉴 -->
+    <div id="filterMenu" class="filter-menu">
+        <div class="filter-menu-header">
+            <span class="filter-menu-title">필터</span>
+            <button class="filter-menu-close" onclick="closeFilterMenu()">×</button>
+        </div>
+        <div class="filter-menu-body">
+            <div class="filter-menu-search">
+                <input type="text" id="filterSearchInput" placeholder="검색..." onkeyup="filterMenuSearch(event)">
+            </div>
+            <div class="filter-menu-options" id="filterMenuOptions">
+                <!-- 옵션들이 동적으로 추가됨 -->
+            </div>
+        </div>
+        <div class="filter-menu-footer">
+            <button class="filter-menu-btn" onclick="clearFilter()">초기화</button>
+            <button class="filter-menu-btn primary" onclick="applyFilter()">적용</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <script src="slack-float-button.js"></script>
 </body>
 </html>

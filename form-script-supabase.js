@@ -2,8 +2,12 @@
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    // 오늘 날짜로 등록일 설정
-    const today = new Date().toISOString().split('T')[0];
+    // 한국 시간(Asia/Seoul) 기준으로 오늘 날짜 설정
+    const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const year = koreaTime.getFullYear();
+    const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreaTime.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
     document.getElementById('registerDate').value = today;
     
     // Supabase 초기화 확인
@@ -18,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 면적 자동 계산 이벤트
     setupAreaCalculators();
+    
+    // 사용승인일 기본값 설정 (1년 전)
+    setDefaultApprovalDate();
 });
 
 // 목록으로 이동
@@ -272,4 +279,44 @@ function setupAreaCalculators() {
             }
         });
     }
+}
+
+// 사용승인일 기본값 설정 (1년 전)
+function setDefaultApprovalDate() {
+    const today = new Date();
+    const lastYear = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    const year = lastYear.getFullYear();
+    const month = String(lastYear.getMonth() + 1).padStart(2, '0');
+    const day = String(lastYear.getDate()).padStart(2, '0');
+    const defaultDate = `${year}-${month}-${day}`;
+    
+    const approvalDateInput = document.getElementById('approvalDate');
+    if (approvalDateInput && !approvalDateInput.value) {
+        approvalDateInput.value = defaultDate;
+    }
+}
+
+// 사용승인일 연도 조정 함수
+function adjustApprovalYear(yearDelta) {
+    const approvalDateInput = document.getElementById('approvalDate');
+    if (!approvalDateInput) return;
+    
+    let currentDate = approvalDateInput.value;
+    if (!currentDate) {
+        // 값이 없으면 기본값(1년 전) 설정
+        setDefaultApprovalDate();
+        currentDate = approvalDateInput.value;
+    }
+    
+    const date = new Date(currentDate);
+    if (isNaN(date.getTime())) return;
+    
+    date.setFullYear(date.getFullYear() + yearDelta);
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const newDate = `${year}-${month}-${day}`;
+    
+    approvalDateInput.value = newDate;
 }

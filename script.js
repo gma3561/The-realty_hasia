@@ -579,19 +579,37 @@ function loadStoredData() {
     localStorage.setItem('properties', JSON.stringify(currentData));
 }
 
-// 테이블 렌더링
+// 페이지네이션 변수
+let currentPage = 1;
+const itemsPerPage = 30;
+let totalPages = 1;
+
+// 테이블 렌더링 (페이지네이션 포함)
 function renderTable(data) {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
 
-    data.forEach(row => {
+    // 전체 데이터 수 업데이트
+    const totalItems = data.length;
+    totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    // 현재 페이지가 총 페이지를 초과하면 마지막 페이지로
+    if (currentPage > totalPages) {
+        currentPage = totalPages || 1;
+    }
+    
+    // 현재 페이지에 표시할 데이터
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageData = data.slice(startIndex, endIndex);
+
+    // 페이지 데이터 렌더링
+    pageData.forEach(row => {
         const tr = document.createElement('tr');
         
         tr.innerHTML = `
             <td>${row.date}</td>
             <td>${row.propertyNumber || '-'}</td>
-            <td>${row.shared ? '<span class="checkmark">✓</span>' : ''}</td>
-            <td>${row.manager}</td>
             <td><span class="status-${getStatusClass(row.status)}">${row.status}</span></td>
             <td><span class="type-${getTypeClass(row.type)}">${row.type}</span></td>
             <td><span class="trade-${getTradeClass(row.trade)}">${row.trade}</span></td>
@@ -602,6 +620,8 @@ function renderTable(data) {
             <td>${row.supply || '-'}</td>
             <td>${row.pyeong || '-'}</td>
             <td>${row.households || '-'}</td>
+            <td>${row.shared ? '<span class="checkmark">✓</span>' : ''}</td>
+            <td>${row.manager}</td>
         `;
         
         // 데이터 속성에 ID 저장
@@ -612,6 +632,65 @@ function renderTable(data) {
     
     // 테이블 렌더링 후 클릭 이벤트 다시 추가
     addRowClickEvents();
+    
+    // 페이지네이션 업데이트
+    updatePagination(totalItems);
+}
+
+// 페이지네이션 UI 업데이트
+function updatePagination(totalItems) {
+    // 현재 표시 건수 계산
+    const startIndex = (currentPage - 1) * itemsPerPage + 1;
+    const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+    
+    // 전체 건수와 현재 표시 건수 표시
+    const paginationInfo = document.getElementById('paginationInfo');
+    if (totalItems === 0) {
+        paginationInfo.textContent = '데이터가 없습니다';
+    } else {
+        paginationInfo.textContent = `${startIndex}-${endIndex} / 전체 ${totalItems}건`;
+    }
+    
+    // 페이지 번호 표시
+    const paginationNumbers = document.getElementById('paginationNumbers');
+    paginationNumbers.innerHTML = '';
+    
+    // 표시할 페이지 범위 계산 (최대 5개)
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+    
+    if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = 'page-number';
+        pageBtn.textContent = i;
+        if (i === currentPage) {
+            pageBtn.classList.add('active');
+        }
+        pageBtn.onclick = () => goToPage(i);
+        paginationNumbers.appendChild(pageBtn);
+    }
+    
+    // 이전/다음 버튼 활성화 상태
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+}
+
+// 페이지 이동
+function goToPage(page) {
+    currentPage = page;
+    renderTable(filteredData.length > 0 ? filteredData : currentData);
+}
+
+// 페이지 변경
+function changePage(direction) {
+    const newPage = currentPage + direction;
+    if (newPage >= 1 && newPage <= totalPages) {
+        goToPage(newPage);
+    }
 }
 
 // CSS 클래스 생성 헬퍼 함수들
@@ -685,26 +764,162 @@ function updateSortArrow() {
 
 // 필터링 기능
 let filteredData = [];
+let activeFilters = {
+    status: [],
+    type: [],
+    trade: []
+};
+let currentFilterType = null;
 
+// 필터 메뉴 표시
+function showFilterMenu(event, filterType) {
+    event.stopPropagation();
+    const menu = document.getElementById('filterMenu');
+    const rect = event.currentTarget.getBoundingClientRect();
+    
+    // 메뉴 위치 설정
+    menu.style.left = rect.left + 'px';
+    menu.style.top = (rect.bottom + 5) + 'px';
+    menu.classList.add('show');
+    
+    currentFilterType = filterType;
+    
+    // 메뉴 옵션 생성
+    populateFilterOptions(filterType);
+    
+    // 클릭 이벤트 리스너 추가
+    setTimeout(() => {
+        document.addEventListener('click', closeFilterMenu);
+    }, 100);
+}
+
+// 필터 메뉴 닫기
+function closeFilterMenu() {
+    const menu = document.getElementById('filterMenu');
+    menu.classList.remove('show');
+    document.removeEventListener('click', closeFilterMenu);
+}
+
+// 필터 옵션 생성
+function populateFilterOptions(filterType) {
+    const optionsContainer = document.getElementById('filterMenuOptions');
+    optionsContainer.innerHTML = '';
+    
+    let options = [];
+    
+    // 미리 정의된 고정 옵션들
+    if (filterType === 'status') {
+        options = ['거래가능', '거래완료', '거래보류', '거래철회'];
+    } else if (filterType === 'type') {
+        options = [
+            '아파트', '주상복합', '빌라/연립', '오피스텔', 
+            '단독주택', '타운하우스', '빌딩/건물', '사무실/상가',
+            '상가주택', '원룸', '다가구', '한옥', 
+            '숙박/콘도', '전원/농가', '공장/창고', '재개발',
+            '재건축', '아파트분양권', '주상복합분양권', '오피스텔분양권',
+            '지식산업센터', '기타'
+        ];
+    } else if (filterType === 'trade') {
+        options = ['분양', '매매', '전세', '월세/렌트', '단기'];
+    }
+    
+    // 옵션 생성
+    options.forEach(option => {
+        if (option) {
+            const div = document.createElement('div');
+            div.className = 'filter-menu-option';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = option;
+            checkbox.checked = activeFilters[filterType].includes(option);
+            
+            const label = document.createElement('label');
+            label.textContent = option;
+            label.style.flex = '1';
+            label.style.cursor = 'pointer';
+            
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            
+            div.onclick = (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    checkbox.checked = !checkbox.checked;
+                }
+            };
+            
+            optionsContainer.appendChild(div);
+        }
+    });
+}
+
+// 필터 적용
+function applyFilter() {
+    const checkboxes = document.querySelectorAll('#filterMenuOptions input[type="checkbox"]:checked');
+    activeFilters[currentFilterType] = Array.from(checkboxes).map(cb => cb.value);
+    
+    // 헤더에 필터 적용 표시
+    updateFilterHeaders();
+    
+    // 필터 적용
+    applyFilters();
+    
+    closeFilterMenu();
+}
+
+// 필터 초기화
+function clearFilter() {
+    activeFilters[currentFilterType] = [];
+    const checkboxes = document.querySelectorAll('#filterMenuOptions input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = false);
+}
+
+// 필터 헤더 업데이트
+function updateFilterHeaders() {
+    // 모든 필터 헤더 업데이트
+    document.querySelectorAll('.filterable').forEach(th => {
+        th.classList.remove('filtered');
+    });
+    
+    if (activeFilters.status.length > 0) {
+        document.querySelector('th[onclick*="status"]')?.classList.add('filtered');
+    }
+    if (activeFilters.type.length > 0) {
+        document.querySelector('th[onclick*="type"]')?.classList.add('filtered');
+    }
+    if (activeFilters.trade.length > 0) {
+        document.querySelector('th[onclick*="trade"]')?.classList.add('filtered');
+    }
+}
+
+// 필터 메뉴 검색
+function filterMenuSearch(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    const options = document.querySelectorAll('.filter-menu-option');
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+    });
+}
+
+// 필터 적용
 function applyFilters() {
-    const propertyTypeFilter = document.getElementById('propertyTypeFilter')?.value;
-    const tradeTypeFilter = document.getElementById('tradeTypeFilter')?.value;
-    const statusFilter = document.getElementById('statusFilter')?.value;
     const searchTerm = document.querySelector('.search-input')?.value.toLowerCase();
     
     filteredData = currentData.filter(item => {
+        // 매물상태 필터
+        if (activeFilters.status.length > 0 && !activeFilters.status.includes(item.status)) {
+            return false;
+        }
+        
         // 매물종류 필터
-        if (propertyTypeFilter && item.type !== propertyTypeFilter) {
+        if (activeFilters.type.length > 0 && !activeFilters.type.includes(item.type)) {
             return false;
         }
         
         // 거래유형 필터
-        if (tradeTypeFilter && !item.trade.includes(tradeTypeFilter)) {
-            return false;
-        }
-        
-        // 매물상태 필터
-        if (statusFilter && item.status !== statusFilter) {
+        if (activeFilters.trade.length > 0 && !activeFilters.trade.includes(item.trade)) {
             return false;
         }
         
@@ -719,6 +934,7 @@ function applyFilters() {
         return true;
     });
     
+    currentPage = 1; // 필터 적용시 첫 페이지로
     renderTable(filteredData);
 }
 
@@ -730,14 +946,23 @@ function searchProperties(event) {
 // 필터 초기화 기능
 function resetFilters() {
     // 모든 필터 초기화
-    document.getElementById('propertyTypeFilter').value = '';
-    document.getElementById('tradeTypeFilter').value = '';
-    document.getElementById('statusFilter').value = '';
+    activeFilters = {
+        status: [],
+        type: [],
+        trade: []
+    };
+    
     document.querySelector('.search-input').value = '';
     
     // 정렬도 초기 상태로 (최신순)
     sortDirection = 'desc';
     sortColumn = 'date';
+    
+    // 페이지도 첫 페이지로
+    currentPage = 1;
+    
+    // 필터 헤더 초기화
+    updateFilterHeaders();
     
     // 전체 데이터 표시
     filteredData = [...currentData];

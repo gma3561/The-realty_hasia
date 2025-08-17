@@ -14,21 +14,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-left">
-                <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
-                    <!-- 배경 -->
-                    <rect width="240" height="45" fill="black" rx="4"/>
-                    <!-- SINCE 1999 -->
-                    <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
-                    
-                    <!-- 더부동산중개법인 -->
-                    <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
+            <button class="btn-back" onclick="goToList()" title="목록으로">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
                 </svg>
-            </div>
-            <div class="header-right">
-                <button class="btn-secondary" onclick="goToList()">목록으로</button>
-                <button class="btn-primary" onclick="saveProperty()">저장</button>
-            </div>
+            </button>
+            <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
+                <!-- 배경 -->
+                <rect width="240" height="45" fill="black" rx="4"/>
+                <!-- SINCE 1999 -->
+                <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
+                
+                <!-- 더부동산중개법인 -->
+                <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
+            </svg>
+            <div class="page-title">매물등록</div>
         </div>
 
         <div class="form-container">
@@ -37,33 +37,46 @@
                     <!-- 첫 번째 행 -->
                     <div class="form-group">
                         <label for="registerDate">등록일</label>
-                        <input type="date" id="registerDate" name="registerDate" required>
+                        <input type="date" id="registerDate" name="registerDate" required readonly style="background-color: #f3f4f6; cursor: not-allowed;">
                     </div>
-                    <div class="form-group">
-                        <label for="supplier">공급업체</label>
-                        <input type="text" id="supplier" name="supplier" placeholder="공급업체명을 입력하세요">
+                    <div class="form-group manager-shared-group" style="grid-column: span 2;">
+                        <div style="display: flex; gap: 20px; width: 100%;">
+                            <div style="flex: 1;">
+                                <label for="manager">담당자</label>
+                                <select id="manager" name="manager" style="width: 100%;">
+                                    <option value="">선택하세요</option>
+                                    <option value="김규민">김규민</option>
+                                    <option value="하상현">하상현</option>
+                                    <option value="정서연">정서연</option>
+                                    <option value="정선혜">정선혜</option>
+                                    <option value="박소현">박소현</option>
+                                    <option value="정연서">정연서</option>
+                                    <option value="송영주">송영주</option>
+                                    <option value="정윤식">정윤식</option>
+                                    <option value="성은미">성은미</option>
+                                    <option value="서을선">서을선</option>
+                                    <option value="서지혜">서지혜</option>
+                                    <option value="김효석">김효석</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding-top: 26px;">
+                                <label for="shared" style="margin: 0;">공유여부</label>
+                                <input type="checkbox" id="shared" name="shared" style="width: 18px; height: 18px; margin: 0;">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- 두 번째 행 -->
-                    <div class="form-group">
-                        <label for="manager">담당자</label>
-                        <input type="text" id="manager" name="manager" placeholder="담당자명을 입력하세요">
-                    </div>
+                    <!-- 두 번째 행 - 매물상태, 매물종류, 거래유형 -->
                     <div class="form-group">
                         <label for="status">매물상태</label>
                         <select id="status" name="status">
                             <option value="">선택하세요</option>
                             <option value="거래가능">거래가능</option>
                             <option value="거래완료">거래완료</option>
+                            <option value="거래보류">거래보류</option>
                             <option value="거래철회">거래철회</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="reRegisterReason">재등록사유</label>
-                        <input type="text" id="reRegisterReason" name="reRegisterReason" placeholder="재등록사유를 입력하세요">
-                    </div>
-
-                    <!-- 세 번째 행 -->
                     <div class="form-group">
                         <label for="propertyType">매물종류</label>
                         <select id="propertyType" name="propertyType">
@@ -93,26 +106,6 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="propertyName">매물명</label>
-                        <input type="text" id="propertyName" name="propertyName" placeholder="매물명을 입력하세요">
-                    </div>
-
-                    <!-- 네 번째 행 -->
-                    <div class="form-group">
-                        <label for="address">소재지</label>
-                        <input type="text" id="address" name="address" placeholder="주소를 입력하세요">
-                    </div>
-                    <div class="form-group">
-                        <label for="dong">동</label>
-                        <input type="text" id="dong" name="dong" placeholder="동을 입력하세요">
-                    </div>
-                    <div class="form-group">
-                        <label for="unit">호</label>
-                        <input type="text" id="unit" name="unit" placeholder="호수를 입력하세요">
-                    </div>
-
-                    <!-- 다섯 번째 행 -->
-                    <div class="form-group">
                         <label for="tradeType">거래유형</label>
                         <select id="tradeType" name="tradeType">
                             <option value="">선택하세요</option>
@@ -123,6 +116,32 @@
                             <option value="단기">단기</option>
                         </select>
                     </div>
+
+                    <!-- 세 번째 행 - 매물명, 소재지, 동, 호 연속 배치 -->
+                    <div class="form-group">
+                        <label for="propertyName">매물명</label>
+                        <input type="text" id="propertyName" name="propertyName" placeholder="매물명을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">소재지</label>
+                        <input type="text" id="address" name="address" placeholder="주소를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="dong">동</label>
+                        <input type="text" id="dong" name="dong" placeholder="동을 입력하세요">
+                    </div>
+
+                    <!-- 네 번째 행 -->
+                    <div class="form-group">
+                        <label for="unit">호</label>
+                        <input type="text" id="unit" name="unit" placeholder="호수를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="reRegisterReason">재등록사유</label>
+                        <input type="text" id="reRegisterReason" name="reRegisterReason" placeholder="재등록사유를 입력하세요">
+                    </div>
+
+                    <!-- 다섯 번째 행 -->
                     <div class="form-group">
                         <label for="price">금액</label>
                         <input type="text" id="price" name="price" placeholder="가격을 입력하세요">
@@ -169,7 +188,15 @@
                     </div>
                     <div class="form-group">
                         <label for="approvalDate">사용승인</label>
-                        <input type="date" id="approvalDate" name="approvalDate">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="date" id="approvalDate" name="approvalDate" style="flex: 1;">
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="year-btn" onclick="adjustApprovalYear(-5)">-5년</button>
+                                <button type="button" class="year-btn" onclick="adjustApprovalYear(-1)">-1년</button>
+                                <button type="button" class="year-btn" onclick="adjustApprovalYear(1)">+1년</button>
+                                <button type="button" class="year-btn" onclick="adjustApprovalYear(5)">+5년</button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 열 번째 행 - 특이사항 (전체 너비) -->
@@ -184,16 +211,101 @@
                         <textarea id="managerMemo" name="managerMemo" rows="3" placeholder="담당자 메모를 입력하세요"></textarea>
                     </div>
 
-                    <!-- 추가 정보 -->
+                    <!-- 소유자 정보 섹션 -->
+                    <div class="form-group full-width">
+                        <h3 style="margin: 20px 0 10px 0; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; font-size: 16px; color: #374151;">소유자 정보</h3>
+                    </div>
                     <div class="form-group">
-                        <label for="shared">공유여부</label>
-                        <select id="shared" name="shared">
-                            <option value="false">비공유</option>
-                            <option value="true">공유</option>
+                        <label for="owner">소유자</label>
+                        <input type="text" id="owner" name="owner" placeholder="소유자명을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerId">주민(법인)등록번호</label>
+                        <input type="text" id="ownerId" name="ownerId" placeholder="주민등록번호 또는 법인등록번호">
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerContact">소유주 연락처</label>
+                        <input type="tel" id="ownerContact" name="ownerContact" placeholder="연락처를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactRelation">연락처 관계</label>
+                        <input type="text" id="contactRelation" name="contactRelation" placeholder="본인, 배우자, 자녀 등">
+                    </div>
+
+                    <!-- 거래 정보 섹션 -->
+                    <div class="form-group full-width">
+                        <h3 style="margin: 20px 0 10px 0; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; font-size: 16px; color: #374151;">거래 정보</h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="completionDate">거래완료날짜</label>
+                        <input type="date" id="completionDate" name="completionDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="resident">거주자</label>
+                        <input type="text" id="resident" name="resident" placeholder="거주자 정보를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="rentType">임차유형</label>
+                        <input type="text" id="rentType" name="rentType" placeholder="임차유형을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="rentAmount">임차금액</label>
+                        <input type="text" id="rentAmount" name="rentAmount" placeholder="임차금액을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="contractPeriod">계약기간</label>
+                        <input type="text" id="contractPeriod" name="contractPeriod" placeholder="예: 2년">
+                    </div>
+
+                    <!-- 광고/공동중개 정보 섹션 - 컴팩트 버전 -->
+                    <div class="form-group full-width">
+                        <h3 style="margin: 20px 0 10px 0; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">광고/공동중개 정보</h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="photo" style="font-size: 12px;">사진</label>
+                        <input type="text" id="photo" name="photo" placeholder="사진 유무 (예: 있음/없음)" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="video" style="font-size: 12px;">영상</label>
+                        <input type="text" id="video" name="video" placeholder="영상 유무 (예: 있음/없음)" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="appearance" style="font-size: 12px;">출연</label>
+                        <input type="text" id="appearance" name="appearance" placeholder="출연 정보" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="jointBrokerage" style="font-size: 12px;">공동중개</label>
+                        <input type="text" id="jointBrokerage" name="jointBrokerage" placeholder="공동중개 정보" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="jointContact" style="font-size: 12px;">공동연락처</label>
+                        <input type="text" id="jointContact" name="jointContact" placeholder="공동연락처" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="adStatus" style="font-size: 12px;">광고상태</label>
+                        <select id="adStatus" name="adStatus" style="font-size: 12px; padding: 6px 10px;">
+                            <option value="">선택하세요</option>
+                            <option value="진행중">진행중</option>
+                            <option value="종료">종료</option>
+                            <option value="예정">예정</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="adPeriod" style="font-size: 12px;">광고기간</label>
+                        <input type="text" id="adPeriod" name="adPeriod" placeholder="예: 30일" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="registrationNumber" style="font-size: 12px;">등록완료번호</label>
+                        <input type="text" id="registrationNumber" name="registrationNumber" placeholder="등록완료번호" style="font-size: 12px; padding: 6px 10px;">
+                    </div>
+
                 </div>
             </form>
+        </div>
+        
+        <!-- 하단 저장 버튼 -->
+        <div class="bottom-actions">
+            <button class="btn-save" onclick="saveProperty()">저장하기</button>
         </div>
     </div>
 

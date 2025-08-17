@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슬랙 버튼 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            padding: 10px 20px;
+            margin: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .side-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .side-panel.open {
+            right: 0;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>슬랙 버튼 테스트 페이지</h1>
+        
+        <h3>1. 슬랙 버튼 직접 표시 테스트</h3>
+        <button class="test-button" onclick="testShowButton()">슬랙 버튼 표시</button>
+        <button class="test-button" onclick="testHideButton()">슬랙 버튼 숨기기</button>
+        
+        <h3>2. 상세보기 시뮬레이션</h3>
+        <button class="test-button" onclick="openTestPanel()">상세보기 열기</button>
+        
+        <h3>3. 슬랙 연결 테스트</h3>
+        <button class="test-button" onclick="testSlackConnection()">슬랙 연결 테스트</button>
+        
+        <div class="status" id="status">
+            테스트 상태가 여기에 표시됩니다.
+        </div>
+    </div>
+    
+    <!-- 테스트용 사이드 패널 -->
+    <div id="sidePanel" class="side-panel">
+        <button class="close-btn" onclick="closeTestPanel()">×</button>
+        <h2>매물 상세 정보</h2>
+        <p>테스트 매물 #123</p>
+        <p>매물명: 테스트 아파트</p>
+        <p>가격: 10억</p>
+        <p>면적: 32평</p>
+    </div>
+    
+    <!-- Slack 설정 로드 -->
+    <script>
+        // 테스트용 Slack Webhook URL (실제 URL로 교체 필요)
+        const SLACK_WEBHOOK_URL = 'YOUR_SLACK_WEBHOOK_URL';
+        
+        // 테스트용 currentPropertyId 설정
+        window.currentPropertyId = '123';
+    </script>
+    
+    <!-- 슬랙 버튼 스크립트 로드 -->
+    <script src="slack-config.js"></script>
+    <script src="slack-float-button.js"></script>
+    
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function testShowButton() {
+            if (typeof showSlackButton === 'function') {
+                showSlackButton();
+                updateStatus('슬랙 버튼을 표시했습니다.', 'success');
+            } else {
+                updateStatus('showSlackButton 함수를 찾을 수 없습니다.', 'error');
+            }
+        }
+        
+        function testHideButton() {
+            if (typeof hideSlackButton === 'function') {
+                hideSlackButton();
+                updateStatus('슬랙 버튼을 숨겼습니다.', 'success');
+            } else {
+                updateStatus('hideSlackButton 함수를 찾을 수 없습니다.', 'error');
+            }
+        }
+        
+        function openTestPanel() {
+            const panel = document.getElementById('sidePanel');
+            panel.classList.add('open');
+            
+            // 슬랙 버튼 표시
+            setTimeout(() => {
+                if (typeof showSlackButton === 'function') {
+                    showSlackButton();
+                    updateStatus('상세보기를 열고 슬랙 버튼을 표시했습니다.', 'success');
+                }
+            }, 100);
+        }
+        
+        function closeTestPanel() {
+            const panel = document.getElementById('sidePanel');
+            panel.classList.remove('open');
+            
+            // 슬랙 버튼 숨기기
+            if (typeof hideSlackButton === 'function') {
+                hideSlackButton();
+                updateStatus('상세보기를 닫고 슬랙 버튼을 숨겼습니다.', 'success');
+            }
+        }
+        
+        async function testSlackConnection() {
+            if (typeof testSlackConnection === 'function') {
+                updateStatus('슬랙 연결 테스트 중...', 'info');
+                const result = await window.testSlackConnection();
+                if (result) {
+                    updateStatus('슬랙 연결 성공!', 'success');
+                } else {
+                    updateStatus('슬랙 연결 실패. Webhook URL을 확인하세요.', 'error');
+                }
+            } else {
+                updateStatus('testSlackConnection 함수를 찾을 수 없습니다.', 'error');
+            }
+        }
+        
+        // 페이지 로드 시 상태 체크
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const button = document.getElementById('floatingSlackButton');
+                if (button) {
+                    updateStatus('슬랙 버튼이 정상적으로 생성되었습니다.', 'success');
+                } else {
+                    updateStatus('슬랙 버튼을 찾을 수 없습니다.', 'error');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
