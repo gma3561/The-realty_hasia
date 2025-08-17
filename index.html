@@ -1,6 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" style="background-color: #000000; color: #ffffff;">
 <head>
+    <!-- 즉시 다크모드 적용 (깜빡임 완전 방지) -->
+    <style>
+        html, body, * {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+        .container {
+            background: #000000 !important;
+        }
+    </style>
+    
+    <script>
+        document.documentElement.style.setProperty('background-color', '#000000', 'important');
+        document.documentElement.style.setProperty('color', '#ffffff', 'important');
+        if (document.body) {
+            document.body.style.setProperty('background-color', '#000000', 'important');
+            document.body.style.setProperty('color', '#ffffff', 'important');
+        }
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>더부동산 임시매물정</title>
