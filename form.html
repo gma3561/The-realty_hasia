@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더부동산 매물등록</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="form-styles.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase 설정 -->
+    <script src="supabase-config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
+                    <!-- 배경 -->
+                    <rect width="240" height="45" fill="black" rx="4"/>
+                    <!-- SINCE 1999 -->
+                    <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
+                    
+                    <!-- 더부동산중개법인 -->
+                    <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
+                </svg>
+            </div>
+            <div class="header-right">
+                <button class="btn-secondary" onclick="goToList()">목록으로</button>
+                <button class="btn-primary" onclick="saveProperty()">저장</button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form id="propertyForm">
+                <div class="form-grid">
+                    <!-- 첫 번째 행 -->
+                    <div class="form-group">
+                        <label for="registerDate">등록일</label>
+                        <input type="date" id="registerDate" name="registerDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supplier">공급업체</label>
+                        <input type="text" id="supplier" name="supplier" placeholder="공급업체명을 입력하세요">
+                    </div>
+
+                    <!-- 두 번째 행 -->
+                    <div class="form-group">
+                        <label for="manager">담당자</label>
+                        <input type="text" id="manager" name="manager" placeholder="담당자명을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">매물상태</label>
+                        <select id="status" name="status">
+                            <option value="">선택하세요</option>
+                            <option value="거래가능">거래가능</option>
+                            <option value="거래완료">거래완료</option>
+                            <option value="거래철회">거래철회</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reRegisterReason">재등록사유</label>
+                        <input type="text" id="reRegisterReason" name="reRegisterReason" placeholder="재등록사유를 입력하세요">
+                    </div>
+
+                    <!-- 세 번째 행 -->
+                    <div class="form-group">
+                        <label for="propertyType">매물종류</label>
+                        <select id="propertyType" name="propertyType">
+                            <option value="">선택하세요</option>
+                            <option value="아파트">아파트</option>
+                            <option value="주상복합">주상복합</option>
+                            <option value="빌라/연립">빌라/연립</option>
+                            <option value="오피스텔">오피스텔</option>
+                            <option value="단독주택">단독주택</option>
+                            <option value="타운하우스">타운하우스</option>
+                            <option value="빌딩/건물">빌딩/건물</option>
+                            <option value="사무실/상가">사무실/상가</option>
+                            <option value="상가주택">상가주택</option>
+                            <option value="원룸">원룸</option>
+                            <option value="다가구">다가구</option>
+                            <option value="한옥">한옥</option>
+                            <option value="숙박/콘도">숙박/콘도</option>
+                            <option value="전원/농가">전원/농가</option>
+                            <option value="공장/창고">공장/창고</option>
+                            <option value="재개발">재개발</option>
+                            <option value="재건축">재건축</option>
+                            <option value="아파트분양권">아파트분양권</option>
+                            <option value="주상복합분양권">주상복합분양권</option>
+                            <option value="오피스텔분양권">오피스텔분양권</option>
+                            <option value="지식산업센터">지식산업센터</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="propertyName">매물명</label>
+                        <input type="text" id="propertyName" name="propertyName" placeholder="매물명을 입력하세요">
+                    </div>
+
+                    <!-- 네 번째 행 -->
+                    <div class="form-group">
+                        <label for="address">소재지</label>
+                        <input type="text" id="address" name="address" placeholder="주소를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="dong">동</label>
+                        <input type="text" id="dong" name="dong" placeholder="동을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="unit">호</label>
+                        <input type="text" id="unit" name="unit" placeholder="호수를 입력하세요">
+                    </div>
+
+                    <!-- 다섯 번째 행 -->
+                    <div class="form-group">
+                        <label for="tradeType">거래유형</label>
+                        <select id="tradeType" name="tradeType">
+                            <option value="">선택하세요</option>
+                            <option value="분양">분양</option>
+                            <option value="매매">매매</option>
+                            <option value="전세">전세</option>
+                            <option value="월세/렌트">월세/렌트</option>
+                            <option value="단기">단기</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">금액</label>
+                        <input type="text" id="price" name="price" placeholder="가격을 입력하세요">
+                    </div>
+
+                    <!-- 여섯 번째 행 -->
+                    <div class="form-group">
+                        <label for="supplyArea">공급/전용 (㎡)</label>
+                        <input type="text" id="supplyArea" name="supplyArea" placeholder="공급면적/전용면적 (㎡)">
+                    </div>
+                    <div class="form-group">
+                        <label for="supplyPyeong">공급/전용 (평)</label>
+                        <input type="text" id="supplyPyeong" name="supplyPyeong" placeholder="공급면적/전용면적 (평)">
+                    </div>
+
+                    <!-- 일곱 번째 행 -->
+                    <div class="form-group">
+                        <label for="floorInfo">해당층/총층</label>
+                        <input type="text" id="floorInfo" name="floorInfo" placeholder="예: 15/25">
+                    </div>
+                    <div class="form-group">
+                        <label for="rooms">룸/욕실</label>
+                        <input type="text" id="rooms" name="rooms" placeholder="룸수/욕실수">
+                    </div>
+                    <div class="form-group">
+                        <label for="direction">방향(거실기준)</label>
+                        <input type="text" id="direction" name="direction" placeholder="방향을 입력하세요">
+                    </div>
+
+                    <!-- 여덟 번째 행 -->
+                    <div class="form-group">
+                        <label for="management">관리비</label>
+                        <input type="text" id="management" name="management" placeholder="관리비를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="parking">주차</label>
+                        <input type="text" id="parking" name="parking" placeholder="주차 정보를 입력하세요">
+                    </div>
+
+                    <!-- 아홉 번째 행 -->
+                    <div class="form-group">
+                        <label for="moveInDate">입주가능일</label>
+                        <input type="date" id="moveInDate" name="moveInDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="approvalDate">사용승인</label>
+                        <input type="date" id="approvalDate" name="approvalDate">
+                    </div>
+
+                    <!-- 열 번째 행 - 특이사항 (전체 너비) -->
+                    <div class="form-group full-width">
+                        <label for="specialNotes">특이사항</label>
+                        <textarea id="specialNotes" name="specialNotes" rows="4" placeholder="특이사항을 입력하세요"></textarea>
+                    </div>
+
+                    <!-- 담당자 메모 -->
+                    <div class="form-group full-width">
+                        <label for="managerMemo">담당자 MEMO</label>
+                        <textarea id="managerMemo" name="managerMemo" rows="3" placeholder="담당자 메모를 입력하세요"></textarea>
+                    </div>
+
+                    <!-- 추가 정보 -->
+                    <div class="form-group">
+                        <label for="shared">공유여부</label>
+                        <select id="shared" name="shared">
+                            <option value="false">비공유</option>
+                            <option value="true">공유</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="form-script-supabase.js"></script>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더부동산 임시매물정</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase 설정 -->
+    <script src="supabase-config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <svg width="240" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 45" class="logo">
+                    <!-- 배경 -->
+                    <rect width="240" height="45" fill="black" rx="4"/>
+                    <!-- SINCE 1999 -->
+                    <text x="10" y="20" font-size="11" font-family="sans-serif" fill="white" letter-spacing="1">SINCE 1999</text>
+                    
+                    <!-- 더부동산중개법인 -->
+                    <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-left">
+                <select class="filter-select" id="propertyTypeFilter" onchange="applyFilters()">
+                    <option value="">매물종류</option>
+                    <option>아파트</option>
+                    <option>주상복합</option>
+                    <option>빌라/연립</option>
+                    <option>오피스텔</option>
+                    <option>단독주택</option>
+                    <option>타운하우스</option>
+                    <option>빌딩/건물</option>
+                    <option>사무실/상가</option>
+                    <option>상가주택</option>
+                    <option>원룸</option>
+                    <option>다가구</option>
+                    <option>한옥</option>
+                    <option>숙박/콘도</option>
+                    <option>전원/농가</option>
+                    <option>공장/창고</option>
+                    <option>재개발</option>
+                    <option>재건축</option>
+                    <option>아파트분양권</option>
+                    <option>주상복합분양권</option>
+                    <option>오피스텔분양권</option>
+                    <option>지식산업센터</option>
+                    <option>기타</option>
+                </select>
+                <select class="filter-select" id="tradeTypeFilter" onchange="applyFilters()">
+                    <option value="">거래유형</option>
+                    <option>분양</option>
+                    <option>매매</option>
+                    <option>전세</option>
+                    <option>월세/렌트</option>
+                    <option>단기</option>
+                </select>
+                <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                    <option value="">매물상태</option>
+                    <option>거래가능</option>
+                    <option>거래완료</option>
+                    <option>거래철회</option>
+                </select>
+                <input type="text" class="search-input" placeholder="검색어를 입력하세요" onkeyup="searchProperties(event)">
+            </div>
+            <div class="filter-right">
+                <button class="reset-btn" onclick="resetFilters()">초기화</button>
+                <button class="sort-btn" onclick="toggleSort()">정렬 <span class="sort-arrow">↓</span></button>
+                <button class="btn-primary" onclick="goToForm()">매물등록</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th class="sortable">등록일 <span class="sort-arrow">↓</span></th>
+                        <th>매물번호</th>
+                        <th>공유여부</th>
+                        <th>담당자</th>
+                        <th>매물상태</th>
+                        <th>매물종류</th>
+                        <th>거래유형</th>
+                        <th>금액</th>
+                        <th>매물명</th>
+                        <th>동</th>
+                        <th>호</th>
+                        <th>공급/전용 (㎡)</th>
+                        <th>공급/전용 (평)</th>
+                        <th>해당층/총층</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 사이드 패널 상세 뷰 (데스크톱용) -->
+    <div id="sidePanel" class="side-panel">
+        <div class="side-panel-header">
+            <h2 id="sidePanelTitle">롯데캐슬스톤돔</h2>
+            <button class="close-panel" onclick="closeSidePanel()">&times;</button>
+        </div>
+        
+        <div class="side-panel-content">
+            <div class="property-info-grid">
+                <div class="info-item">
+                    <label>공유여부</label>
+                    <span id="sideShared">-</span>
+                </div>
+                <div class="info-item">
+                    <label>담당자</label>
+                    <span id="sideManager">박소희</span>
+                </div>
+                <div class="info-item">
+                    <label>매물상태</label>
+                    <span id="sideStatus">거래완료</span>
+                </div>
+                <div class="info-item">
+                    <label>재등록사유</label>
+                    <span id="sideReason">렌트로 계약</span>
+                </div>
+                <div class="info-item">
+                    <label>매물종류</label>
+                    <span id="sideType">아파트</span>
+                </div>
+                <div class="info-item">
+                    <label>매물명</label>
+                    <span id="sideProperty">롯데캐슬이스트폴</span>
+                </div>
+                <div class="info-item">
+                    <label>동</label>
+                    <span id="sideDong">102</span>
+                </div>
+                <div class="info-item">
+                    <label>호</label>
+                    <span id="sideUnit">4704</span>
+                </div>
+                <div class="info-item">
+                    <label>소재지</label>
+                    <span id="sideAddress">자양동 680-63</span>
+                </div>
+                <div class="info-item">
+                    <label>거래유형</label>
+                    <span id="sideTrade">렌트</span>
+                </div>
+                <div class="info-item">
+                    <label>광고상태</label>
+                    <span id="sideAdStatus">-</span>
+                </div>
+                <div class="info-item">
+                    <label>공동연락처</label>
+                    <span id="sideSharedContact">-</span>
+                </div>
+                <div class="info-item">
+                    <label>공동중개</label>
+                    <span id="sideSharedBrokerage">-</span>
+                </div>
+                <div class="info-item">
+                    <label>영상</label>
+                    <span id="sideVideo">-</span>
+                </div>
+                <div class="info-item">
+                    <label>사진</label>
+                    <span id="sidePhoto">-</span>
+                </div>
+                <div class="info-item">
+                    <label>계약기간</label>
+                    <span id="sideContractPeriod">25.08~26.08</span>
+                </div>
+                <div class="info-item">
+                    <label>임차금액</label>
+                    <span id="sideRentAmount">0/1050</span>
+                </div>
+                <div class="info-item">
+                    <label>임차유형</label>
+                    <span id="sideRentType">1년렌트</span>
+                </div>
+                <div class="info-item">
+                    <label>거주자</label>
+                    <span id="sideResident">임차인</span>
+                </div>
+                <div class="info-item">
+                    <label>거래완료날짜</label>
+                    <span id="sideCompletionDate">25.08.16</span>
+                </div>
+                <div class="info-item">
+                    <label>사용승인</label>
+                    <span id="sideApprovalDate">2025.03.01</span>
+                </div>
+                <div class="info-item">
+                    <label>입주가능일</label>
+                    <span id="sideMoveInDate">2025-03-08이후</span>
+                </div>
+                <div class="info-item">
+                    <label>주차</label>
+                    <span id="sideParking">1-32대</span>
+                </div>
+                <div class="info-item">
+                    <label>관리비</label>
+                    <span id="sideManagementFee">-</span>
+                </div>
+                <div class="info-item">
+                    <label>방향(거실기준)</label>
+                    <span id="sideDirection">남향</span>
+                </div>
+                <div class="info-item">
+                    <label>룸/욕실</label>
+                    <span id="sideRooms">4/2개</span>
+                </div>
+                <div class="info-item">
+                    <label>해당층/총층</label>
+                    <span id="sideFloorInfo">47/48층</span>
+                </div>
+                <div class="info-item">
+                    <label>금액</label>
+                    <span id="sidePrice">1,050</span>
+                </div>
+                <div class="info-item">
+                    <label>공급/전용 (㎡)</label>
+                    <span id="sideSupplyArea">180.16/138.52</span>
+                </div>
+                <div class="info-item">
+                    <label>공급/전용 (평)</label>
+                    <span id="sideSupplyPyeong">54.49/41.9</span>
+                </div>
+                <div class="info-item">
+                    <label>등록일</label>
+                    <span id="sideRegisterDate">2025-08-15</span>
+                </div>
+                <div class="info-item">
+                    <label>출연</label>
+                    <span id="sideAppearance">-</span>
+                </div>
+                <div class="info-item">
+                    <label>광고기간</label>
+                    <span id="sideAdPeriod">-</span>
+                </div>
+            </div>
+
+            <!-- 담당자 MEMO -->
+            <div class="memo-section">
+                <h4>담당자MEMO</h4>
+                <div class="memo-content" id="sideMemo">
+                    양도세 66%라서 정상거래 시 p8~9억,<br>
+                    현금 거래 등 1억만 신고하면 p4~5억 (25년 4월 초까지)<br>
+                    25년 3월 초 이후 전세 17억 수준으로 진행할 예정<br>
+                    막히지는 않았지만 뷰가 그렇게 잘 나오지는 않는다고함
+                </div>
+            </div>
+
+            <!-- 특이사항 -->
+            <div class="special-section">
+                <h4>특이사항</h4>
+                <div class="special-content" id="sideSpecial">
+                    고급풀옵션, 거실전면, 통창변경예정, 장기거주가능<br><br>
+                    커뮤니티 : 실내스크린 골프장, 피트니스클럽, GX룸, 독서실, 맘스까페, 키즈까페 등 커뮤니티시설 최상<br><br>
+                    교통 : 동서울터미널(스타필드 예정), 올림픽대로, 강변북로, 동부간선도로 등 강남 잠실 출퇴근 편리<br><br>
+                    편의시설 : 혜민병원, 건대병원, 자양 골목시장, 쇼핑몰, 광진구청, 보건소, 문화센터, 호텔, 대형마트 등<br><br>
+                    주위녹지 : 한강, 어린이대공원, 건국대학교 녹지<br><br>
+                    학군 : 양남초, 구남초, 성동초, 건대부중, 부고, 동대부속여자중, 건국대학교
+                </div>
+            </div>
+
+            <!-- 댓글 섹션 -->
+            <div class="comments-section">
+                <div class="comments-header">
+                    <span class="comment-icon">💬</span>
+                    <span class="comment-text">Add a comment...</span>
+                    <span class="no-comments">No comments yet</span>
+                </div>
+                
+                <div class="comment-input-area" style="display: none;">
+                    <div class="comment-user">
+                        <div class="user-avatar">Y</div>
+                        <div class="comment-input-wrapper">
+                            <textarea id="commentInput" placeholder="댓글을 입력하세요..." rows="3"></textarea>
+                            <div class="comment-actions">
+                                <button class="btn-cancel" onclick="cancelComment()">취소</button>
+                                <button class="btn-submit" onclick="submitComment()">댓글 작성</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comments-list" id="commentsList">
+                    <!-- 댓글들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모바일용 모달 (기존 모달을 모바일에서만 사용) -->
+    <div id="detailModal" class="modal mobile-only">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">매물 상세 정보</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mobile-property-details">
+                    <div class="mobile-detail-section">
+                        <h3>기본 정보</h3>
+                        <div class="mobile-detail-grid">
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">공유여부:</span>
+                                <span id="mobileShared">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">담당자:</span>
+                                <span id="mobileManager">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">매물상태:</span>
+                                <span id="mobileStatus">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">재등록사유:</span>
+                                <span id="mobileReason">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">매물종류:</span>
+                                <span id="mobileType">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">매물명:</span>
+                                <span id="mobileProperty">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-detail-section">
+                        <h3>위치 및 구조</h3>
+                        <div class="mobile-detail-grid">
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">동:</span>
+                                <span id="mobileDong">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">호:</span>
+                                <span id="mobileUnit">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">소재지:</span>
+                                <span id="mobileAddress">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">방향:</span>
+                                <span id="mobileDirection">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">룸/욕실:</span>
+                                <span id="mobileRooms">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">해당층/총층:</span>
+                                <span id="mobileFloorInfo">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-detail-section">
+                        <h3>거래 정보</h3>
+                        <div class="mobile-detail-grid">
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">거래유형:</span>
+                                <span id="mobileTrade">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">금액:</span>
+                                <span id="mobilePrice">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">계약기간:</span>
+                                <span id="mobileContractPeriod">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">거래완료날짜:</span>
+                                <span id="mobileCompletionDate">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-detail-section">
+                        <h3>면적 정보</h3>
+                        <div class="mobile-detail-grid">
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">공급/전용 (㎡):</span>
+                                <span id="mobileSupplyArea">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">공급/전용 (평):</span>
+                                <span id="mobileSupplyPyeong">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MEMO 및 특이사항 -->
+                    <div class="mobile-detail-section">
+                        <h3>담당자MEMO</h3>
+                        <div class="mobile-memo-content" id="mobileMemo">
+                            등록된 메모가 없습니다.
+                        </div>
+                    </div>
+
+                    <div class="mobile-detail-section">
+                        <h3>특이사항</h3>
+                        <div class="mobile-special-content" id="mobileSpecial">
+                            등록된 특이사항이 없습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 모바일 댓글 섹션 -->
+                <div class="mobile-comments-section">
+                    <h3>댓글</h3>
+                    <div class="mobile-comment-input">
+                        <textarea id="mobileCommentInput" placeholder="댓글을 입력하세요..." rows="2"></textarea>
+                        <button class="btn-primary" onclick="submitMobileComment()">댓글 작성</button>
+                    </div>
+                    <div class="mobile-comments-list" id="mobileCommentsList">
+                        <!-- 모바일 댓글들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeModal()">닫기</button>
+                    <button class="btn-primary" onclick="editCurrentProperty()">수정</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 배경 오버레이 -->
+    <div id="overlay" class="overlay"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
