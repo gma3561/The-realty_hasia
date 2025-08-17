@@ -341,10 +341,17 @@
         let confirmedAction = null;
         
         function showConfirmModal(title, message, action) {
+            console.log('showConfirmModal 호출:', title);
             document.getElementById('confirmTitle').textContent = title;
             document.getElementById('confirmMessage').textContent = message;
             confirmedAction = action;
-            document.getElementById('confirmModal').style.display = 'flex';
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('모달 display 변경: flex');
+            } else {
+                console.error('confirmModal 요소를 찾을 수 없습니다.');
+            }
         }
         
         function closeConfirmModal() {
@@ -368,10 +375,19 @@
         }
         
         function confirmSave() {
+            console.log('confirmSave 호출됨');
+            console.log('saveProperty 타입:', typeof window.saveProperty);
+            
+            if (typeof window.saveProperty !== 'function') {
+                console.error('saveProperty 함수가 정의되지 않았습니다.');
+                alert('페이지 로딩이 완료되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+            
             showConfirmModal(
                 '매물 저장', 
                 '매물 정보를 저장하시겠습니까?', 
-                saveProperty
+                window.saveProperty
             );
         }
         
@@ -386,10 +402,6 @@
         document.querySelector('.confirm-modal-overlay')?.addEventListener('click', closeConfirmModal);
     </script>
     
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Supabase 설정 -->
-    <script src="supabase-config.js"></script>
     <!-- 복사 방지 -->
     <script src="copy-protection.js"></script>
     <!-- 폼 스크립트 -->
