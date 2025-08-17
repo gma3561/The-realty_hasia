@@ -9,6 +9,11 @@ body {
     font-size: 14px;
     color: #333;
     background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 .container {
@@ -16,6 +21,8 @@ body {
     margin: 0;
     background: white;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
@@ -175,9 +182,12 @@ body {
 
 .table-container {
     background: white;
-    height: calc(100vh - 180px);
-    overflow: auto;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
     position: relative;
+    -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
+    scroll-behavior: smooth;
 }
 
 .data-table {
@@ -1177,6 +1187,10 @@ body {
     padding: 12px 20px;
     background: white;
     border-top: 1px solid #e5e7eb;
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .pagination-info {
@@ -1353,10 +1367,6 @@ body {
 
     .sort-btn {
         display: none;
-    }
-
-    .table-container {
-        height: calc(100vh - 150px);
     }
 
     .table-container {
@@ -1571,9 +1581,6 @@ body {
         height: 24px;
     }
 
-    .table-container {
-        height: calc(100vh - 130px);
-    }
 
     .data-table {
         font-size: 9px;

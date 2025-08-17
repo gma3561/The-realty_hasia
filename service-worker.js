@@ -1,19 +1,18 @@
 // Service Worker for 더부동산 PWA
-const CACHE_NAME = 'the-realty-v1';
+const CACHE_NAME = 'the-realty-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/form.html',
-  '/admin-login.html',
-  '/styles.css',
-  '/form-styles.css',
-  '/confirm-modal-styles.css',
-  '/slack-button-styles.css',
-  '/script.js',
-  '/form-script-supabase.js',
-  '/supabase-config.js',
-  '/copy-protection.js',
-  '/sample-data.js',
+  '/The-realty_hasia/',
+  '/The-realty_hasia/index.html',
+  '/The-realty_hasia/form.html',
+  '/The-realty_hasia/admin-login.html',
+  '/The-realty_hasia/styles.css',
+  '/The-realty_hasia/form-styles.css',
+  '/The-realty_hasia/confirm-modal-styles.css',
+  '/The-realty_hasia/slack-button-styles.css',
+  '/The-realty_hasia/script.js',
+  '/The-realty_hasia/form-script-supabase.js',
+  '/The-realty_hasia/supabase-config.js',
+  '/The-realty_hasia/copy-protection.js',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 

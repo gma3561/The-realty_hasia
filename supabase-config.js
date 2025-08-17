@@ -37,20 +37,55 @@ async function getProperties(limit = null, offset = 0) {
             .order('register_date', { ascending: false })
             .order('created_at', { ascending: false });
         
-        // limit이 지정되면 범위 제한, null이면 전체 데이터
+        // limit이 지정되면 범위 제한, null이면 전체 데이터를 페이지별로 가져오기
         if (limit !== null) {
             query = query.range(offset, offset + limit - 1);
+            const { data, error, count } = await query;
+            
+            if (error) {
+                console.error('매물 조회 오류:', error);
+                return { data: [], error, count: 0 };
+            }
+            
+            console.log(`매물 ${data.length}개 조회 완료`);
+            return { data, error: null, count };
+        } else {
+            // 전체 데이터를 가져오기 위해 페이지네이션 사용
+            let allData = [];
+            let currentOffset = 0;
+            const pageSize = 1000; // Supabase 최대 한계
+            
+            while (true) {
+                const { data, error, count } = await supabaseClient
+                    .from('properties')
+                    .select('*', { count: 'exact' })
+                    .order('register_date', { ascending: false })
+                    .order('created_at', { ascending: false })
+                    .range(currentOffset, currentOffset + pageSize - 1);
+                
+                if (error) {
+                    console.error('매물 조회 오류:', error);
+                    return { data: allData, error, count: allData.length };
+                }
+                
+                if (!data || data.length === 0) {
+                    break;
+                }
+                
+                allData = allData.concat(data);
+                console.log(`${currentOffset + 1}-${currentOffset + data.length}번째 매물 로드`);
+                
+                // 더 이상 데이터가 없으면 종료
+                if (data.length < pageSize) {
+                    break;
+                }
+                
+                currentOffset += pageSize;
+            }
+            
+            console.log(`전체 매물 ${allData.length}개 조회 완료`);
+            return { data: allData, error: null, count: allData.length };
         }
-        
-        const { data, error, count } = await query;
-
-        if (error) {
-            console.error('매물 조회 오류:', error);
-            return { data: [], error, count: 0 };
-        }
-
-        console.log(`매물 ${data.length}개 조회 완료`);
-        return { data, error: null, count };
     } catch (err) {
         console.error('매물 조회 중 예외 발생:', err);
         return { data: [], error: err, count: 0 };
