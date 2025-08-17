@@ -46,6 +46,18 @@
     <meta name="msapplication-TileColor" content="#000000">
     <meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
     
+    <!-- 로고 이미지 미리 로드 -->
+    <link rel="preload" href="logo_white@2x.png" as="image">
+    
+    <!-- 테마 즉시 적용 (깜빡임 방지) -->
+    <script>
+        (function() {
+            // 다크모드를 기본값으로 설정하여 스플래시와 일관성 유지
+            document.documentElement.style.backgroundColor = '#000000';
+            document.documentElement.style.color = '#ffffff';
+        })();
+    </script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="slack-button-styles.css">
     <link rel="stylesheet" href="no-select-styles.css">

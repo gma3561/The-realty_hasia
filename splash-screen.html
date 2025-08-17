@@ -9,6 +9,9 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    
+    <!-- 로고 이미지 미리 로드 -->
+    <link rel="preload" href="logo_white@2x.png" as="image">
     <style>
         * {
             margin: 0;
@@ -102,6 +105,35 @@
             animation: loading 2s ease-in-out infinite;
         }
         
+        .splash-logo {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            /* 데스크톱 기본 크기 */
+            max-width: 400px;
+            height: auto;
+        }
+        
+        /* 태블릿 크기 */
+        @media (max-width: 1024px) {
+            .splash-logo {
+                max-width: 300px;
+            }
+        }
+        
+        /* 모바일 크기 */
+        @media (max-width: 768px) {
+            .splash-logo {
+                max-width: 250px;
+            }
+        }
+        
+        /* 작은 모바일 */
+        @media (max-width: 480px) {
+            .splash-logo {
+                max-width: 200px;
+            }
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -191,7 +223,7 @@
 <body>
     <div class="splash-container">
         <div class="logo-wrapper">
-            <img src="logo_white@2x.png" alt="더부동산중개법인" style="max-width: 80%; height: auto; opacity: 0; animation: fadeIn 1s ease-out forwards;">
+            <img src="logo_white@2x.png" alt="더부동산중개법인" class="splash-logo">
         </div>
     </div>
     

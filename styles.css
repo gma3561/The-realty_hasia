@@ -7,8 +7,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
-    color: #333;
-    background-color: #f8f9fa;
+    color: #ffffff;
+    background-color: #000000;
     overflow-x: hidden;
 }
 
@@ -24,7 +24,7 @@ body {
 .container {
     width: 100%;
     margin: 0;
-    background: white;
+    background: #000000;
     height: 100vh;
     display: flex;
     flex-direction: column;

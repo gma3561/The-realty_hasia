@@ -47,10 +47,13 @@ async function generateUniquePropertyNumber() {
     const maxAttempts = 10;
     
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const date = new Date();
-        const dateStr = date.getFullYear().toString() + 
-                      (date.getMonth() + 1).toString().padStart(2, '0') + 
-                      date.getDate().toString().padStart(2, '0');
+        // 한국시간 (UTC+9) 기준으로 날짜 생성
+        const now = new Date();
+        const koreaTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+        
+        const dateStr = koreaTime.getFullYear().toString() + 
+                      (koreaTime.getMonth() + 1).toString().padStart(2, '0') + 
+                      koreaTime.getDate().toString().padStart(2, '0');
         const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
         const propertyNumber = dateStr + randomNum;
         
@@ -79,12 +82,14 @@ async function generateUniquePropertyNumber() {
         }
     }
     
-    // 최대 시도 횟수 초과 시 타임스탬프 추가
+    // 최대 시도 횟수 초과 시 타임스탬프 추가 (한국시간 기준)
     const timestamp = Date.now().toString().slice(-4);
-    const date = new Date();
-    const dateStr = date.getFullYear().toString() + 
-                  (date.getMonth() + 1).toString().padStart(2, '0') + 
-                  date.getDate().toString().padStart(2, '0');
+    const now = new Date();
+    const koreaTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+    
+    const dateStr = koreaTime.getFullYear().toString() + 
+                  (koreaTime.getMonth() + 1).toString().padStart(2, '0') + 
+                  koreaTime.getDate().toString().padStart(2, '0');
     const fallbackNumber = dateStr + timestamp;
     console.log(`매물번호 생성 fallback 사용: ${fallbackNumber}`);
     return fallbackNumber;
@@ -118,7 +123,7 @@ async function getProperties(limit = null, offset = 0) {
                 .select(`
                     id, property_number, register_date, manager, 
                     property_name, property_type, trade_type, 
-                    price, address, district, building, status,
+                    price, address, building, status,
                     area_supply, area_exclusive, floor_info,
                     completion_date, direction, room_count,
                     management_fee, special_notes, 
@@ -192,6 +197,25 @@ async function getPropertyById(id) {
     }
 }
 
+// 잘못된 유니코드 문자 정리 함수
+function cleanInvalidUnicode(str) {
+    if (!str || typeof str !== 'string') return str;
+    
+    try {
+        // 잘못된 서로게이트 페어 제거
+        str = str.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '');
+        str = str.replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '');
+        
+        // 제어 문자 제거 (탭, 줄바꿈 제외)
+        str = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+        
+        return str;
+    } catch (error) {
+        console.warn('문자열 정리 중 오류:', error);
+        return str.replace(/[^\x20-\x7E\n\r\t가-힣ㄱ-ㅎㅏ-ㅣ]/g, '');
+    }
+}
+
 // 매물 등록
 async function insertProperty(propertyData) {
     try {
@@ -202,10 +226,16 @@ async function insertProperty(propertyData) {
             return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
         }
 
-        // 데이터 정리 (빈 문자열을 null로 변환)
+        // 데이터 정리 (빈 문자열을 null로 변환 + 유니코드 정리)
         const cleanedData = {};
         for (const [key, value] of Object.entries(propertyData)) {
-            cleanedData[key] = value === '' ? null : value;
+            if (value === '') {
+                cleanedData[key] = null;
+            } else if (typeof value === 'string') {
+                cleanedData[key] = cleanInvalidUnicode(value);
+            } else {
+                cleanedData[key] = value;
+            }
         }
         
         // 매물번호 자동 생성 (중복 방지 포함)
@@ -262,10 +292,16 @@ async function updateProperty(id, propertyData) {
             console.warn('이전 상태 조회 실패:', error);
         }
 
-        // 데이터 정리
+        // 데이터 정리 (빈 문자열을 null로 변환 + 유니코드 정리)
         const cleanedData = {};
         for (const [key, value] of Object.entries(propertyData)) {
-            cleanedData[key] = value === '' ? null : value;
+            if (value === '') {
+                cleanedData[key] = null;
+            } else if (typeof value === 'string') {
+                cleanedData[key] = cleanInvalidUnicode(value);
+            } else {
+                cleanedData[key] = value;
+            }
         }
 
         const { data, error } = await supabaseClient

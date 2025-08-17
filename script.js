@@ -39,11 +39,13 @@ function goToForm() {
 
 // 매물 편집 페이지로 이동
 function editProperty(id) {
+    console.log('editProperty 호출, ID:', id);
     // 관리자 권한 확인
     if (!isAdminLoggedIn()) {
         alert('관리자만 매물을 수정할 수 있습니다.');
         return;
     }
+    console.log('관리자 권한 확인됨, 페이지 이동:', `form.html?edit=${id}`);
     window.location.href = `form.html?edit=${id}`;
 }
 
@@ -4719,27 +4721,45 @@ function closeSidePanel() {
 function addRowClickEvents() {
     const rows = document.querySelectorAll('#tableBody tr');
     rows.forEach(row => {
-        // 클릭 이벤트 - 상세보기
-        row.addEventListener('click', function() {
-            const rowId = this.getAttribute('data-id');
-            const rowData = currentData.find(item => item.id == rowId);
-            if (rowData) {
-                openModal(rowData);
-            }
-        });
+        let clickTimer = null;
+        let clickCount = 0;
         
-        // 더블클릭 이벤트 - 수정 (관리자만)
-        row.addEventListener('dblclick', function(e) {
-            e.stopPropagation(); // 클릭 이벤트 중복 방지
+        // 클릭/더블클릭 처리를 위한 통합 이벤트 핸들러
+        row.addEventListener('click', function(e) {
+            clickCount++;
             
-            if (!isAdminLoggedIn()) {
-                alert('관리자만 매물을 수정할 수 있습니다.');
-                return;
-            }
-            
-            const rowId = this.getAttribute('data-id');
-            if (rowId) {
-                editProperty(rowId);
+            if (clickCount === 1) {
+                // 싱글 클릭 - 300ms 대기
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                    // 싱글 클릭 처리 - 상세보기
+                    const rowId = this.getAttribute('data-id');
+                    const rowData = currentData.find(item => item.id == rowId);
+                    if (rowData) {
+                        openModal(rowData);
+                    }
+                }, 300);
+            } else if (clickCount === 2) {
+                // 더블 클릭
+                clearTimeout(clickTimer);
+                clickCount = 0;
+                
+                console.log('더블클릭 이벤트 발생');
+                
+                if (!isAdminLoggedIn()) {
+                    alert('관리자만 매물을 수정할 수 있습니다.');
+                    return;
+                }
+                
+                const rowId = this.getAttribute('data-id');
+                console.log('row data-id:', rowId);
+                if (rowId) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    editProperty(rowId);
+                } else {
+                    console.error('data-id 속성이 없습니다');
+                }
             }
         });
     });
