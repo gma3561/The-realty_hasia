@@ -4,17 +4,11 @@
     box-sizing: border-box;
 }
 
-/* 최우선 다크모드 적용 (깜빡임 방지) */
-html {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-}
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
-    color: #ffffff;
-    background-color: #000000;
+    color: #333;
+    background-color: #f8f9fa;
     overflow-x: hidden;
 }
 
@@ -30,7 +24,7 @@ body {
 .container {
     width: 100%;
     margin: 0;
-    background: #000000;
+    background: white;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -196,6 +190,7 @@ body {
     background: white;
     flex: 1 1 auto;
     overflow-y: scroll;
+    padding-bottom: 70px; /* 고정 페이지네이션을 위한 하단 패딩 */
     overflow-x: auto;
     position: relative;
     -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
@@ -1224,6 +1219,11 @@ body {
     flex-shrink: 0; /* 페이지네이션이 축소되지 않도록 */
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.08);
     min-height: 50px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 }
 
 .pagination-info {

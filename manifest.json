@@ -4,7 +4,7 @@
   "description": "Since 1999, 더부동산중개법인 매물관리 시스템",
   "start_url": "/The-realty_hasia/splash-screen.html",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#ffffff",
   "theme_color": "#000000",
   "orientation": "portrait-primary",
   "scope": "/The-realty_hasia/",
