@@ -206,7 +206,7 @@ body {
 
 .data-table thead {
     position: sticky;
-    top: 98px; /* 데스크톱 헤더 높이만큼 */
+    top: 115px; /* 데스크톱 헤더 실제 높이 */
     z-index: 50;
     background: #f8f9fa;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -215,13 +215,13 @@ body {
 /* 모바일에서 헤더 아래에 테이블 헤더 고정 */
 @media (max-width: 768px) {
     .data-table thead {
-        top: 88px; /* 모바일 헤더 높이만큼 */
+        top: 84px; /* 모바일 헤더 실제 높이 */
     }
 }
 
 @media (max-width: 480px) {
     .data-table thead {
-        top: 84px; /* 소형 모바일 헤더 높이만큼 */
+        top: 84px; /* 소형 모바일 헤더 실제 높이 */
     }
 }
 
