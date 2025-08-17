@@ -123,9 +123,9 @@ async function getProperties(limit = null, offset = 0) {
                 .select(`
                     id, property_number, register_date, manager, 
                     property_name, property_type, trade_type, 
-                    price, address, building, status,
-                    area_supply, area_exclusive, floor_info,
-                    completion_date, direction, room_count,
+                    price, address, dong, ho, status,
+                    supply_area_sqm, supply_area_pyeong, floor_current,
+                    completion_date, direction, rooms,
                     management_fee, special_notes, 
                     created_at
                 `, { count: 'exact' })
