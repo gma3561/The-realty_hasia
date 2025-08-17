@@ -269,32 +269,27 @@ function fillFormWithSupabaseData(data) {
     document.getElementById('supplyArea').value = data.supply_area_sqm || '';
     document.getElementById('supplyPyeong').value = data.supply_area_pyeong || '';
     document.getElementById('floor').value = data.floor_current || '';
-            
-            if (data.floor_current && data.floor_total) {
-                document.getElementById('floorInfo').value = `${data.floor_current}/${data.floor_total}`;
-            }
-            
-            document.getElementById('rooms').value = data.rooms || '';
-            document.getElementById('direction').value = data.direction || '';
-            document.getElementById('management').value = data.management_fee || '';
-            document.getElementById('parking').value = data.parking || '';
-            document.getElementById('moveInDate').value = data.move_in_date || '';
-            document.getElementById('approvalDate').value = data.approval_date || '';
-            document.getElementById('specialNotes').value = data.special_notes || '';
-            document.getElementById('managerMemo').value = data.manager_memo || '';
-            
-            // 버튼 텍스트 변경
-            document.querySelector('.btn-primary').textContent = '수정';
-            
-            // 저장 함수를 수정 함수로 변경
-            window.saveProperty = async function() {
-                await updatePropertyData(propertyId);
-            };
-        }
-    } catch (error) {
-        console.error('매물 데이터 로드 오류:', error);
-        alert('매물 정보를 불러오는 중 오류가 발생했습니다.');
+    
+    if (data.floor_current && data.floor_total) {
+        document.getElementById('floorInfo').value = `${data.floor_current}/${data.floor_total}`;
     }
+    
+    document.getElementById('rooms').value = data.rooms || '';
+    document.getElementById('direction').value = data.direction || '';
+    document.getElementById('management').value = data.management_fee || '';
+    document.getElementById('parking').value = data.parking || '';
+    document.getElementById('moveInDate').value = data.move_in_date || '';
+    document.getElementById('approvalDate').value = data.approval_date || '';
+    document.getElementById('specialNotes').value = data.special_notes || '';
+    document.getElementById('managerMemo').value = data.manager_memo || '';
+    
+    // 버튼 텍스트 변경
+    document.querySelector('.btn-primary').textContent = '수정';
+    
+    // 저장 함수를 수정 함수로 변경
+    window.saveProperty = async function() {
+        await updatePropertyData(propertyId);
+    };
 }
 
 // 매물 수정
