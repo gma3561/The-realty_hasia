@@ -189,9 +189,6 @@ async function saveProperty() {
                 // 취소를 눌러도 목록으로 이동 (뒤로가기 방지)
                 window.location.replace('index.html');
             }
-        } else {
-            // 수정 모드가 아닌 경우에도 동일하게 처리
-            window.location.href = 'index.html';
         }
         
     } catch (error) {
