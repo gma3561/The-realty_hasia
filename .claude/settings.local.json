@@ -15,7 +15,15 @@
       "Bash(cat:*)",
       "Bash(rm:*)",
       "Bash(rm:*)",
-      "Bash(open generate-pwa-icons.html)"
+      "Bash(open generate-pwa-icons.html)",
+      "Bash(open /Users/hasanghyeon/final_the_realty/generate-pwa-icons.html)",
+      "Bash(open /Users/hasanghyeon/final_the_realty/generate-icons-from-logo.html)",
+      "Bash(pip3 install:*)",
+      "Bash(open convert-svg-to-png.html)",
+      "Bash(open /Users/hasanghyeon/final_the_realty/resize-icons.html)",
+      "Bash(git commit:*)",
+      "Bash(git commit:*)",
+      "Bash(npx playwright test:*)"
     ],
     "deny": [],
     "ask": []

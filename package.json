@@ -19,5 +19,8 @@
   },
   "directories": {
     "test": "tests"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
   }
 }

@@ -14,15 +14,21 @@ body {
 
 html {
     scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    height: 100%;
 }
 
 .container {
     width: 100%;
     margin: 0;
     background: white;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .header {
@@ -182,12 +188,13 @@ html {
 
 .table-container {
     background: white;
-    flex: 1;
-    overflow-y: auto;
+    flex: 1 1 auto;
+    overflow-y: scroll;
     overflow-x: auto;
     position: relative;
     -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
     scroll-behavior: smooth;
+    min-height: 0; /* flex 아이템이 overflow 작동하도록 */
 }
 
 .data-table {
@@ -1186,11 +1193,10 @@ html {
     align-items: center;
     padding: 12px 20px;
     background: white;
-    border-top: 1px solid #e5e7eb;
-    position: sticky;
-    bottom: 0;
-    z-index: 50;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+    border-top: 2px solid #e5e7eb;
+    flex-shrink: 0; /* 페이지네이션이 축소되지 않도록 */
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.08);
+    min-height: 50px;
 }
 
 .pagination-info {

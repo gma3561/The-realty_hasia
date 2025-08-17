@@ -78,8 +78,11 @@ test.describe('Property Registration', () => {
     // 저장하기 버튼 클릭
     await page.click('.btn-save');
     
+    // 확인 모달이 나타날 때까지 대기
+    await page.waitForTimeout(500);
+    
     // 확인 모달이 나타나는지 확인
-    await expect(page.locator('#confirmModal')).toBeVisible();
+    await expect(page.locator('#confirmModal')).toHaveCSS('display', 'flex');
     await expect(page.locator('#confirmTitle')).toHaveText('매물 저장');
     
     // 확인 버튼 클릭

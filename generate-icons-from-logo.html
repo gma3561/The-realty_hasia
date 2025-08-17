@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA 아이콘 생성 - THE REAL ESTATE 로고</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            width: 100%;
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+        }
+        #fileInput {
+            margin: 20px 0;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .icon-item {
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: block;
+            margin: 0 auto 10px;
+            background: #4a4a4a;
+        }
+        .size-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #333;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .download-link {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .download-link:hover {
+            background: #333;
+        }
+        .downloads {
+            margin-top: 30px;
+            text-align: center;
+        }
+        #originalImage {
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PWA 아이콘 생성기 - THE REAL ESTATE</h1>
+        
+        <div class="upload-section">
+            <p>로고 이미지를 업로드하세요 (THE REAL ESTATE 로고)</p>
+            <input type="file" id="fileInput" accept="image/*">
+            <div id="originalImage"></div>
+        </div>
+        
+        <div class="icon-grid" id="iconGrid" style="display: none;">
+            <div class="icon-item">
+                <div class="size-label">48x48</div>
+                <canvas id="icon48" width="48" height="48"></canvas>
+                <button onclick="downloadIcon(48)">다운로드</button>
+            </div>
+            <div class="icon-item">
+                <div class="size-label">72x72</div>
+                <canvas id="icon72" width="72" height="72"></canvas>
+                <button onclick="downloadIcon(72)">다운로드</button>
+            </div>
+            <div class="icon-item">
+                <div class="size-label">96x96</div>
+                <canvas id="icon96" width="96" height="96"></canvas>
+                <button onclick="downloadIcon(96)">다운로드</button>
+            </div>
+            <div class="icon-item">
+                <div class="size-label">144x144</div>
+                <canvas id="icon144" width="144" height="144"></canvas>
+                <button onclick="downloadIcon(144)">다운로드</button>
+            </div>
+            <div class="icon-item">
+                <div class="size-label">192x192</div>
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <button onclick="downloadIcon(192)">다운로드</button>
+            </div>
+            <div class="icon-item">
+                <div class="size-label">512x512</div>
+                <canvas id="icon512" width="512" height="512"></canvas>
+                <button onclick="downloadIcon(512)">다운로드</button>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="downloadAllBtn" onclick="downloadAll()" style="display: none;">모든 아이콘 다운로드</button>
+        </div>
+        
+        <div id="downloads" class="downloads"></div>
+    </div>
+
+    <script>
+        const sizes = [48, 72, 96, 144, 192, 512];
+        let loadedImage = null;
+        
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        loadedImage = img;
+                        
+                        // 원본 이미지 표시
+                        const originalDiv = document.getElementById('originalImage');
+                        originalDiv.innerHTML = '';
+                        const displayImg = document.createElement('img');
+                        displayImg.src = event.target.result;
+                        displayImg.style.maxWidth = '100%';
+                        displayImg.style.borderRadius = '8px';
+                        originalDiv.appendChild(displayImg);
+                        
+                        // 모든 크기의 아이콘 생성
+                        generateIcons();
+                        
+                        // UI 표시
+                        document.getElementById('iconGrid').style.display = 'grid';
+                        document.getElementById('downloadAllBtn').style.display = 'inline-block';
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        function generateIcons() {
+            sizes.forEach(size => {
+                const canvas = document.getElementById(`icon${size}`);
+                const ctx = canvas.getContext('2d');
+                
+                // 캔버스 클리어
+                ctx.clearRect(0, 0, size, size);
+                
+                // 배경색 설정 (로고의 회색 배경과 유사)
+                ctx.fillStyle = '#4a4a4a';
+                ctx.fillRect(0, 0, size, size);
+                
+                // 이미지를 중앙에 맞춰 그리기
+                const scale = Math.min(size / loadedImage.width, size / loadedImage.height) * 0.9; // 90% 크기로 조정
+                const width = loadedImage.width * scale;
+                const height = loadedImage.height * scale;
+                const x = (size - width) / 2;
+                const y = (size - height) / 2;
+                
+                ctx.drawImage(loadedImage, x, y, width, height);
+            });
+        }
+        
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        function downloadAll() {
+            sizes.forEach(size => {
+                setTimeout(() => downloadIcon(size), size * 10); // 순차적으로 다운로드
+            });
+        }
+    </script>
+</body>
+</html>

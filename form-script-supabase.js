@@ -72,7 +72,7 @@ function goToList() {
     window.location.href = 'index.html';
 }
 
-// 매물 저장
+// 매물 저장 - 전역 함수로 등록
 async function saveProperty() {
     // Supabase 클라이언트 확인
     if (!window.supabaseClient) {
@@ -441,3 +441,8 @@ function adjustApprovalYear(yearDelta) {
     
     approvalDateInput.value = newDate;
 }
+
+// 전역 함수로 노출
+window.saveProperty = saveProperty;
+window.goToList = goToList;
+window.adjustApprovalYear = adjustApprovalYear;
