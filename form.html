@@ -367,11 +367,9 @@
         }
         
         function confirmGoBack() {
-            showConfirmModal(
-                '목록으로 이동', 
-                '작성 중인 내용이 저장되지 않습니다. 정말로 목록으로 이동하시겠습니까?', 
-                goToList
-            );
+            // 뒤로가기 기능 비활성화
+            alert('뒤로가기는 지원되지 않습니다. 저장 후 자동으로 목록으로 이동됩니다.');
+            return false;
         }
         
         function confirmSave() {
