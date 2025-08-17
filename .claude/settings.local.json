@@ -23,7 +23,8 @@
       "Bash(open /Users/hasanghyeon/final_the_realty/resize-icons.html)",
       "Bash(git commit:*)",
       "Bash(git commit:*)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": [],
     "ask": []
