@@ -22,6 +22,14 @@
     <script src="supabase-config.js"></script>
     <!-- 슬랙 설정 -->
     <script src="slack-config.js"></script>
+    
+    <script>
+        // 첫 방문 시 스플래시 스크린 표시
+        if (!sessionStorage.getItem('splashShown')) {
+            sessionStorage.setItem('splashShown', 'true');
+            window.location.href = 'splash-screen.html';
+        }
+    </script>
 </head>
 <body>
     <div class="container">

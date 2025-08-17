@@ -2,7 +2,7 @@
   "name": "더부동산 매물관리시스템",
   "short_name": "더부동산",
   "description": "더부동산중개법인 매물관리 시스템",
-  "start_url": "/The-realty_hasia/index.html",
+  "start_url": "/The-realty_hasia/splash-screen.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",

@@ -1,7 +1,8 @@
 // Service Worker for 더부동산 PWA
-const CACHE_NAME = 'the-realty-v2';
+const CACHE_NAME = 'the-realty-v3';
 const urlsToCache = [
   '/The-realty_hasia/',
+  '/The-realty_hasia/splash-screen.html',
   '/The-realty_hasia/index.html',
   '/The-realty_hasia/form.html',
   '/The-realty_hasia/admin-login.html',

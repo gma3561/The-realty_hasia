@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더부동산중개법인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .splash-container {
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        .logo-wrapper {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .logo-main {
+            font-size: 80px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #000;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .diamonds {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 120px;
+        }
+        
+        .diamond {
+            width: 12px;
+            height: 12px;
+            background: #000;
+            transform: rotate(45deg);
+            animation: twinkle 2s infinite;
+        }
+        
+        .diamond:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .since {
+            font-size: 18px;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            color: #000;
+            font-weight: 300;
+        }
+        
+        .company-name {
+            font-size: 32px;
+            letter-spacing: 12px;
+            color: #000;
+            font-weight: 400;
+            margin-top: 30px;
+        }
+        
+        .loading-bar {
+            width: 200px;
+            height: 2px;
+            background: #f0f0f0;
+            margin: 40px auto 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        
+        .loading-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #000;
+            animation: loading 2s ease-in-out infinite;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 1;
+                transform: rotate(45deg) scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: rotate(45deg) scale(0.9);
+            }
+        }
+        
+        @keyframes loading {
+            0% {
+                width: 0%;
+                left: 0;
+            }
+            50% {
+                width: 40%;
+                left: 30%;
+            }
+            100% {
+                width: 0%;
+                left: 100%;
+            }
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .logo-main {
+                font-size: 60px;
+                letter-spacing: 6px;
+            }
+            
+            .diamonds {
+                gap: 80px;
+            }
+            
+            .since {
+                font-size: 16px;
+                letter-spacing: 6px;
+            }
+            
+            .company-name {
+                font-size: 24px;
+                letter-spacing: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-main {
+                font-size: 48px;
+                letter-spacing: 4px;
+            }
+            
+            .diamonds {
+                gap: 60px;
+            }
+            
+            .diamond {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .since {
+                font-size: 14px;
+                letter-spacing: 4px;
+            }
+            
+            .company-name {
+                font-size: 18px;
+                letter-spacing: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <div class="logo-wrapper">
+            <div class="diamonds">
+                <div class="diamond"></div>
+                <div class="diamond"></div>
+            </div>
+            <div class="logo-main">THE</div>
+        </div>
+        <div class="since">SINCE 1999</div>
+        <div class="company-name">더부동산중개법인</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 3초 후 메인 페이지로 이동
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 3000);
+    </script>
+</body>
+</html>
