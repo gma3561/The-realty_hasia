@@ -116,6 +116,13 @@ async function getPropertyById(id) {
 // 매물 등록
 async function insertProperty(propertyData) {
     try {
+        console.log('insertProperty 함수 시작');
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+        }
+
         // 데이터 정리 (빈 문자열을 null로 변환)
         const cleanedData = {};
         for (const [key, value] of Object.entries(propertyData)) {
@@ -129,20 +136,27 @@ async function insertProperty(propertyData) {
 
         if (error) {
             console.error('매물 등록 오류:', error);
-            return { data: null, error };
+            return { success: false, error, data: null };
         }
 
         console.log('매물 등록 완료:', data[0]);
-        return { data: data[0], error: null };
+        return { success: true, error: null, data: data[0] };
     } catch (err) {
         console.error('매물 등록 중 예외 발생:', err);
-        return { data: null, error: err };
+        return { success: false, error: err, data: null };
     }
 }
 
 // 매물 수정
 async function updateProperty(id, propertyData) {
     try {
+        console.log('updateProperty 함수 시작, ID:', id);
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+        }
+
         // 데이터 정리
         const cleanedData = {};
         for (const [key, value] of Object.entries(propertyData)) {
@@ -157,20 +171,27 @@ async function updateProperty(id, propertyData) {
 
         if (error) {
             console.error('매물 수정 오류:', error);
-            return { data: null, error };
+            return { success: false, error, data: null };
         }
 
         console.log('매물 수정 완료:', data[0]);
-        return { data: data[0], error: null };
+        return { success: true, error: null, data: data[0] };
     } catch (err) {
         console.error('매물 수정 중 예외 발생:', err);
-        return { data: null, error: err };
+        return { success: false, error: err, data: null };
     }
 }
 
 // 매물 삭제 (상태값만 변경)
 async function deleteProperty(id) {
     try {
+        console.log('deleteProperty 함수 시작, ID:', id);
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.') };
+        }
+
         const { data, error } = await supabaseClient
             .from('properties')
             .update({ status: '삭제됨' })
@@ -183,7 +204,7 @@ async function deleteProperty(id) {
         }
 
         console.log('매물 삭제 완료 (상태 변경):', data[0]);
-        return { success: true, error: null };
+        return { success: true, error: null, data };
     } catch (err) {
         console.error('매물 삭제 중 예외 발생:', err);
         return { success: false, error: err };

@@ -377,8 +377,15 @@
             console.log('saveProperty 타입:', typeof window.saveProperty);
             
             if (typeof window.saveProperty !== 'function') {
-                console.error('saveProperty 함수가 정의되지 않았습니다.');
-                alert('페이지 로딩이 완료되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                console.error('saveProperty 함수가 정의되지 않았습니다. 3초 후 재시도...');
+                // 3초 대기 후 재시도
+                setTimeout(() => {
+                    if (typeof window.saveProperty === 'function') {
+                        confirmSave();
+                    } else {
+                        alert('시스템 준비중입니다. 페이지를 새로고침해주세요.');
+                    }
+                }, 3000);
                 return;
             }
             

@@ -1,7 +1,9 @@
 // 매물 등록 페이지 스크립트 (Supabase 연동)
+console.log('form-script-supabase.js 로드 시작');
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded 이벤트 발생');
     // 대한민국 서울시 기준으로 오늘 날짜 설정
     function setSeoulDate() {
         try {
@@ -50,12 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
         setSeoulDate();
     }, 100);
     
-    // Supabase 초기화 확인
+    // Supabase 초기화 확인 - 더 긴 시간 대기
     setTimeout(() => {
         if (!window.supabaseClient) {
-            alert('데이터베이스 연결 실패. Supabase 설정을 확인해주세요.');
+            console.warn('Supabase 아직 초기화되지 않음, 재시도...');
+            // 재시도
+            setTimeout(() => {
+                if (!window.supabaseClient) {
+                    console.error('Supabase 연결 실패');
+                }
+            }, 3000);
         }
-    }, 2000);
+    }, 5000);
     
     // 수정 모드 확인
     checkEditMode();
@@ -74,9 +82,17 @@ function goToList() {
 
 // 매물 저장 - 전역 함수로 등록
 async function saveProperty() {
-    // Supabase 클라이언트 확인
+    // Supabase 클라이언트 확인 - 재시도 로직 추가
     if (!window.supabaseClient) {
-        alert('데이터베이스 연결이 필요합니다. 잠시 후 다시 시도해주세요.');
+        console.log('Supabase 아직 준비안됨, 3초 후 재시도...');
+        // 3초 대기 후 재시도
+        setTimeout(() => {
+            if (window.supabaseClient) {
+                saveProperty(); // 재귀 호출
+            } else {
+                alert('데이터베이스 연결이 필요합니다. 페이지를 새로고침해주세요.');
+            }
+        }, 3000);
         return;
     }
 
@@ -135,13 +151,16 @@ async function saveProperty() {
         
         if (propertyId) {
             // 수정 모드: 기존 매물 업데이트
+            console.log('매물 수정 시작, ID:', propertyId);
             const result = await updateProperty(propertyId, formData);
+            console.log('매물 수정 결과:', result);
+            
+            if (!result || !result.success) {
+                throw new Error(result?.error?.message || '수정 실패');
+            }
+            
             data = result.data;
             error = result.error;
-            
-            if (error) {
-                throw error;
-            }
             
             // 수정 완료 후 확인 시 목록으로 이동 (뒤로가기 방지)
             if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
@@ -152,13 +171,16 @@ async function saveProperty() {
             }
         } else {
             // 등록 모드: 새 매물 추가
+            console.log('매물 등록 시작');
             const result = await insertProperty(formData);
+            console.log('매물 등록 결과:', result);
+            
+            if (!result || !result.success) {
+                throw new Error(result?.error?.message || '등록 실패');
+            }
+            
             data = result.data;
             error = result.error;
-            
-            if (error) {
-                throw error;
-            }
             
             // alert 확인 후 목록으로 이동 (뒤로가기 방지)
             if (confirm('매물이 성공적으로 등록되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
@@ -175,7 +197,20 @@ async function saveProperty() {
     } catch (error) {
         console.error('저장 오류:', error);
         const action = urlParams.get('edit') || urlParams.get('id') ? '수정' : '등록';
-        alert(`매물 ${action} 중 오류가 발생했습니다: ` + error.message);
+        
+        // 더 친절한 에러 메시지
+        let errorMessage = '';
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+            errorMessage = '네트워크 연결을 확인해주세요.';
+        } else if (error.message.includes('duplicate')) {
+            errorMessage = '이미 등록된 매물입니다.';
+        } else if (error.message.includes('permission')) {
+            errorMessage = '권한이 없습니다. 관리자에게 문의하세요.';
+        } else {
+            errorMessage = error.message;
+        }
+        
+        alert(`매물 ${action} 실패: ${errorMessage}`);
     } finally {
         // 버튼 상태 복구
         if (saveButton) {
@@ -466,7 +501,15 @@ function adjustApprovalYear(yearDelta) {
     approvalDateInput.value = newDate;
 }
 
-// 전역 함수로 노출
+// 전역 함수로 노출 - 즉시 실행
+console.log('전역 함수 노출 시작');
 window.saveProperty = saveProperty;
 window.goToList = goToList;
 window.adjustApprovalYear = adjustApprovalYear;
+console.log('window.saveProperty 설정 완료:', typeof window.saveProperty);
+
+// 페이지 로드 완료 후에도 한번 더 설정 (보험용)
+window.addEventListener('load', function() {
+    window.saveProperty = saveProperty;
+    console.log('window.saveProperty 재설정 완료');
+});

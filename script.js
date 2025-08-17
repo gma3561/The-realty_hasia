@@ -49,6 +49,15 @@ function editProperty(id) {
 
 // 매물 삭제 (상태값만 변경)
 function deleteProperty(id) {
+    // 사이드패널이 열려있으면 닫기
+    const sidePanel = document.getElementById('sidePanel');
+    if (sidePanel && sidePanel.classList.contains('show')) {
+        closeSidePanel();
+        // 패널이 닫힐 때까지 잠시 대기
+        setTimeout(() => deleteProperty(id), 300);
+        return;
+    }
+    
     // 관리자 권한 확인
     if (!isAdminLoggedIn()) {
         alert('관리자만 매물을 삭제할 수 있습니다.');
@@ -67,9 +76,12 @@ function deleteProperty(id) {
         try {
             // Supabase 연동이 있는 경우 백엔드 업데이트
             if (window.supabaseClient && window.deleteProperty) {
+                console.log('Supabase deleteProperty 호출 시작:', id);
                 const result = await window.deleteProperty(id);
-                if (!result.success) {
-                    throw new Error(result.error?.message || '삭제 실패');
+                console.log('Supabase deleteProperty 결과:', result);
+                
+                if (!result || !result.success) {
+                    throw new Error(result?.error?.message || '삭제 실패');
                 }
             }
             
@@ -4707,11 +4719,27 @@ function closeSidePanel() {
 function addRowClickEvents() {
     const rows = document.querySelectorAll('#tableBody tr');
     rows.forEach(row => {
+        // 클릭 이벤트 - 상세보기
         row.addEventListener('click', function() {
             const rowId = this.getAttribute('data-id');
             const rowData = currentData.find(item => item.id == rowId);
             if (rowData) {
                 openModal(rowData);
+            }
+        });
+        
+        // 더블클릭 이벤트 - 수정 (관리자만)
+        row.addEventListener('dblclick', function(e) {
+            e.stopPropagation(); // 클릭 이벤트 중복 방지
+            
+            if (!isAdminLoggedIn()) {
+                alert('관리자만 매물을 수정할 수 있습니다.');
+                return;
+            }
+            
+            const rowId = this.getAttribute('data-id');
+            if (rowId) {
+                editProperty(rowId);
             }
         });
     });

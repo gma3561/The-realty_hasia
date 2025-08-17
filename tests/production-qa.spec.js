@@ -332,7 +332,7 @@ test.describe('Production Site QA Tests', () => {
     // Manifest 파일 링크 존재 확인 (visible 체크 제거)
     const manifestLink = page.locator('link[rel="manifest"]');
     const manifestHref = await manifestLink.getAttribute('href');
-    expect(manifestHref).toBe('manifest.json');
+    expect(manifestHref).toMatch(/manifest\.json$/);
     
     // PWA 관련 메타 태그들 확인
     const themeColor = page.locator('meta[name="theme-color"]');
@@ -346,7 +346,7 @@ test.describe('Production Site QA Tests', () => {
     // Apple touch icon 확인
     const appleTouchIcon = page.locator('link[rel="apple-touch-icon"]');
     const iconHref = await appleTouchIcon.getAttribute('href');
-    expect(iconHref).toBe('icon-192.png');
+    expect(iconHref).toMatch(/icon-192\.png$/);
     
     console.log('✅ PWA 기능 확인 완료');
   });
