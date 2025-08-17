@@ -12,7 +12,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px 20px;
-    max-width: 1200px;
+    width: 100%;
 }
 
 /* 폼 그룹 스타일 */

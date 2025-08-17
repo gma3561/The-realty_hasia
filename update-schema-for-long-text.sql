@@ -1,0 +1,32 @@
+-- 텍스트 필드 길이 제한 해제
+-- VARCHAR를 TEXT로 변경하여 길이 제한 없애기
+
+-- 1. properties 테이블 수정
+ALTER TABLE properties 
+ALTER COLUMN property_name TYPE TEXT,
+ALTER COLUMN address TYPE TEXT,
+ALTER COLUMN dong TYPE TEXT,
+ALTER COLUMN ho TYPE TEXT,
+ALTER COLUMN price TYPE TEXT,
+ALTER COLUMN supply_area_sqm TYPE TEXT,
+ALTER COLUMN supply_area_pyeong TYPE TEXT,
+ALTER COLUMN floor_current TYPE TEXT,
+ALTER COLUMN floor_total TYPE TEXT,
+ALTER COLUMN rooms TYPE TEXT,
+ALTER COLUMN direction TYPE TEXT,
+ALTER COLUMN management_fee TYPE TEXT,
+ALTER COLUMN parking TYPE TEXT,
+ALTER COLUMN owner_name TYPE TEXT,
+ALTER COLUMN owner_id TYPE TEXT,
+ALTER COLUMN owner_contact TYPE TEXT,
+ALTER COLUMN contact_relation TYPE TEXT,
+ALTER COLUMN resident TYPE TEXT,
+ALTER COLUMN rent_type TYPE TEXT,
+ALTER COLUMN rent_amount TYPE TEXT,
+ALTER COLUMN contract_period TYPE TEXT,
+ALTER COLUMN joint_brokerage TYPE TEXT,
+ALTER COLUMN joint_contact TYPE TEXT,
+ALTER COLUMN ad_status TYPE TEXT,
+ALTER COLUMN ad_period TYPE TEXT,
+ALTER COLUMN registration_number TYPE TEXT,
+ALTER COLUMN manager TYPE TEXT;

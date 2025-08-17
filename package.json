@@ -11,8 +11,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "## 📋 개요 더부동산중개법인의 매물 관리를 위한 실시간 연동 웹 시스템입니다.",
   "dependencies": {
+    "@supabase/supabase-js": "^2.55.0",
+    "csv-parser": "^3.2.0",
     "playwright": "^1.54.2"
+  },
+  "directories": {
+    "test": "tests"
   }
 }

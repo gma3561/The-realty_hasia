@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>더부동산 임시매물정</title>
+    
+    <!-- PWA 메타 태그 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="더부동산">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="slack-button-styles.css">
     <link rel="stylesheet" href="no-select-styles.css">
@@ -492,7 +501,25 @@
 
     <script src="copy-protection.js"></script>
     <script src="script.js"></script>
-    <script src="csv-importer.js"></script>
     <script src="slack-float-button.js"></script>
+    
+    <!-- PWA Service Worker 등록 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => console.log('ServiceWorker 등록 성공:', registration.scope))
+                    .catch(error => console.log('ServiceWorker 등록 실패:', error));
+            });
+        }
+        
+        // PWA 설치 프롬프트
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // 설치 버튼 표시 (필요시 구현)
+        });
+    </script>
 </body>
 </html>
