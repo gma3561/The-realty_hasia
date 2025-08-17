@@ -1,3 +1,21 @@
+/* body와 html 스크롤 설정 */
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+html {
+    height: 100%;
+}
+
+/* 폼 페이지 전용 컨테이너 설정 */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
 /* 폼 컨테이너 스타일 */
 .form-container {
     background: white;
@@ -5,6 +23,9 @@
     margin: 0;
     border-radius: 0;
     box-shadow: none;
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 100px; /* 하단 버튼 공간 확보 */
 }
 
 /* 폼 그리드 레이아웃 */
@@ -408,15 +429,17 @@
 
 /* 하단 저장 버튼 컨테이너 */
 .bottom-actions {
-    position: sticky;
+    position: fixed;
     bottom: 0;
+    left: 0;
+    right: 0;
     background: white;
     border-top: 1px solid #e5e7eb;
     padding: 16px 24px;
     display: flex;
     justify-content: flex-end;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    margin-top: 24px;
+    z-index: 1000;
 }
 
 .bottom-actions .btn-save {
