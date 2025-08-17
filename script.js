@@ -149,8 +149,13 @@ function confirmDelete() {
     closeDeleteConfirmModal();
 }
 
-// 실제 데이터 (CSV에서 가져온 데이터)
-const sampleData = [
+// 실제 데이터는 Supabase에서 로드됨
+// 더미 데이터는 더 이상 사용하지 않음
+const sampleData = []; 
+
+// 주석 처리된 더미 데이터 (백업용)
+/*
+const oldSampleData = [
     {
         id: 1,
         date: "2025-01-31",
@@ -3962,35 +3967,104 @@ const sampleData = [
         special: "깨끗한 상태"
     }
 ];
+*/
 
-
-
+// 전역 변수
 let currentData = [];
 let sortDirection = 'desc'; // 기본 정렬: 최신순 (내림차순)
 let sortColumn = 'date';
 
-// 로컬 스토리지에서 데이터 로드
-function loadStoredData() {
-    // 강제로 새 데이터 로드 (캐시 클리어)
-    localStorage.removeItem('properties');
-    
-    // 초기 샘플 데이터 설정
-    currentData = [...sampleData];
-    currentData.forEach((item, index) => {
-        item.id = Date.now() + index;
+// Supabase 초기화 대기
+async function waitForSupabase() {
+    return new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+            if (window.supabaseClient) {
+                clearInterval(checkInterval);
+                console.log('Supabase 클라이언트 연결 확인');
+                resolve();
+            }
+        }, 100);
+        
+        // 5초 후 타임아웃
+        setTimeout(() => {
+            clearInterval(checkInterval);
+            console.log('Supabase 연결 타임아웃');
+            resolve();
+        }, 5000);
     });
+}
+
+// Supabase에서 데이터 로드
+async function loadStoredData() {
+    console.log('데이터 로드 시작...');
+    
+    // Supabase 연결 확인
+    if (window.supabaseClient && window.getProperties) {
+        try {
+            console.log('Supabase에서 데이터 로드 중...');
+            const { data, error, count } = await window.getProperties(); // 전체 데이터 로드 (limit=null)
+            
+            if (error) {
+                console.error('Supabase 로드 오류:', error);
+                // 오류 시 빈 배열 사용
+                currentData = [];
+            } else {
+                console.log(`Supabase에서 ${data.length}개 매물 로드 완료`);
+                // Supabase 데이터를 UI 형식으로 변환
+                currentData = data.map(transformSupabaseToUI);
+            }
+        } catch (err) {
+            console.error('데이터 로드 실패:', err);
+            currentData = [];
+        }
+    } else {
+        console.log('Supabase 연결 없음 - 빈 데이터 사용');
+        currentData = [];
+    }
     
     // 전역 접근을 위해 window 객체에 추가
     window.currentData = currentData;
     
     // 등록일 기준 최신순 정렬
     currentData.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+        const dateA = new Date(a.date || a.register_date);
+        const dateB = new Date(b.date || b.register_date);
         return dateB - dateA; // 내림차순 (최신순)
     });
-    
-    localStorage.setItem('properties', JSON.stringify(currentData));
+}
+
+// Supabase 데이터를 UI 형식으로 변환
+function transformSupabaseToUI(property) {
+    return {
+        id: property.id,
+        property_number: property.property_number,
+        date: property.register_date ? new Date(property.register_date).toISOString().split('T')[0] : '',
+        shared: property.shared || false,
+        manager: property.manager || '',
+        status: property.status || '',
+        type: property.property_type || '',
+        trade: property.trade_type || '',
+        price: property.price || '',
+        property: property.property_name || '',
+        floor: property.dong || '',
+        unit: property.ho || '',
+        supply: property.supply_area_sqm || '',
+        pyeong: property.supply_area_pyeong || '',
+        households: `${property.floor_current || ''}/${property.floor_total || ''}`,
+        address: property.address || '',
+        reason: property.re_register_reason || '',
+        memo: property.manager_memo || '',
+        special: property.special_notes || '',
+        owner: property.owner_name || '',
+        ownerContact: property.owner_contact || '',
+        contactRelation: property.contact_relation || '',
+        moveInDate: property.move_in_date || '',
+        approvalDate: property.approval_date || '',
+        management: property.management_fee || '',
+        parking: property.parking || '',
+        direction: property.direction || '',
+        rooms: property.rooms || ''
+    };
 }
 
 // 페이지네이션 변수
@@ -4741,8 +4815,13 @@ function updateAdminUI() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadStoredData();
+document.addEventListener('DOMContentLoaded', async function() {
+    // Supabase 초기화 대기
+    await waitForSupabase();
+    
+    // 데이터 로드
+    await loadStoredData();
+    
     // 삭제되지 않은 데이터만 필터링
     filteredData = currentData.filter(item => item.status !== '삭제됨');
     updateAdminUI(); // 관리자 UI 상태 업데이트

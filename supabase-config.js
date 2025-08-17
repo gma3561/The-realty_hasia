@@ -28,15 +28,21 @@ function initSupabase() {
 
 // 데이터베이스 작업 함수들
 
-// 매물 목록 조회
-async function getProperties(limit = 100, offset = 0) {
+// 매물 목록 조회 (전체 데이터 가져오기)
+async function getProperties(limit = null, offset = 0) {
     try {
-        const { data, error, count } = await supabaseClient
+        let query = supabaseClient
             .from('properties')
             .select('*', { count: 'exact' })
             .order('register_date', { ascending: false })
-            .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
+            .order('created_at', { ascending: false });
+        
+        // limit이 지정되면 범위 제한, null이면 전체 데이터
+        if (limit !== null) {
+            query = query.range(offset, offset + limit - 1);
+        }
+        
+        const { data, error, count } = await query;
 
         if (error) {
             console.error('매물 조회 오류:', error);

@@ -14,7 +14,8 @@
       "Bash(node:*)",
       "Bash(cat:*)",
       "Bash(rm:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(open generate-pwa-icons.html)"
     ],
     "deny": [],
     "ask": []
