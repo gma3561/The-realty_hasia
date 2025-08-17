@@ -6,6 +6,8 @@
     <title>더부동산 매물등록</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="form-styles.css">
+    <link rel="stylesheet" href="confirm-modal-styles.css">
+    <link rel="stylesheet" href="no-select-styles.css">
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase 설정 -->
@@ -14,7 +16,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="btn-back" onclick="goToList()" title="목록으로">
+            <button class="btn-back" onclick="confirmGoBack()" title="목록으로">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M15 18l-6-6 6-6"/>
                 </svg>
@@ -261,17 +263,17 @@
                     <div class="form-group full-width">
                         <h3 style="margin: 20px 0 10px 0; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">광고/공동중개 정보</h3>
                     </div>
-                    <div class="form-group">
-                        <label for="photo" style="font-size: 12px;">사진</label>
-                        <input type="text" id="photo" name="photo" placeholder="사진 유무 (예: 있음/없음)" style="font-size: 12px; padding: 6px 10px;">
+                    <div class="form-group compact-checkbox">
+                        <label for="photo">사진</label>
+                        <input type="checkbox" id="photo" name="photo">
                     </div>
-                    <div class="form-group">
-                        <label for="video" style="font-size: 12px;">영상</label>
-                        <input type="text" id="video" name="video" placeholder="영상 유무 (예: 있음/없음)" style="font-size: 12px; padding: 6px 10px;">
+                    <div class="form-group compact-checkbox">
+                        <label for="video">영상</label>
+                        <input type="checkbox" id="video" name="video">
                     </div>
-                    <div class="form-group">
-                        <label for="appearance" style="font-size: 12px;">출연</label>
-                        <input type="text" id="appearance" name="appearance" placeholder="출연 정보" style="font-size: 12px; padding: 6px 10px;">
+                    <div class="form-group compact-checkbox">
+                        <label for="appearance">출연</label>
+                        <input type="checkbox" id="appearance" name="appearance">
                     </div>
                     <div class="form-group">
                         <label for="jointBrokerage" style="font-size: 12px;">공동중개</label>
@@ -305,10 +307,77 @@
         
         <!-- 하단 저장 버튼 -->
         <div class="bottom-actions">
-            <button class="btn-save" onclick="saveProperty()">저장하기</button>
+            <button class="btn-save" onclick="confirmSave()">저장하기</button>
         </div>
     </div>
 
+    <!-- 확인 팝업 모달 -->
+    <div id="confirmModal" class="confirm-modal" style="display: none;">
+        <div class="confirm-modal-overlay"></div>
+        <div class="confirm-modal-content">
+            <div class="confirm-modal-header">
+                <h3 id="confirmTitle">확인</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <p id="confirmMessage">정말로 진행하시겠습니까?</p>
+            </div>
+            <div class="confirm-modal-actions">
+                <button class="btn-cancel" onclick="closeConfirmModal()">취소</button>
+                <button class="btn-confirm" id="confirmBtn" onclick="executeConfirmedAction()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let confirmedAction = null;
+        
+        function showConfirmModal(title, message, action) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            confirmedAction = action;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            confirmedAction = null;
+        }
+        
+        function executeConfirmedAction() {
+            if (confirmedAction) {
+                confirmedAction();
+            }
+            closeConfirmModal();
+        }
+        
+        function confirmGoBack() {
+            showConfirmModal(
+                '목록으로 이동', 
+                '작성 중인 내용이 저장되지 않습니다. 정말로 목록으로 이동하시겠습니까?', 
+                goToList
+            );
+        }
+        
+        function confirmSave() {
+            showConfirmModal(
+                '매물 저장', 
+                '매물 정보를 저장하시겠습니까?', 
+                saveProperty
+            );
+        }
+        
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfirmModal();
+            }
+        });
+        
+        // 오버레이 클릭으로 모달 닫기
+        document.querySelector('.confirm-modal-overlay')?.addEventListener('click', closeConfirmModal);
+    </script>
+    
+    <script src="copy-protection.js"></script>
     <script src="form-script-supabase.js"></script>
 </body>
 </html>

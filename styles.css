@@ -206,7 +206,7 @@ body {
 
 .data-table th {
     background: #f8f9fa;
-    padding: 5px 3px;
+    padding: 5px 2px;
     text-align: center;
     font-weight: 500;
     border-bottom: 1px solid #e5e7eb;
@@ -217,27 +217,24 @@ body {
     color: #374151;
 }
 
-/* 좁은 컬럼들: 등록일(1), 매물번호(2), 매물종류(4), 거래유형(5), 동(8), 호(9), 공유여부(13), 담당자(14) */
-.data-table th:nth-child(1),
-.data-table th:nth-child(2),
-.data-table th:nth-child(4),
-.data-table th:nth-child(5),
-.data-table th:nth-child(8),
-.data-table th:nth-child(9),
-.data-table th:nth-child(13),
-.data-table th:nth-child(14) {
-    padding: 5px 2px;
-    font-size: 11px !important;
+/* 모든 테이블 헤더 동일한 스타일 적용됨 */
+
+/* 소재지 컬럼 너비 1.5배 */
+.data-table th:nth-child(8) { /* 소재지 */
+    width: 120px;
+    min-width: 120px;
 }
 
-.data-table th:nth-child(1) { max-width: 70px; } /* 등록일 */
-.data-table th:nth-child(2) { max-width: 60px; } /* 매물번호 */
-.data-table th:nth-child(4) { max-width: 60px; } /* 매물종류 */
-.data-table th:nth-child(5) { max-width: 55px; } /* 거래유형 */
-.data-table th:nth-child(8) { max-width: 35px; } /* 동 */
-.data-table th:nth-child(9) { max-width: 35px; } /* 호 */
-.data-table th:nth-child(13) { max-width: 45px; } /* 공유여부 */
-.data-table th:nth-child(14) { max-width: 60px; } /* 담당자 */
+/* 컬럼별 최대 너비 설정 */
+.data-table th:nth-child(1) { max-width: 70px; }
+.data-table th:nth-child(2) { max-width: 60px; }
+.data-table th:nth-child(4) { max-width: 60px; }
+.data-table th:nth-child(5) { max-width: 55px; }
+.data-table th:nth-child(8) { max-width: 120px; } /* 소재지 */
+.data-table th:nth-child(9) { max-width: 35px; }
+.data-table th:nth-child(10) { max-width: 35px; }
+.data-table th:nth-child(14) { max-width: 45px; }
+.data-table th:nth-child(15) { max-width: 60px; }
 
 .data-table th:last-child {
     border-right: none;
@@ -278,27 +275,30 @@ body {
     max-width: 150px;
 }
 
-/* 좁은 컬럼 데이터들 */
-.data-table td:nth-child(1),
-.data-table td:nth-child(2),
-.data-table td:nth-child(4),
-.data-table td:nth-child(5),
-.data-table td:nth-child(8),
-.data-table td:nth-child(9),
-.data-table td:nth-child(13),
-.data-table td:nth-child(14) {
+/* 테이블 데이터 - 좁은 컬럼들 */
+.data-table td:nth-child(1),  /* 등록일 */
+.data-table td:nth-child(2),  /* 매물번호 */
+.data-table td:nth-child(4),  /* 매물종류 */
+.data-table td:nth-child(5),  /* 거래유형 */
+.data-table td:nth-child(8),  /* 소재지 */
+.data-table td:nth-child(9),  /* 동 */
+.data-table td:nth-child(10), /* 호 */
+.data-table td:nth-child(14), /* 공유여부 */
+.data-table td:nth-child(15)  /* 담당자 */ {
     padding: 4px 2px;
     font-size: 9px;
 }
 
-.data-table td:nth-child(1) { max-width: 70px; } /* 등록일 */
-.data-table td:nth-child(2) { max-width: 60px; } /* 매물번호 */
-.data-table td:nth-child(4) { max-width: 60px; } /* 매물종류 */
-.data-table td:nth-child(5) { max-width: 55px; } /* 거래유형 */
-.data-table td:nth-child(8) { max-width: 35px; } /* 동 */
-.data-table td:nth-child(9) { max-width: 35px; } /* 호 */
-.data-table td:nth-child(13) { max-width: 45px; } /* 공유여부 */
-.data-table td:nth-child(14) { max-width: 60px; } /* 담당자 */
+/* 데이터 컬럼별 최대 너비 설정 */
+.data-table td:nth-child(1) { max-width: 70px; }
+.data-table td:nth-child(2) { max-width: 60px; }
+.data-table td:nth-child(4) { max-width: 60px; }
+.data-table td:nth-child(5) { max-width: 55px; }
+.data-table td:nth-child(8) { max-width: 120px; } /* 소재지 */
+.data-table td:nth-child(9) { max-width: 35px; }
+.data-table td:nth-child(10) { max-width: 35px; }
+.data-table td:nth-child(14) { max-width: 45px; }
+.data-table td:nth-child(15) { max-width: 60px; }
 
 .data-table td:last-child {
     border-right: none;
@@ -308,6 +308,7 @@ body {
     background-color: #f9fafb;
 }
 
+/* 매물 상태 스타일 */
 .status-완료 {
     color: #059669;
     font-weight: 500;
@@ -323,33 +324,40 @@ body {
     font-weight: 500;
 }
 
-.type-아파트 {
-    background: #dbeafe;
-    color: #1e40af;
+/* 매물 종류 스타일 - 배지 형태 */
+.type-아파트,
+.type-빌라연립,
+.type-오피스텔,
+.type-단독주택 {
     padding: 1px 4px;
     border-radius: 10px;
     font-size: 9px;
+}
+
+.type-아파트 {
+    background: #dbeafe;
+    color: #1e40af;
 }
 
 .type-빌라연립 {
     background: #fef3c7;
     color: #92400e;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-size: 9px;
 }
 
 .type-오피스텔 {
     background: #f3e8ff;
     color: #7c3aed;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-size: 9px;
 }
 
 .type-단독주택 {
     background: #dcfce7;
     color: #16a34a;
+}
+
+/* 거래 유형 스타일 - 배지 형태 */
+.trade-매매,
+.trade-전세,
+.trade-월세 {
     padding: 1px 4px;
     border-radius: 10px;
     font-size: 9px;
@@ -358,25 +366,16 @@ body {
 .trade-매매 {
     background: #fee2e2;
     color: #dc2626;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-size: 9px;
 }
 
 .trade-전세 {
     background: #dbeafe;
     color: #2563eb;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-size: 9px;
 }
 
 .trade-월세 {
     background: #ecfdf5;
     color: #059669;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-size: 9px;
 }
 
 .checkmark {
@@ -385,35 +384,22 @@ body {
     text-align: center;
 }
 
-.supplier-박소희 {
-    color: #3b82f6;
-    font-weight: 500;
-}
-
-.supplier-김효석 {
-    color: #ef4444;
-    font-weight: 500;
-}
-
-.supplier-성은미 {
-    color: #f59e0b;
-    font-weight: 500;
-}
-
-.supplier-서혜신 {
-    color: #8b5cf6;
-    font-weight: 500;
-}
-
-.supplier-정선희 {
-    color: #06b6d4;
-    font-weight: 500;
-}
-
+/* 담당자별 색상 스타일 */
+.supplier-박소희,
+.supplier-김효석,
+.supplier-성은미,
+.supplier-서혜신,
+.supplier-정선희,
 .supplier-서지혜 {
-    color: #22c55e;
     font-weight: 500;
 }
+
+.supplier-박소희 { color: #3b82f6; }
+.supplier-김효석 { color: #ef4444; }
+.supplier-성은미 { color: #f59e0b; }
+.supplier-서혜신 { color: #8b5cf6; }
+.supplier-정선희 { color: #06b6d4; }
+.supplier-서지혜 { color: #22c55e; }
 
 /* 오버레이 */
 .overlay {
@@ -789,7 +775,7 @@ body {
     }
 }
 
-/* 테이블 행 클릭 가능하도록 */
+/* 테이블 행 상호작용 */
 .data-table tbody tr {
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -799,7 +785,7 @@ body {
     background-color: #f3f4f6 !important;
 }
 
-/* 모달 스타일 수정 */
+/* 모달 기본 스타일 */
 .modal {
     display: none;
     position: fixed;
@@ -816,22 +802,10 @@ body {
     display: block;
 }
 
+/* 모달 애니메이션 */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-.modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 0;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {
@@ -845,6 +819,21 @@ body {
     }
 }
 
+/* 모달 콘텐츠 */
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: slideIn 0.3s ease;
+}
+
+/* 모달 헤더 */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -862,6 +851,7 @@ body {
     margin: 0;
 }
 
+/* 모달 닫기 버튼 */
 .close {
     color: #6b7280;
     font-size: 28px;
@@ -968,95 +958,6 @@ body {
     background-color: #e5e7eb;
 }
 
-/* 테이블 행 클릭 가능하도록 */
-.data-table tbody tr {
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.data-table tbody tr:hover {
-    background-color: #f3f4f6 !important;
-}
-
-/* 모달 스타일 */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.3s ease;
-}
-
-.modal.show {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 0;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from { 
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to { 
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 12px 12px 0 0;
-}
-
-.modal-header h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0;
-}
-
-.close {
-    color: #6b7280;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1;
-    transition: color 0.2s ease;
-}
-
-.close:hover {
-    color: #374151;
-}
-
-.modal-body {
-    padding: 24px;
-}
 
 .detail-grid {
     display: grid;
@@ -1299,6 +1200,20 @@ body {
     color: #374151;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    height: 32px;
+}
+
+/* 데스크톱에서는 텍스트 표시, 모바일에서는 숨김 */
+.desktop-text {
+    display: inline;
+}
+
+.mobile-arrow {
+    display: none;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -1336,28 +1251,30 @@ body {
     border-color: #1a1a1a;
 }
 
-/* 대형 화면 최적화 */
+/* ======= 반응형 디자인 - 화면 크기별 최적화 ======= */
+
+/* 대형 화면 (1600px 이상) */
 @media (min-width: 1600px) {
     .container {
         max-width: 1300px;
     }
 }
 
-/* 중형 화면 최적화 */
+/* 중형 화면 (1440px 이하) */
 @media (max-width: 1440px) {
     .container {
         max-width: 90%;
     }
 }
 
-/* 작은 화면 최적화 */
+/* 작은 화면 (1280px 이하) */
 @media (max-width: 1280px) {
     .container {
         max-width: 95%;
     }
 }
 
-/* 모바일 최적화 */
+/* ======= 태블릿 및 모바일 최적화 (768px 이하) ======= */
 @media (max-width: 768px) {
     .container {
         max-width: 100%;
@@ -1458,19 +1375,12 @@ body {
         font-size: 9px !important;
     }
 
-    /* 모바일에서 모든 th 폰트 크기 통일 */
+    /* 태블릿에서 모든 헤더 폰트 크기 통일 */
     .data-table th,
     .data-table th.filterable,
     .data-table th.sortable {
         font-size: 9px !important;
         padding: 5px 2px;
-    }
-    
-    /* 필터 아이콘이 있는 헤더도 강제 적용 */
-    .data-table th:nth-child(3),
-    .data-table th:nth-child(4),
-    .data-table th:nth-child(5) {
-        font-size: 9px !important;
     }
 
     .modal-content {
@@ -1524,8 +1434,93 @@ body {
         padding: 8px;
         font-size: 12px;
     }
+
+    /* 모바일 페이지네이션 스타일 */
+    .desktop-text {
+        display: none;
+    }
+
+    .mobile-arrow {
+        display: inline;
+    }
+
+    .pagination-btn {
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        padding: 8px;
+    }
+
+    .pagination-numbers {
+        gap: 2px;
+    }
+
+    .page-number {
+        padding: 6px 8px;
+        font-size: 11px;
+        min-width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pagination-container {
+        padding: 8px 16px;
+    }
+
+    .pagination-info {
+        font-size: 11px;
+    }
+
+    /* 모바일 테이블 글자 크기 증가 */
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th {
+        font-size: 12px !important;
+    }
+
+    .data-table td {
+        font-size: 11px;
+        padding: 6px 4px;
+    }
+
+    /* 좁은 컬럼들 */
+    .data-table td:nth-child(1),  /* 등록일 */
+    .data-table td:nth-child(2),  /* 매물번호 */
+    .data-table td:nth-child(3),  /* 매물상태 */
+    .data-table td:nth-child(4),  /* 매물종류 */
+    .data-table td:nth-child(5),  /* 거래유형 */
+    .data-table td:nth-child(9),  /* 동 */
+    .data-table td:nth-child(10), /* 호 */
+    .data-table td:nth-child(14), /* 공유여부 */
+    .data-table td:nth-child(15)  /* 담당자 */ {
+        font-size: 10px;
+        padding: 6px 3px;
+    }
+
+    /* 필터 바 요소들 크기 증가 */
+    .search-input {
+        font-size: 12px;
+        height: 32px;
+    }
+
+    .filter-btn, .sort-btn, .reset-btn {
+        font-size: 12px;
+        height: 32px;
+        padding: 6px 12px;
+    }
+
+    .btn-primary {
+        font-size: 12px;
+        height: 32px;
+        padding: 6px 12px;
+    }
 }
 
+/* ======= 소형 모바일 최적화 (480px 이하) ======= */
 @media (max-width: 480px) {
     .header {
         padding: 24px 8px 18px 6px;
@@ -1595,32 +1590,15 @@ body {
         font-size: 8px !important;
     }
 
-    /* 480px 이하에서도 모든 th 폰트 크기 통일 */
+    /* 소형 모바일에서 모든 헤더 폰트 크기 통일 */
     .data-table th,
     .data-table th.filterable,
     .data-table th.sortable {
         font-size: 8px !important;
         padding: 4px 2px;
     }
-    
-    /* 필터 아이콘이 있는 헤더도 강제 적용 */
-    .data-table th:nth-child(1),
-    .data-table th:nth-child(2),
-    .data-table th:nth-child(3),
-    .data-table th:nth-child(4),
-    .data-table th:nth-child(5),
-    .data-table th:nth-child(6),
-    .data-table th:nth-child(7),
-    .data-table th:nth-child(8),
-    .data-table th:nth-child(9),
-    .data-table th:nth-child(10),
-    .data-table th:nth-child(11),
-    .data-table th:nth-child(12),
-    .data-table th:nth-child(13),
-    .data-table th:nth-child(14) {
-        font-size: 8px !important;
-    }
 
+    /* 소형 모바일에서 배지 스타일 조정 */
     .type-아파트,
     .type-빌라연립,
     .type-오피스텔,
@@ -1632,3 +1610,267 @@ body {
         padding: 1px 4px;
     }
 }
+
+/* ======= 상세 뷰 새로운 디자인 ======= */
+
+/* 매물명 제목 섹션 */
+.property-title-section {
+    padding: 20px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 20px;
+}
+
+.property-title-section h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* 상세 정보 그리드 */
+.property-detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: #e5e7eb;
+}
+
+.property-detail-grid .detail-item {
+    background-color: white !important;
+    padding: 12px 16px !important;
+    border: none !important;
+    border-bottom: none !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+}
+
+.property-detail-grid .detail-item label {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+}
+
+.property-detail-grid .detail-item span {
+    font-size: 12px !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+}
+
+/* 모바일에서도 2열 그리드 유지 */
+@media (max-width: 768px) {
+    .property-detail-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1px !important;
+    }
+    
+    .property-detail-grid .detail-item {
+        padding: 10px 12px !important;
+        font-size: 12px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        border-bottom: none !important;
+    }
+    
+    .property-detail-grid .detail-item label {
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+        color: #6b7280 !important;
+    }
+    
+    .property-detail-grid .detail-item span {
+        font-size: 12px !important;
+        color: #111827 !important;
+        font-weight: 600 !important;
+    }
+}
+
+/* 모바일 모달용 2열 그리드 */
+.mobile-detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1px !important;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: #e5e7eb;
+}
+
+.mobile-detail-grid .mobile-detail-item {
+    background-color: white !important;
+    padding: 10px 12px !important;
+    border: none !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+}
+
+.mobile-detail-grid .mobile-detail-item .mobile-label {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+}
+
+.mobile-detail-grid .mobile-detail-item span:not(.mobile-label) {
+    font-size: 12px !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    border-right: 1px solid #f3f4f6;
+    background: white;
+    min-height: 48px;
+}
+
+.detail-item:nth-child(2n) {
+    border-right: none;
+}
+
+.detail-item:nth-last-child(-n+2) {
+    border-bottom: none;
+}
+
+.detail-item label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+    min-width: 80px;
+    flex-shrink: 0;
+}
+
+.detail-item span {
+    font-size: 14px;
+    color: #111827;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+    flex: 1;
+    margin-left: 16px;
+}
+
+/* 특정 항목들에 배지 스타일 적용 */
+.detail-item span[id*="Status"] {
+    background: #dcfce7;
+    color: #166534;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.detail-item span[id*="Trade"] {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* 섹션 제목 스타일 */
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin: 24px 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title:first-of-type {
+    margin-top: 16px;
+}
+
+/* MEMO와 특이사항 텍스트 스타일 */
+.memo-text,
+.special-text {
+    padding: 12px 0;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* 모바일 제목 섹션 */
+.mobile-property-title-section {
+    padding: 16px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 16px;
+}
+
+.mobile-property-title-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* 수정/삭제 버튼 스타일 */
+.btn-edit,
+.btn-delete {
+    background: none;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 1px;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit {
+    color: #059669;
+    border-color: #059669;
+}
+
+.btn-edit:hover {
+    background: #059669;
+    color: white;
+}
+
+.btn-delete {
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* ======= CSS 리팩토링 완료 ======= */
+/* 
+ * 주요 개선 사항:
+ * - 중복 코드 제거 및 통합
+ * - 일관성 있는 주석 체계 적용  
+ * - 반응형 디자인 최적화
+ * - 코드 가독성 향상
+ * - 상세 뷰 핵심 정보 강조 디자인 추가
+ */

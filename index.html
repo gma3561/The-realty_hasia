@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>더부동산 임시매물정</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="slack-button-styles.css">
+    <link rel="stylesheet" href="no-select-styles.css">
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase 설정 -->
@@ -25,7 +27,7 @@
                 <!-- 더부동산중개법인 -->
                 <text x="10" y="38" font-size="20" font-family="sans-serif" fill="white">더부동산중개법인</text>
             </svg>
-            <div class="header-title">팀매물장</div>
+            <div class="header-title" onclick="handleHeaderClick()">팀매물장</div>
         </div>
 
         <div class="filter-bar">
@@ -35,6 +37,7 @@
             <div class="filter-right">
                 <button class="reset-btn" onclick="resetFilters()">초기화</button>
                 <button class="sort-btn" onclick="toggleSort()">정렬 <span class="sort-arrow">↓</span></button>
+                <button id="adminLogoutBtn" class="reset-btn" onclick="adminLogout()" style="display: none;">관리자 로그아웃</button>
                 <button class="btn-primary" onclick="goToForm()">매물등록</button>
             </div>
         </div>
@@ -59,6 +62,7 @@
                         </th>
                         <th>금액</th>
                         <th>매물명</th>
+                        <th>소재지</th>
                         <th>동</th>
                         <th>호</th>
                         <th>공급/전용 (㎡)</th>
@@ -66,6 +70,12 @@
                         <th>해당층/총층</th>
                         <th>공유여부</th>
                         <th>담당자</th>
+                        <th class="admin-only" style="display: none;">소유자명</th>
+                        <th class="admin-only" style="display: none;">소유자연락처</th>
+                        <th class="admin-only" style="display: none;">연락처관계</th>
+                        <th class="admin-only" style="display: none;">특이사항</th>
+                        <th class="admin-only" style="display: none;">담당자MEMO</th>
+                        <th id="adminColumn" style="display: none;">수정/삭제</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -79,229 +89,245 @@
                 <span id="paginationInfo">전체 0건</span>
             </div>
             <div class="pagination-controls">
-                <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">이전</button>
+                <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+                    <span class="desktop-text">이전</span>
+                    <svg class="mobile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
                 <div class="pagination-numbers" id="paginationNumbers"></div>
-                <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">다음</button>
+                <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                    <span class="desktop-text">다음</span>
+                    <svg class="mobile-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- 사이드 패널 상세 뷰 (데스크톱용) -->
     <div id="sidePanel" class="side-panel">
-        <div class="side-panel-header" style="background: black; color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; margin: -20px -20px 20px -20px;">
-            <div style="display: flex; align-items: center; gap: 0;">
-                <div style="color: white; font-size: 12px; font-weight: 400; margin-right: 15px; letter-spacing: 1px;">SINCE 1999</div>
-                <div style="color: white; font-size: 18px; font-weight: 600; margin-right: 30px;">더부동산중개법인</div>
-                <div style="color: white; font-size: 18px; font-weight: 500;">매물 상세</div>
-            </div>
+        <div class="side-panel-header" style="background: black; color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: flex-end; margin: -20px -20px 20px -20px;">
             <button class="close-panel" onclick="closeSidePanel()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
         
         <div class="side-panel-content">
-            <div class="property-info-grid">
-                <div class="info-item">
-                    <label>공유여부</label>
-                    <span id="sideShared">-</span>
-                </div>
-                <div class="info-item">
-                    <label>담당자</label>
-                    <span id="sideManager">박소희</span>
-                </div>
-                <div class="info-item">
-                    <label>매물상태</label>
-                    <span id="sideStatus">거래완료</span>
-                </div>
-                <div class="info-item">
-                    <label>재등록사유</label>
-                    <span id="sideReason">렌트로 계약</span>
-                </div>
-                <div class="info-item">
-                    <label>매물종류</label>
-                    <span id="sideType">아파트</span>
-                </div>
-                <div class="info-item">
-                    <label>매물명</label>
-                    <span id="sideProperty">롯데캐슬이스트폴</span>
-                </div>
-                <div class="info-item">
-                    <label>동</label>
-                    <span id="sideDong">102</span>
-                </div>
-                <div class="info-item">
-                    <label>호</label>
-                    <span id="sideUnit">4704</span>
-                </div>
-                <div class="info-item">
-                    <label>소재지</label>
-                    <span id="sideAddress">자양동 680-63</span>
-                </div>
-                <div class="info-item">
-                    <label>거래유형</label>
-                    <span id="sideTrade">렌트</span>
-                </div>
-                <div class="info-item">
-                    <label>광고상태</label>
-                    <span id="sideAdStatus">-</span>
-                </div>
-                <div class="info-item">
-                    <label>공동연락처</label>
-                    <span id="sideSharedContact">-</span>
-                </div>
-                <div class="info-item">
-                    <label>공동중개</label>
-                    <span id="sideSharedBrokerage">-</span>
-                </div>
-                <div class="info-item">
-                    <label>영상</label>
-                    <span id="sideVideo">-</span>
-                </div>
-                <div class="info-item">
-                    <label>사진</label>
-                    <span id="sidePhoto">-</span>
-                </div>
-                <div class="info-item">
-                    <label>계약기간</label>
-                    <span id="sideContractPeriod">25.08~26.08</span>
-                </div>
-                <div class="info-item">
-                    <label>임차금액</label>
-                    <span id="sideRentAmount">0/1050</span>
-                </div>
-                <div class="info-item">
-                    <label>임차유형</label>
-                    <span id="sideRentType">1년렌트</span>
-                </div>
-                <div class="info-item">
-                    <label>거주자</label>
-                    <span id="sideResident">임차인</span>
-                </div>
-                <div class="info-item">
-                    <label>거래완료날짜</label>
-                    <span id="sideCompletionDate">25.08.16</span>
-                </div>
-                <div class="info-item">
-                    <label>사용승인</label>
-                    <span id="sideApprovalDate">2025.03.01</span>
-                </div>
-                <div class="info-item">
-                    <label>입주가능일</label>
-                    <span id="sideMoveInDate">2025-03-08이후</span>
-                </div>
-                <div class="info-item">
-                    <label>주차</label>
-                    <span id="sideParking">1-32대</span>
-                </div>
-                <div class="info-item">
-                    <label>관리비</label>
-                    <span id="sideManagementFee">-</span>
-                </div>
-                <div class="info-item">
-                    <label>방향(거실기준)</label>
-                    <span id="sideDirection">남향</span>
-                </div>
-                <div class="info-item">
-                    <label>룸/욕실</label>
-                    <span id="sideRooms">4/2개</span>
-                </div>
-                <div class="info-item">
-                    <label>해당층/총층</label>
-                    <span id="sideFloorInfo">47/48층</span>
-                </div>
-                <div class="info-item">
+            <!-- 매물명을 큰 제목으로 -->
+            <div class="property-title-section">
+                <h2 id="sidePropertyTitle">롯데캐슬이스트폴 (136A타입)</h2>
+            </div>
+
+            <!-- 핵심 정보 -->
+            <div class="property-detail-grid">
+                <div class="detail-item">
                     <label>금액</label>
                     <span id="sidePrice">1,050</span>
                 </div>
-                <div class="info-item">
-                    <label>공급/전용 (㎡)</label>
-                    <span id="sideSupplyArea">180.16/138.52</span>
+                <div class="detail-item">
+                    <label>거래유형</label>
+                    <span id="sideTrade">렌트</span>
                 </div>
-                <div class="info-item">
-                    <label>공급/전용 (평)</label>
-                    <span id="sideSupplyPyeong">54.49/41.9</span>
+                <div class="detail-item">
+                    <label>매물상태</label>
+                    <span id="sideStatus">거래완료</span>
                 </div>
-                <div class="info-item">
+                <div class="detail-item">
+                    <label>담당자</label>
+                    <span id="sideManager">박소희</span>
+                </div>
+                <div class="detail-item">
                     <label>등록일</label>
                     <span id="sideRegisterDate">2025-08-15</span>
                 </div>
-                <div class="info-item">
-                    <label>출연</label>
-                    <span id="sideAppearance">-</span>
+            </div>
+
+            <!-- 기본 정보 섹션 -->
+            <div class="section-title">기본 정보</div>
+            <div class="property-detail-grid">
+                <div class="detail-item">
+                    <label>매물종류</label>
+                    <span id="sideType">아파트</span>
                 </div>
-                <div class="info-item">
-                    <label>광고기간</label>
-                    <span id="sideAdPeriod">-</span>
+                <div class="detail-item">
+                    <label>공유여부</label>
+                    <span id="sideShared">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>재등록사유</label>
+                    <span id="sideReason">-</span>
                 </div>
             </div>
 
-            <!-- 담당자 MEMO -->
-            <div class="memo-section">
-                <h4>담당자MEMO</h4>
-                <div class="memo-content" id="sideMemo">
-                    양도세 66%라서 정상거래 시 p8~9억,<br>
-                    현금 거래 등 1억만 신고하면 p4~5억 (25년 4월 초까지)<br>
-                    25년 3월 초 이후 전세 17억 수준으로 진행할 예정<br>
-                    막히지는 않았지만 뷰가 그렇게 잘 나오지는 않는다고함
+            <!-- 위치 및 구조 섹션 -->
+            <div class="section-title">위치 및 구조</div>
+            <div class="property-detail-grid">
+                <div class="detail-item">
+                    <label>동</label>
+                    <span id="sideDong">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>호</label>
+                    <span id="sideUnit">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>소재지</label>
+                    <span id="sideAddress">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>방향</label>
+                    <span id="sideDirection">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>룸/욕실</label>
+                    <span id="sideRooms">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>해당층/총층</label>
+                    <span id="sideFloorInfo">-</span>
                 </div>
             </div>
 
-
-            <!-- 특이사항 -->
-            <div class="special-section">
-                <h4>특이사항</h4>
-                <div class="special-content" id="sideSpecial">
-                    고급풀옵션, 거실전면, 통창변경예정, 장기거주가능<br><br>
-                    커뮤니티 : 실내스크린 골프장, 피트니스클럽, GX룸, 독서실, 맘스까페, 키즈까페 등 커뮤니티시설 최상<br><br>
-                    교통 : 동서울터미널(스타필드 예정), 올림픽대로, 강변북로, 동부간선도로 등 강남 잠실 출퇴근 편리<br><br>
-                    편의시설 : 혜민병원, 건대병원, 자양 골목시장, 쇼핑몰, 광진구청, 보건소, 문화센터, 호텔, 대형마트 등<br><br>
-                    주위녹지 : 한강, 어린이대공원, 건국대학교 녹지<br><br>
-                    학군 : 양남초, 구남초, 성동초, 건대부중, 부고, 동대부속여자중, 건국대학교
+            <!-- 거래 정보 섹션 -->
+            <div class="section-title">거래 정보</div>
+            <div class="property-detail-grid">
+                <div class="detail-item">
+                    <label>계약기간</label>
+                    <span id="sideContractPeriod">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>거래완료날짜</label>
+                    <span id="sideCompletionDate">-</span>
                 </div>
             </div>
 
+            <!-- 면적 정보 섹션 -->
+            <div class="section-title">면적 정보</div>
+            <div class="property-detail-grid">
+                <div class="detail-item">
+                    <label>공급/전용 (㎡)</label>
+                    <span id="sideSupplyArea">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>공급/전용 (평)</label>
+                    <span id="sideSupplyPyeong">-</span>
+                </div>
+            </div>
+
+            <!-- 관리자 전용: 소유자 정보 섹션 -->
+            <div class="admin-only-section" style="display: none;">
+                <div class="section-title">소유자 정보 (관리자 전용)</div>
+                <div class="property-detail-grid">
+                    <div class="detail-item">
+                        <label>소유자명</label>
+                        <span id="sideOwnerName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>소유자연락처</label>
+                        <span id="sideOwnerContact">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>연락처관계</label>
+                        <span id="sideContactRelation">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>입주가능일</label>
+                        <span id="sideMoveInDate">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>사용승인일</label>
+                        <span id="sideApprovalDate">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>관리비</label>
+                        <span id="sideManagement">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>주차</label>
+                        <span id="sideParking">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>방향</label>
+                        <span id="sideDirectionDetail">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 담당자MEMO 섹션 -->
+            <div class="section-title">담당자MEMO</div>
+            <div class="memo-text" id="sideMemoText">-</div>
+
+            <!-- 특이사항 섹션 -->
+            <div class="section-title">특이사항</div>
+            <div class="special-text" id="sideSpecialText">-</div>
+        </div>
+        
+        <!-- 하단 슬랙 전송 버튼 (데스크톱) -->
+        <div class="side-panel-bottom-actions">
+            <button class="slack-send-btn" onclick="handleSlackButtonClick()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"/>
+                    <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z"/>
+                    <path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z"/>
+                    <path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                </svg>
+                슬랙으로 전송
+            </button>
         </div>
     </div>
 
     <!-- 모바일용 모달 (기존 모달을 모바일에서만 사용) -->
     <div id="detailModal" class="modal mobile-only">
         <div class="modal-content">
-            <div class="modal-header" style="background: black; color: white; padding: 15px 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0; min-height: 60px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%;">
-                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
-                        <div style="color: white; font-size: 11px; font-weight: 400; letter-spacing: 1px;">SINCE 1999</div>
-                        <div style="color: white; font-size: 15px; font-weight: 600;">더부동산중개법인</div>
-                        <div style="color: white; font-size: 15px; font-weight: 500;">매물 상세</div>
-                    </div>
-                    <span class="close" style="color: white; font-size: 24px; cursor: pointer; flex-shrink: 0;">&times;</span>
+            <div class="modal-header" style="background: black; color: white; padding: 30px 20px 10px 20px; margin: 0 -20px 20px -20px; border-radius: 12px 12px 0 0; min-height: 60px; padding-top: env(safe-area-inset-top, 30px);">
+                <div style="display: flex; align-items: center; justify-content: flex-end; position: relative; width: 100%; height: 100%;">
+                    <span class="close" style="color: white; font-size: 26px; cursor: pointer;">&times;</span>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="mobile-property-details">
+                    <!-- 핵심 정보 섹션 (모바일) -->
+                    <div class="mobile-detail-grid">
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">매물명:</span>
+                            <span id="mobileProperty">-</span>
+                        </div>
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">금액:</span>
+                            <span id="mobilePrice">-</span>
+                        </div>
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">거래유형:</span>
+                            <span id="mobileTrade">-</span>
+                        </div>
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">매물상태:</span>
+                            <span id="mobileStatus">-</span>
+                        </div>
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">담당자:</span>
+                            <span id="mobileManager">-</span>
+                        </div>
+                        <div class="mobile-detail-item">
+                            <span class="mobile-label">등록일:</span>
+                            <span id="mobileRegisterDate">-</span>
+                        </div>
+                    </div>
+
                     <div class="mobile-detail-section">
                         <h3>기본 정보</h3>
                         <div class="mobile-detail-grid">
-                            <div class="mobile-detail-item">
-                                <span class="mobile-label">공유여부:</span>
-                                <span id="mobileShared">-</span>
-                            </div>
-                            <div class="mobile-detail-item">
-                                <span class="mobile-label">담당자:</span>
-                                <span id="mobileManager">-</span>
-                            </div>
-                            <div class="mobile-detail-item">
-                                <span class="mobile-label">매물상태:</span>
-                                <span id="mobileStatus">-</span>
-                            </div>
-                            <div class="mobile-detail-item">
-                                <span class="mobile-label">재등록사유:</span>
-                                <span id="mobileReason">-</span>
-                            </div>
                             <div class="mobile-detail-item">
                                 <span class="mobile-label">매물종류:</span>
                                 <span id="mobileType">-</span>
                             </div>
                             <div class="mobile-detail-item">
-                                <span class="mobile-label">매물명:</span>
-                                <span id="mobileProperty">-</span>
+                                <span class="mobile-label">공유여부:</span>
+                                <span id="mobileShared">-</span>
+                            </div>
+                            <div class="mobile-detail-item">
+                                <span class="mobile-label">재등록사유:</span>
+                                <span id="mobileReason">-</span>
                             </div>
                         </div>
                     </div>
@@ -340,14 +366,6 @@
                         <h3>거래 정보</h3>
                         <div class="mobile-detail-grid">
                             <div class="mobile-detail-item">
-                                <span class="mobile-label">거래유형:</span>
-                                <span id="mobileTrade">-</span>
-                            </div>
-                            <div class="mobile-detail-item">
-                                <span class="mobile-label">금액:</span>
-                                <span id="mobilePrice">-</span>
-                            </div>
-                            <div class="mobile-detail-item">
                                 <span class="mobile-label">계약기간:</span>
                                 <span id="mobileContractPeriod">-</span>
                             </div>
@@ -372,6 +390,47 @@
                         </div>
                     </div>
 
+                    <!-- 관리자 전용: 소유자 정보 섹션 (모바일) -->
+                    <div class="mobile-admin-only-section" style="display: none;">
+                        <div class="mobile-detail-section">
+                            <h3>소유자 정보 (관리자 전용)</h3>
+                            <div class="mobile-detail-grid">
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">소유자명:</span>
+                                    <span id="mobileOwnerName">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">소유자연락처:</span>
+                                    <span id="mobileOwnerContact">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">연락처관계:</span>
+                                    <span id="mobileContactRelation">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">입주가능일:</span>
+                                    <span id="mobileMoveInDate">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">사용승인일:</span>
+                                    <span id="mobileApprovalDate">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">관리비:</span>
+                                    <span id="mobileManagement">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">주차:</span>
+                                    <span id="mobileParking">-</span>
+                                </div>
+                                <div class="mobile-detail-item">
+                                    <span class="mobile-label">방향:</span>
+                                    <span id="mobileDirectionDetail">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- MEMO 및 특이사항 -->
                     <div class="mobile-detail-section">
                         <h3>담당자MEMO</h3>
@@ -388,6 +447,19 @@
                     </div>
                 </div>
 
+                <!-- 하단 슬랙 전송 버튼 (모바일) -->
+                <div class="mobile-slack-section">
+                    <button class="mobile-slack-btn" onclick="handleSlackButtonClick()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"/>
+                            <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z"/>
+                            <path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z"/>
+                            <path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                        </svg>
+                        슬랙으로 전송
+                    </button>
+                </div>
+                
                 <div class="modal-actions">
                     <button class="btn-secondary" onclick="closeModal()">닫기</button>
                 </div>
@@ -418,6 +490,7 @@
         </div>
     </div>
 
+    <script src="copy-protection.js"></script>
     <script src="script.js"></script>
     <script src="slack-float-button.js"></script>
 </body>

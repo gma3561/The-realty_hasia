@@ -283,12 +283,42 @@
     }
 }
 
+/* 광고/공동중개 섹션 체크박스 스타일 */
+.form-group.compact-checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.form-group.compact-checkbox label {
+    font-size: 12px;
+    margin: 0;
+    color: #6b7280;
+}
+
+.form-group.compact-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
 @media (max-width: 480px) {
     .year-btn {
         min-width: 30px;
         height: 24px;
         font-size: 9px;
         padding: 2px 4px;
+    }
+    
+    /* 모바일에서 광고/공동중개 섹션 간격 조정 */
+    .form-group.compact-checkbox {
+        margin-bottom: 6px;
+        gap: 6px;
+    }
+    
+    .form-group.compact-checkbox label {
+        font-size: 11px;
     }
     
     .header {
@@ -371,15 +401,9 @@
     justify-content: center;
     width: 36px;
     height: 55px; /* 로고와 동일한 높이 */
-    transition: opacity 0.2s;
     border-radius: 4px;
     flex-shrink: 0;
     margin-bottom: 0;
-}
-
-.btn-back:hover {
-    opacity: 0.7;
-    background: rgba(255, 255, 255, 0.1);
 }
 
 /* 하단 저장 버튼 컨테이너 */

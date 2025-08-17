@@ -1,61 +1,88 @@
 # 더부동산 매물관리시스템
 
-Supabase와 Vercel을 사용한 부동산 매물 관리 웹 애플리케이션
+## 📋 개요
+더부동산중개법인의 매물 관리를 위한 실시간 연동 웹 시스템입니다.
 
-## 설정 방법
+## ✨ 주요 기능
 
-### 1. Supabase 설정
+### 🏠 매물 관리
+- **실시간 매물 등록/수정/삭제**
+- **자동 매물번호 생성** (YYYYMMDD001 형식)
+- **완전한 감사추적** (모든 변경사항 기록)
+- **소프트 삭제** (데이터 보존)
 
-1. [Supabase](https://supabase.com)에서 프로젝트 생성
-2. SQL Editor에서 `supabase_setup.sql` 파일의 쿼리 실행
-3. Project Settings > API에서 다음 정보 확인:
-   - Project URL
-   - anon/public key
+### 👥 사용자 관리
+- **관리자/일반 사용자 권한 분리**
+- **세션 기반 인증**
+- **사용자별 UUID 관리**
 
-### 2. 코드 설정
+### 🔄 실시간 기능
+- **다중 사용자 실시간 동기화**
+- **즉시 데이터 업데이트** (새로고침 불필요)
+- **실시간 알림 시스템**
 
-1. `supabase-config.js` 파일 수정:
-```javascript
-const SUPABASE_URL = 'your-project-url.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
-```
+### 📊 데이터 보안
+- **Row Level Security (RLS)**
+- **완전한 변경이력 추적**
+- **물리적 데이터 삭제 방지**
 
-### 3. Vercel 배포
+### 🔗 외부 연동
+- **Slack 웹훅 연동**
+- **매물 정보 원클릭 공유**
 
-1. GitHub 저장소에 코드 푸시
-2. [Vercel](https://vercel.com)에서 새 프로젝트 생성
-3. GitHub 저장소 연결
-4. 환경 변수 설정:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-5. Deploy 클릭
+## 🛠️ 기술 스택
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Backend**: Supabase (PostgreSQL + Realtime)
+- **배포**: GitHub Pages
+- **외부 API**: Slack Webhooks
 
-## 파일 구조
+## 🚀 배포 URL
+- **Live Demo**: [https://yourusername.github.io/realty-system/](https://yourusername.github.io/realty-system/)
 
+## 📱 반응형 디자인
+- **데스크톱**: 사이드패널 상세뷰
+- **태블릿**: 2열 그리드 + 모달
+- **모바일**: 1열 그리드 + 최적화된 UI
+
+## 🔧 로컬 실행 방법
+1. 파일 다운로드
+2. `index.html` 브라우저에서 열기
+3. Supabase 연결 자동 확인
+
+## 📁 프로젝트 구조
 ```
 /
-├── index.html          # 매물 목록 페이지
-├── form.html           # 매물 등록/수정 페이지
-├── styles.css          # 공통 스타일
-├── form-styles.css     # 폼 전용 스타일
-├── script-supabase.js  # 목록 페이지 Supabase 연동
-├── form-script-supabase.js # 폼 페이지 Supabase 연동
-├── supabase-config.js  # Supabase 설정
-├── supabase_setup.sql  # 데이터베이스 테이블 생성 쿼리
-└── vercel.json         # Vercel 배포 설정
+├── index.html              # 메인 페이지
+├── form.html              # 매물 등록/수정
+├── admin-login.html       # 관리자 로그인
+├── styles.css             # 메인 스타일
+├── form-styles.css        # 폼 스타일
+├── supabase-config.js     # DB 연결 설정
+├── script.js              # 메인 로직
+├── form-script-supabase.js # 폼 로직
+├── slack-config.js        # Slack 연동
+└── supabase-schema.sql    # DB 스키마
 ```
 
-## 주요 기능
+## 🔐 보안 기능
+- **RLS (Row Level Security)**
+- **사용자별 권한 제어**
+- **API 키 보안 관리**
+- **CORS 정책 적용**
 
-- 매물 등록/수정/조회
-- 실시간 데이터 동기화
-- 필터링 및 검색
-- 반응형 디자인 (데스크톱/모바일)
-- 매물 상태 관리
+## 📈 성능 최적화
+- **인덱스 최적화**
+- **실시간 구독 필터링**
+- **클라이언트 캐싱**
+- **반응형 이미지**
 
-## 기술 스택
+## 🎯 향후 계획
+- [ ] 파일 업로드 기능
+- [ ] 매물 사진 관리
+- [ ] 고급 검색 필터
+- [ ] 데이터 내보내기
+- [ ] 모바일 앱 연동
 
-- Frontend: HTML, CSS, JavaScript
-- Database: Supabase (PostgreSQL)
-- Hosting: Vercel
-- Real-time: Supabase Realtime
+---
+
+© 2025 더부동산중개법인. All rights reserved.

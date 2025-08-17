@@ -1,30 +1,25 @@
-# Node modules
-node_modules/
-
-# Environment variables
-.env
-.env.local
-
-# Mac OS
+# 운영체제
 .DS_Store
+Thumbs.db
 
-# IDE
+# 에디터
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Logs
+# 로그
 *.log
+npm-debug.log*
 
-# Temporary files
+# 임시 파일
 *.tmp
 *.temp
 
-# Supabase config (보안상 제외)
-supabase-config.js
+# 환경 변수 (필요시)
+.env
+.env.local
 
-# 데이터 파일 (필요시 제외)
-# *.csv
-
-# Build outputs
-dist/
-build/
+# 불필요한 파일들
+script-github-pages.js
+script-realtime.js

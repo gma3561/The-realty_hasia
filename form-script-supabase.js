@@ -2,13 +2,53 @@
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    // 한국 시간(Asia/Seoul) 기준으로 오늘 날짜 설정
-    const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-    const year = koreaTime.getFullYear();
-    const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
-    const day = String(koreaTime.getDate()).padStart(2, '0');
-    const today = `${year}-${month}-${day}`;
-    document.getElementById('registerDate').value = today;
+    // 대한민국 서울시 기준으로 오늘 날짜 설정
+    function setSeoulDate() {
+        try {
+            // Method 1: Intl API 사용 (가장 정확한 방법)
+            const seoulTime = new Date().toLocaleDateString('sv-SE', {
+                timeZone: 'Asia/Seoul'
+            });
+            
+            console.log('서울 시간 (Method 1):', seoulTime);
+            
+            const registerDateField = document.getElementById('registerDate');
+            if (registerDateField) {
+                registerDateField.value = seoulTime;
+                console.log('등록일 설정 완료:', seoulTime);
+                return;
+            }
+        } catch (error) {
+            console.warn('Method 1 실패, Method 2 시도:', error);
+        }
+        
+        try {
+            // Method 2: 수동 계산
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const seoul = new Date(utc + (9 * 3600000));
+            
+            const year = seoul.getFullYear();
+            const month = String(seoul.getMonth() + 1).padStart(2, '0');
+            const day = String(seoul.getDate()).padStart(2, '0');
+            const todayDate = `${year}-${month}-${day}`;
+            
+            console.log('서울 시간 (Method 2):', todayDate);
+            
+            const registerDateField = document.getElementById('registerDate');
+            if (registerDateField) {
+                registerDateField.value = todayDate;
+                console.log('등록일 설정 완료 (Method 2):', todayDate);
+            }
+        } catch (error) {
+            console.error('날짜 설정 실패:', error);
+        }
+    }
+    
+    // DOM이 완전히 로드된 후 날짜 설정
+    setTimeout(() => {
+        setSeoulDate();
+    }, 100);
     
     // Supabase 초기화 확인
     setTimeout(() => {
@@ -85,21 +125,43 @@ async function saveProperty() {
     saveButton.disabled = true;
 
     try {
-        // Supabase에 데이터 저장
-        const { data, error } = await insertProperty(formData);
-
-        if (error) {
-            throw error;
+        // 수정 모드 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('edit') || urlParams.get('id');
+        
+        let data, error;
+        
+        if (propertyId) {
+            // 수정 모드: 기존 매물 업데이트
+            const result = await updateProperty(propertyId, formData);
+            data = result.data;
+            error = result.error;
+            
+            if (error) {
+                throw error;
+            }
+            
+            alert('매물이 성공적으로 수정되었습니다.');
+        } else {
+            // 등록 모드: 새 매물 추가
+            const result = await insertProperty(formData);
+            data = result.data;
+            error = result.error;
+            
+            if (error) {
+                throw error;
+            }
+            
+            alert('매물이 성공적으로 등록되었습니다.');
         }
-
-        alert('매물이 성공적으로 등록되었습니다.');
         
         // 목록 페이지로 이동
         window.location.href = 'index.html';
         
     } catch (error) {
         console.error('저장 오류:', error);
-        alert('매물 등록 중 오류가 발생했습니다: ' + error.message);
+        const action = urlParams.get('edit') || urlParams.get('id') ? '수정' : '등록';
+        alert(`매물 ${action} 중 오류가 발생했습니다: ` + error.message);
     } finally {
         // 버튼 상태 복구
         saveButton.textContent = originalText;
@@ -110,21 +172,40 @@ async function saveProperty() {
 // URL 파라미터로 수정 모드 확인
 function checkEditMode() {
     const urlParams = new URLSearchParams(window.location.search);
-    const propertyId = urlParams.get('id');
+    const propertyId = urlParams.get('edit') || urlParams.get('id');
     
     if (propertyId) {
+        // 관리자 권한 확인
+        const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+        if (!isAdmin) {
+            alert('관리자만 매물을 수정할 수 있습니다.');
+            window.location.href = 'index.html';
+            return;
+        }
+        
         loadPropertyForEdit(propertyId);
+        // 페이지 제목 변경
+        document.querySelector('.page-title').textContent = '매물수정';
     }
 }
 
 // 수정을 위한 매물 데이터 로드
 async function loadPropertyForEdit(propertyId) {
-    if (!window.supabaseClient) {
-        setTimeout(() => loadPropertyForEdit(propertyId), 500);
-        return;
-    }
-
     try {
+        // 먼저 로컬 데이터에서 찾기 시도
+        const localData = getLocalPropertyById(propertyId);
+        
+        if (localData) {
+            fillFormWithLocalData(localData);
+            return;
+        }
+        
+        // 로컬에서 찾지 못하면 Supabase에서 조회
+        if (!window.supabaseClient) {
+            setTimeout(() => loadPropertyForEdit(propertyId), 500);
+            return;
+        }
+
         const { data, error } = await getPropertyById(propertyId);
         
         if (error) {
@@ -132,22 +213,62 @@ async function loadPropertyForEdit(propertyId) {
         }
         
         if (data) {
-            // 폼에 데이터 채우기
-            document.getElementById('registerDate').value = data.register_date || '';
-            document.getElementById('shared').value = data.shared ? 'true' : 'false';
-            document.getElementById('manager').value = data.manager || '';
-            document.getElementById('status').value = data.status || '';
-            document.getElementById('reRegisterReason').value = data.re_register_reason || '';
-            document.getElementById('propertyType').value = data.property_type || '';
-            document.getElementById('propertyName').value = data.property_name || '';
-            document.getElementById('dong').value = data.dong || '';
-            document.getElementById('unit').value = data.ho || '';
-            document.getElementById('address').value = data.address || '';
-            document.getElementById('tradeType').value = data.trade_type || '';
-            document.getElementById('price').value = data.price || '';
-            document.getElementById('supplyArea').value = data.supply_area_sqm || '';
-            document.getElementById('supplyPyeong').value = data.supply_area_pyeong || '';
-            document.getElementById('floor').value = data.floor_current || '';
+            fillFormWithSupabaseData(data);
+        }
+        
+    } catch (error) {
+        console.error('매물 데이터 로드 오류:', error);
+        alert('매물 데이터를 불러오는 중 오류가 발생했습니다.');
+    }
+}
+
+// 로컬 데이터에서 매물 찾기
+function getLocalPropertyById(id) {
+    // script.js의 currentData에서 찾기
+    if (window.currentData) {
+        return window.currentData.find(item => item.id == id);
+    }
+    return null;
+}
+
+// 로컬 데이터로 폼 채우기
+function fillFormWithLocalData(data) {
+    document.getElementById('registerDate').value = data.date || '';
+    document.getElementById('shared').checked = data.shared || false;
+    document.getElementById('manager').value = data.manager || '';
+    document.getElementById('status').value = data.status || '';
+    document.getElementById('reRegisterReason').value = data.reason || '';
+    document.getElementById('propertyType').value = data.type || '';
+    document.getElementById('propertyName').value = data.property || '';
+    document.getElementById('dong').value = data.floor || '';
+    document.getElementById('unit').value = data.unit || '';
+    document.getElementById('address').value = data.address || '';
+    document.getElementById('tradeType').value = data.trade || '';
+    document.getElementById('price').value = data.price || '';
+    document.getElementById('supplyArea').value = data.supply || '';
+    document.getElementById('supplyPyeong').value = data.pyeong || '';
+    document.getElementById('floorInfo').value = data.households || '';
+    document.getElementById('specialNotes').value = data.special || '';
+    document.getElementById('managerMemo').value = data.memo || '';
+}
+
+// Supabase 데이터로 폼 채우기  
+function fillFormWithSupabaseData(data) {
+    document.getElementById('registerDate').value = data.register_date || '';
+    document.getElementById('shared').checked = data.shared || false;
+    document.getElementById('manager').value = data.manager || '';
+    document.getElementById('status').value = data.status || '';
+    document.getElementById('reRegisterReason').value = data.re_register_reason || '';
+    document.getElementById('propertyType').value = data.property_type || '';
+    document.getElementById('propertyName').value = data.property_name || '';
+    document.getElementById('dong').value = data.dong || '';
+    document.getElementById('unit').value = data.ho || '';
+    document.getElementById('address').value = data.address || '';
+    document.getElementById('tradeType').value = data.trade_type || '';
+    document.getElementById('price').value = data.price || '';
+    document.getElementById('supplyArea').value = data.supply_area_sqm || '';
+    document.getElementById('supplyPyeong').value = data.supply_area_pyeong || '';
+    document.getElementById('floor').value = data.floor_current || '';
             
             if (data.floor_current && data.floor_total) {
                 document.getElementById('floorInfo').value = `${data.floor_current}/${data.floor_total}`;
