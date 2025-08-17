@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Function Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+</head>
+<body>
+    <h1>Delete Function Test</h1>
+    <button onclick="testDelete()">Test Delete</button>
+    <pre id="result"></pre>
+    
+    <script>
+        async function testDelete() {
+            const resultDiv = document.getElementById('result');
+            
+            // 1. Supabase 클라이언트 확인
+            resultDiv.textContent += 'Supabase Client: ' + (!!window.supabaseClient) + '\n';
+            resultDiv.textContent += 'deleteProperty type: ' + typeof window.deleteProperty + '\n';
+            
+            // 2. 첫 번째 매물 ID 가져오기
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('properties')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) {
+                    resultDiv.textContent += 'Error getting ID: ' + error.message + '\n';
+                    return;
+                }
+                
+                if (data && data.length > 0) {
+                    const testId = data[0].id;
+                    resultDiv.textContent += 'Test ID: ' + testId + '\n';
+                    
+                    // 3. deleteProperty 함수 테스트
+                    console.log('Calling deleteProperty with ID:', testId);
+                    const deleteResult = await window.deleteProperty(testId);
+                    console.log('deleteProperty result:', deleteResult);
+                    
+                    resultDiv.textContent += 'Delete Result: ' + JSON.stringify(deleteResult, null, 2) + '\n';
+                }
+            } catch (err) {
+                resultDiv.textContent += 'Error: ' + err.message + '\n';
+                console.error('Error:', err);
+            }
+        }
+        
+        // 페이지 로드 후 5초 대기
+        setTimeout(() => {
+            document.getElementById('result').textContent = 'Ready to test\n';
+        }, 5000);
+    </script>
+</body>
+</html>

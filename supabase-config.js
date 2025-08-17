@@ -117,21 +117,48 @@ async function getProperties(limit = null, offset = 0) {
             console.log(`매물 ${data.length}개 조회 완료`);
             return { data, error: null, count };
         } else {
-            // 성능 최적화: 필요한 필드만 선택하고 제한 적용
-            const { data, error, count } = await supabaseClient
-                .from('properties')
-                .select(`
-                    id, property_number, register_date, manager, 
-                    property_name, property_type, trade_type, 
-                    price, address, dong, ho, status,
-                    supply_area_sqm, supply_area_pyeong, floor_current,
-                    completion_date, direction, rooms,
-                    management_fee, special_notes, 
-                    created_at
-                `, { count: 'exact' })
-                .order('register_date', { ascending: false })
-                .order('created_at', { ascending: false })
-                .limit(2000); // 성능을 위해 제한
+            // 전체 데이터를 페이지별로 가져오기 (성능 최적화)
+            let allData = [];
+            let currentOffset = 0;
+            const pageSize = 1000; // Supabase 기본 페이지 크기
+            let hasMore = true;
+            
+            while (hasMore) {
+                const { data: pageData, error, count } = await supabaseClient
+                    .from('properties')
+                    .select(`
+                        id, property_number, register_date, manager, 
+                        property_name, property_type, trade_type, 
+                        price, address, dong, ho, status,
+                        supply_area_sqm, supply_area_pyeong, floor_current,
+                        completion_date, direction, rooms,
+                        management_fee, special_notes, 
+                        created_at
+                    `, { count: 'exact' })
+                    .order('register_date', { ascending: false })
+                    .order('created_at', { ascending: false })
+                    .range(currentOffset, currentOffset + pageSize - 1);
+                
+                if (error) {
+                    console.error('매물 조회 오류:', error);
+                    return { data: [], error, count: 0 };
+                }
+                
+                if (pageData && pageData.length > 0) {
+                    allData = allData.concat(pageData);
+                    currentOffset += pageSize;
+                    
+                    // 더 이상 데이터가 없으면 중단
+                    if (pageData.length < pageSize) {
+                        hasMore = false;
+                    }
+                } else {
+                    hasMore = false;
+                }
+            }
+            
+            console.log(`매물 ${allData.length}개 조회 완료 (전체 데이터)`);
+            return { data: allData, error: null, count: allData.length };
             
             if (error) {
                 console.error('매물 조회 오류:', error);

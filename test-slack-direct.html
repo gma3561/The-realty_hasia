@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slack 알림 직접 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 14px;
+        }
+        .test-button:hover { background: #0056b3; }
+        
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Slack 알림 직접 테스트</h1>
+        
+        <div>
+            <h3>1. 시스템 상태 확인</h3>
+            <button class="test-button" onclick="checkSystem()">시스템 상태 확인</button>
+            <div id="system-result" class="result"></div>
+        </div>
+
+        <div>
+            <h3>2. 새 매물 등록 알림 테스트</h3>
+            <button class="test-button" onclick="testNewProperty()">새 매물 알림 테스트</button>
+            <div id="new-property-result" class="result"></div>
+        </div>
+
+        <div>
+            <h3>3. 매물 상태 변경 알림 테스트</h3>
+            <button class="test-button" onclick="testStatusChange()">상태 변경 알림 테스트</button>
+            <div id="status-change-result" class="result"></div>
+        </div>
+
+        <div>
+            <h3>4. 간단한 Slack 메시지 테스트</h3>
+            <button class="test-button" onclick="testSimpleMessage()">간단 메시지 테스트</button>
+            <div id="simple-message-result" class="result"></div>
+        </div>
+
+        <div>
+            <h3>5. Webhook 연결 테스트</h3>
+            <button class="test-button" onclick="testConnection()">연결 테스트</button>
+            <div id="connection-result" class="result"></div>
+        </div>
+    </div>
+
+    <!-- 실제 프로젝트 스크립트들 로드 -->
+    <script src="config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="slack-config.js"></script>
+
+    <script>
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = message;
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+
+        function checkSystem() {
+            console.log('시스템 상태 확인 시작');
+            
+            const checks = [
+                { name: 'SLACK_WEBHOOK_URL', value: typeof SLACK_WEBHOOK_URL !== 'undefined' },
+                { name: 'notifyNewProperty', value: typeof window.notifyNewProperty === 'function' },
+                { name: 'notifyStatusChange', value: typeof window.notifyStatusChange === 'function' },
+                { name: 'sendSimpleSlackMessage', value: typeof window.sendSimpleSlackMessage === 'function' },
+                { name: 'testSlackConnection', value: typeof window.testSlackConnection === 'function' },
+                { name: 'notificationSettings', value: !!window.notificationSettings },
+                { name: '상태 변경 알림 활성화', value: window.notificationSettings?.statusChange === true },
+                { name: '새 매물 알림 활성화', value: window.notificationSettings?.newProperty === true }
+            ];
+
+            let allGood = true;
+            let resultHtml = '<div style="font-family: monospace; font-size: 11px;">';
+
+            checks.forEach(check => {
+                const icon = check.value ? '✅' : '❌';
+                const status = check.value ? 'OK' : 'FAIL';
+                resultHtml += `${icon} ${check.name}: ${status}<br>`;
+                
+                if (!check.value) allGood = false;
+            });
+
+            resultHtml += '</div>';
+            
+            if (allGood) {
+                resultHtml = '<strong>🎉 모든 시스템이 정상입니다!</strong><br>' + resultHtml;
+                showResult('system-result', resultHtml, 'success');
+            } else {
+                resultHtml = '<strong>⚠️ 일부 시스템에 문제가 있습니다:</strong><br>' + resultHtml;
+                showResult('system-result', resultHtml, 'error');
+            }
+        }
+
+        async function testNewProperty() {
+            console.log('새 매물 알림 테스트 시작');
+            
+            try {
+                if (typeof window.notifyNewProperty !== 'function') {
+                    throw new Error('notifyNewProperty 함수가 없습니다');
+                }
+
+                const testProperty = {
+                    id: 'NEW_TEST_' + Date.now(),
+                    property_name: '테스트 새 매물',
+                    property_number: 'NEW' + Date.now(),
+                    property_type: '아파트',
+                    trade_type: '매매',
+                    price: '5억',
+                    address: '서울시 강남구 테스트동',
+                    dong: '101',
+                    ho: '1501',
+                    manager: '테스터',
+                    register_date: new Date().toISOString().split('T')[0]
+                };
+
+                console.log('새 매물 알림 함수 호출 중...');
+                const result = await window.notifyNewProperty(testProperty);
+
+                if (result) {
+                    showResult('new-property-result', '✅ 새 매물 알림 전송 성공! Slack 채널을 확인하세요.', 'success');
+                } else {
+                    showResult('new-property-result', '⚠️ 새 매물 알림 함수는 호출되었지만 결과가 false입니다.', 'error');
+                }
+
+            } catch (error) {
+                console.error('새 매물 알림 테스트 오류:', error);
+                showResult('new-property-result', `❌ 새 매물 알림 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        async function testStatusChange() {
+            console.log('상태 변경 알림 테스트 시작');
+            
+            try {
+                if (typeof window.notifyStatusChange !== 'function') {
+                    throw new Error('notifyStatusChange 함수가 없습니다');
+                }
+
+                const testProperty = {
+                    id: 'STATUS_TEST_' + Date.now(),
+                    property_name: '테스트 상태 변경 매물',
+                    property_number: 'STATUS' + Date.now(),
+                    property_type: '아파트',
+                    trade_type: '매매',
+                    price: '5억',
+                    address: '서울시 강남구 테스트동',
+                    dong: '101',
+                    ho: '1501',
+                    manager: '테스터',
+                    status: '거래완료'
+                };
+
+                console.log('상태 변경 알림 함수 호출 중...');
+                const result = await window.notifyStatusChange(testProperty, '거래가능', '거래완료');
+
+                if (result) {
+                    showResult('status-change-result', '✅ 상태 변경 알림 전송 성공! Slack 채널을 확인하세요.', 'success');
+                } else {
+                    showResult('status-change-result', '⚠️ 상태 변경 알림 함수는 호출되었지만 결과가 false입니다.', 'error');
+                }
+
+            } catch (error) {
+                console.error('상태 변경 알림 테스트 오류:', error);
+                showResult('status-change-result', `❌ 상태 변경 알림 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSimpleMessage() {
+            console.log('간단 메시지 테스트 시작');
+            
+            try {
+                if (typeof window.sendSimpleSlackMessage !== 'function') {
+                    throw new Error('sendSimpleSlackMessage 함수가 없습니다');
+                }
+
+                const testMessage = `🧪 직접 테스트 메시지 - ${new Date().toLocaleString()}`;
+                
+                console.log('간단 메시지 전송 중...');
+                const result = await window.sendSimpleSlackMessage(testMessage);
+
+                if (result) {
+                    showResult('simple-message-result', '✅ 간단 메시지 전송 성공! Slack 채널을 확인하세요.', 'success');
+                } else {
+                    showResult('simple-message-result', '❌ 간단 메시지 전송 실패', 'error');
+                }
+
+            } catch (error) {
+                console.error('간단 메시지 테스트 오류:', error);
+                showResult('simple-message-result', `❌ 간단 메시지 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        async function testConnection() {
+            console.log('연결 테스트 시작');
+            
+            try {
+                if (typeof window.testSlackConnection !== 'function') {
+                    throw new Error('testSlackConnection 함수가 없습니다');
+                }
+
+                console.log('Slack 연결 테스트 중...');
+                const result = await window.testSlackConnection();
+
+                if (result) {
+                    showResult('connection-result', '✅ Slack 연결 테스트 성공!', 'success');
+                } else {
+                    showResult('connection-result', '❌ Slack 연결 테스트 실패', 'error');
+                }
+
+            } catch (error) {
+                console.error('연결 테스트 오류:', error);
+                showResult('connection-result', `❌ 연결 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 자동으로 시스템 상태 확인
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkSystem();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

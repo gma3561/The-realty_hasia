@@ -19,7 +19,26 @@ npm-debug.log*
 # 환경 변수 (필요시)
 .env
 .env.local
+.env.*.local
+
+# 중요: API 키와 설정 파일
+config.js
+supabase-config.js
+slack-config.js
+*-config.js
+!*-config.example.js
+!config.example.js
 
 # 불필요한 파일들
 script-github-pages.js
 script-realtime.js
+
+# 백업 파일
+*.backup
+*.bak
+
+# 민감한 데이터
+/data/
+/private/
+*.csv
+!sample-data.csv

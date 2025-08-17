@@ -29,6 +29,13 @@
 ### 🔗 외부 연동
 - **Slack 웹훅 연동**
 - **매물 정보 원클릭 공유**
+- **실시간 슬랙 알림 시스템**
+
+### 🔔 알림 시스템
+- **새 매물 등록 자동 알림**
+- **매물 상태 변경 알림**
+- **슬랙 전송 알림**
+- **사용자별 알림 설정 관리**
 
 ## 🛠️ 기술 스택
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
@@ -60,7 +67,9 @@
 ├── supabase-config.js     # DB 연결 설정
 ├── script.js              # 메인 로직
 ├── form-script-supabase.js # 폼 로직
-├── slack-config.js        # Slack 연동
+├── slack-config.js        # Slack 연동 및 알림 시스템
+├── slack-integration.js   # Slack 통합 기능
+├── notification-settings.html # 알림 설정 페이지
 └── supabase-schema.sql    # DB 스키마
 ```
 
@@ -77,6 +86,7 @@
 - **반응형 이미지**
 
 ## 🎯 향후 계획
+- [x] 실시간 슬랙 알림 시스템 ✅
 - [ ] 파일 업로드 기능
 - [ ] 매물 사진 관리
 - [ ] 고급 검색 필터

@@ -158,7 +158,7 @@ body {
     border-bottom: 1px solid #e5e7eb;
     align-items: center;
     position: sticky;
-    top: 115px; /* 헤더 높이만큼 - 헤더와 딱 붙도록 조정 */
+    top: 115px; /* 원래 값으로 복구 */
     z-index: 99;
     margin-top: 0;
 }
@@ -206,7 +206,7 @@ body {
 
 .data-table thead {
     position: sticky;
-    top: 115px; /* 데스크톱 헤더 실제 높이 */
+    top: 164px; /* 헤더(115px) + 필터바(49px) = 164px (실측정값) */
     z-index: 50;
     background: #f8f9fa;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -215,13 +215,13 @@ body {
 /* 모바일에서 헤더 아래에 테이블 헤더 고정 */
 @media (max-width: 768px) {
     .data-table thead {
-        top: 84px; /* 모바일 헤더 실제 높이 */
+        top: 121px; /* 모바일 헤더(84px) + 모바일 필터바(37px) = 121px (실측정값) */
     }
 }
 
 @media (max-width: 480px) {
     .data-table thead {
-        top: 84px; /* 소형 모바일 헤더 실제 높이 */
+        top: 121px; /* 소형 모바일 헤더(84px) + 소형 모바일 필터바(37px) = 121px (실측정값) */
     }
 }
 
@@ -1931,4 +1931,4 @@ body {
  * - 반응형 디자인 최적화
  * - 코드 가독성 향상
  * - 상세 뷰 핵심 정보 강조 디자인 추가
- */
+ *//* Cache buster: 1755456189 */

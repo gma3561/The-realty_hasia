@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슬랙 통합 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .webhook-input-group {
+            margin-bottom: 30px;
+        }
+        .webhook-input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: 600;
+        }
+        .webhook-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .webhook-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .test-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .test-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .info-box p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .test-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 슬랙 통합 테스트</h1>
+        
+        <div class="info-box">
+            <p>📌 슬랙 웹훅 URL을 입력하고 테스트해보세요.</p>
+            <p>📌 웹훅 URL은 https://hooks.slack.com/services/... 형식입니다.</p>
+            <p>📌 <a href="https://api.slack.com/apps" target="_blank">Slack App 관리 페이지</a>에서 Incoming Webhooks를 생성할 수 있습니다.</p>
+        </div>
+
+        <div class="webhook-input-group">
+            <label for="webhookUrl">슬랙 웹훅 URL:</label>
+            <input 
+                type="text" 
+                id="webhookUrl" 
+                class="webhook-input" 
+                placeholder="https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX"
+                value=""
+            >
+        </div>
+
+        <div id="result" class="result"></div>
+
+        <div class="test-section">
+            <h2>1단계: 기본 연결 테스트</h2>
+            <button class="test-button" onclick="testBasicConnection()">
+                🔌 기본 연결 테스트
+            </button>
+
+            <h2>2단계: 포맷팅된 메시지 테스트</h2>
+            <button class="test-button" onclick="testFormattedMessage()">
+                📝 포맷팅된 메시지 테스트
+            </button>
+
+            <h2>3단계: 매물 알림 테스트</h2>
+            <button class="test-button" onclick="testPropertyNotification()">
+                🏠 새 매물 등록 알림 테스트
+            </button>
+            <button class="test-button" onclick="testStatusChangeNotification()">
+                🔄 상태 변경 알림 테스트
+            </button>
+            <button class="test-button" onclick="testSlackSendNotification()">
+                📤 슬랙 전송 알림 테스트
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 결과 표시 함수
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = message;
+            
+            // 5초 후 자동으로 숨기기
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // 웹훅 URL 가져오기
+        function getWebhookUrl() {
+            const url = document.getElementById('webhookUrl').value.trim();
+            if (!url) {
+                showResult('❌ 웹훅 URL을 입력해주세요.', 'error');
+                return null;
+            }
+            if (!url.startsWith('https://hooks.slack.com/services/')) {
+                showResult('⚠️ 올바른 슬랙 웹훅 URL 형식이 아닙니다.', 'error');
+                return null;
+            }
+            return url;
+        }
+
+        // 1. 기본 연결 테스트
+        async function testBasicConnection() {
+            const webhookUrl = getWebhookUrl();
+            if (!webhookUrl) return;
+
+            showResult('📡 연결 테스트 중...', 'info');
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: '✅ 슬랙 연결 테스트 성공! - 더부동산중개법인'
+                    })
+                });
+
+                if (response.ok) {
+                    showResult('✅ 연결 성공! 슬랙 채널을 확인해보세요.', 'success');
+                    
+                    // 성공 시 자동으로 slack-config.js 업데이트 코드 표시
+                    const updateCode = `
+                        <strong>slack-config.js 파일을 다음과 같이 업데이트하세요:</strong><br>
+                        <code>const SLACK_WEBHOOK_URL = '${webhookUrl}';</code>
+                    `;
+                    showResult('✅ 연결 성공!<br><br>' + updateCode, 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`❌ 연결 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 2. 포맷팅된 메시지 테스트
+        async function testFormattedMessage() {
+            const webhookUrl = getWebhookUrl();
+            if (!webhookUrl) return;
+
+            showResult('📡 포맷팅된 메시지 전송 중...', 'info');
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: '포맷팅 테스트 메시지',
+                        blocks: [
+                            {
+                                type: "header",
+                                text: {
+                                    type: "plain_text",
+                                    text: "📋 포맷팅 테스트",
+                                    emoji: true
+                                }
+                            },
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: "*이것은 포맷팅된 메시지입니다*"
+                                },
+                                fields: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*항목 1:*\n테스트 값 1"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*항목 2:*\n테스트 값 2"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "divider"
+                            },
+                            {
+                                type: "context",
+                                elements: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: `🏢 더부동산중개법인 | 🕐 ${new Date().toLocaleString('ko-KR')}`
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                if (response.ok) {
+                    showResult('✅ 포맷팅된 메시지 전송 성공!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`❌ 전송 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 3. 새 매물 등록 알림 테스트
+        async function testPropertyNotification() {
+            const webhookUrl = getWebhookUrl();
+            if (!webhookUrl) return;
+
+            showResult('📡 새 매물 알림 전송 중...', 'info');
+
+            const testProperty = {
+                property_name: '테스트 아파트',
+                property_number: '2024TEST001',
+                trade_type: '매매',
+                price: '5억',
+                address: '서울시 강남구 테스트동',
+                dong: '101',
+                ho: '1501',
+                supply_area_sqm: '84.5',
+                supply_area_pyeong: '25.6',
+                floor_current: '15',
+                floor_total: '25',
+                rooms: '3',
+                manager: '김담당',
+                register_date: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: `🆕 새 매물이 등록되었습니다! - ${testProperty.property_name}`,
+                        blocks: [
+                            {
+                                type: "header",
+                                text: {
+                                    type: "plain_text",
+                                    text: "🆕 새 매물이 등록되었습니다!",
+                                    emoji: true
+                                }
+                            },
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: "🏠 *매물 정보*"
+                                },
+                                fields: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*매물명:*\n${testProperty.property_name}`
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*매물번호:*\n${testProperty.property_number}`
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*거래유형:*\n${testProperty.trade_type}`
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*금액:*\n${testProperty.price}`
+                                    }
+                                ]
+                            },
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: "📍 *위치 정보*"
+                                },
+                                fields: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*주소:*\n${testProperty.address}`
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*동/호:*\n${testProperty.dong}동 ${testProperty.ho}호`
+                                    }
+                                ]
+                            },
+                            {
+                                type: "divider"
+                            },
+                            {
+                                type: "context",
+                                elements: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: `🏢 더부동산중개법인 | 🕐 ${new Date().toLocaleString('ko-KR')}`
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                if (response.ok) {
+                    showResult('✅ 새 매물 알림 전송 성공!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`❌ 전송 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 4. 상태 변경 알림 테스트
+        async function testStatusChangeNotification() {
+            const webhookUrl = getWebhookUrl();
+            if (!webhookUrl) return;
+
+            showResult('📡 상태 변경 알림 전송 중...', 'info');
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: '🔄 매물 상태 변경: 거래가능 → 거래완료',
+                        blocks: [
+                            {
+                                type: "header",
+                                text: {
+                                    type: "plain_text",
+                                    text: "🔄 매물 상태가 변경되었습니다!",
+                                    emoji: true
+                                }
+                            },
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: "📋 *상태 변경 정보*"
+                                },
+                                fields: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*매물명:*\n테스트 아파트"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*이전 상태:*\n🟢 거래가능"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*새로운 상태:*\n🔴 거래완료"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*변경일시:*\n${new Date().toLocaleString('ko-KR')}`
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                if (response.ok) {
+                    showResult('✅ 상태 변경 알림 전송 성공!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`❌ 전송 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 5. 슬랙 전송 알림 테스트
+        async function testSlackSendNotification() {
+            const webhookUrl = getWebhookUrl();
+            if (!webhookUrl) return;
+
+            showResult('📡 슬랙 전송 알림 전송 중...', 'info');
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: '📤 매물 정보가 슬랙으로 전송되었습니다!',
+                        blocks: [
+                            {
+                                type: "header",
+                                text: {
+                                    type: "plain_text",
+                                    text: "📤 매물 정보가 슬랙으로 전송되었습니다!",
+                                    emoji: true
+                                }
+                            },
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: "📤 *전송 상세*"
+                                },
+                                fields: [
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*전송 채널:*\n#매물관리"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*전송자:*\n테스트 사용자"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: "*전송 목적:*\n고객 문의/팀 공유"
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `*전송 시간:*\n${new Date().toLocaleString('ko-KR')}`
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                if (response.ok) {
+                    showResult('✅ 슬랙 전송 알림 성공!', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult(`❌ 전송 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 로컬 스토리지에서 URL 복원
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUrl = localStorage.getItem('slackWebhookUrl');
+            if (savedUrl) {
+                document.getElementById('webhookUrl').value = savedUrl;
+            }
+        });
+
+        // URL 입력 시 로컬 스토리지에 저장
+        document.getElementById('webhookUrl').addEventListener('input', (e) => {
+            localStorage.setItem('slackWebhookUrl', e.target.value);
+        });
+    </script>
+</body>
+</html>

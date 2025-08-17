@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직접 상태 변경 알림 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover { background: #0056b3; }
+        .test-button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+        }
+        
+        .property-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .property-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .property-item:hover {
+            background: #e7f3ff;
+        }
+        
+        .property-item.selected {
+            background: #007bff;
+            color: white;
+        }
+        
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        
+        .status-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .status-btn.current {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .status-btn:hover {
+            border-color: #007bff;
+            background: #e7f3ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 직접 상태 변경 알림 테스트</h1>
+        
+        <div class="test-section">
+            <h3>1. 시스템 초기화 및 확인</h3>
+            <button class="test-button" onclick="initializeSystem()">시스템 초기화</button>
+            <button class="test-button" onclick="checkSystemStatus()">시스템 상태 확인</button>
+            <div id="system-status" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. 매물 목록 로드</h3>
+            <button class="test-button" onclick="loadProperties()" id="load-btn">매물 목록 로드</button>
+            <div id="property-count" class="result"></div>
+            <div id="property-list" class="property-list" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. 매물 선택 및 상태 변경</h3>
+            <div id="selected-property" class="result" style="display:none;"></div>
+            <div id="status-selector" style="display:none;">
+                <p><strong>현재 상태에서 변경할 새로운 상태를 선택하세요:</strong></p>
+                <div class="status-buttons">
+                    <div class="status-btn" onclick="changeStatus('거래가능')">거래가능</div>
+                    <div class="status-btn" onclick="changeStatus('거래완료')">거래완료</div>
+                    <div class="status-btn" onclick="changeStatus('거래철회')">거래철회</div>
+                    <div class="status-btn" onclick="changeStatus('매물검토')">매물검토</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. 알림 함수 직접 테스트</h3>
+            <button class="test-button" onclick="testNotificationFunction()">알림 함수 직접 호출</button>
+            <div id="notification-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. 실시간 로그</h3>
+            <button class="test-button" onclick="clearLog()">로그 지우기</button>
+            <div id="debug-log" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 실제 프로젝트 스크립트들 로드 -->
+    <script src="config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="slack-config.js"></script>
+
+    <script>
+        let debugLog = '';
+        let selectedProperty = null;
+        let propertiesList = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const emoji = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            
+            debugLog += `[${timestamp}] ${emoji[type]} ${message}\n`;
+            document.getElementById('debug-log').textContent = debugLog;
+            console.log(`${emoji[type]} ${message}`);
+            
+            // 자동 스크롤
+            const logElement = document.getElementById('debug-log');
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = message;
+            element.style.display = 'block';
+            log(message, type);
+        }
+
+        // 1. 시스템 초기화
+        async function initializeSystem() {
+            log('시스템 초기화 시작', 'info');
+            
+            try {
+                // Supabase 초기화 확인
+                if (typeof window.initSupabase === 'function') {
+                    const client = window.initSupabase();
+                    if (client) {
+                        window.supabaseClient = client;
+                        log('Supabase 클라이언트 초기화 완료', 'success');
+                    }
+                } else if (window.supabaseClient) {
+                    log('Supabase 클라이언트 이미 초기화됨', 'success');
+                } else {
+                    throw new Error('Supabase 초기화 실패');
+                }
+                
+                // 연결 테스트
+                if (typeof window.testConnection === 'function') {
+                    const connected = await window.testConnection();
+                    if (connected) {
+                        log('데이터베이스 연결 테스트 성공', 'success');
+                    } else {
+                        log('데이터베이스 연결 테스트 실패', 'error');
+                    }
+                }
+                
+                showResult('system-status', '✅ 시스템 초기화 완료', 'success');
+                
+            } catch (error) {
+                log(`시스템 초기화 오류: ${error.message}`, 'error');
+                showResult('system-status', `❌ 초기화 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 2. 시스템 상태 확인
+        function checkSystemStatus() {
+            log('시스템 상태 확인 시작', 'info');
+            
+            const checks = [
+                { name: 'Supabase Client', check: () => !!window.supabaseClient, required: true },
+                { name: 'updateProperty 함수', check: () => typeof window.updateProperty === 'function', required: true },
+                { name: 'notifyStatusChange 함수', check: () => typeof window.notifyStatusChange === 'function', required: true },
+                { name: 'notificationSettings', check: () => !!window.notificationSettings, required: true },
+                { name: '상태 변경 알림 활성화', check: () => window.notificationSettings?.statusChange === true, required: true },
+                { name: 'SLACK_WEBHOOK_URL', check: () => typeof SLACK_WEBHOOK_URL !== 'undefined' && SLACK_WEBHOOK_URL.includes('hooks.slack.com'), required: true }
+            ];
+
+            let allGood = true;
+            let statusHtml = '<div style="font-family: monospace; font-size: 12px;">';
+
+            checks.forEach(check => {
+                const result = check.check();
+                const icon = result ? '✅' : '❌';
+                const status = result ? 'OK' : 'FAIL';
+                
+                statusHtml += `${icon} ${check.name}: ${status}<br>`;
+                log(`${check.name}: ${status}`, result ? 'success' : 'error');
+                
+                if (!result && check.required) {
+                    allGood = false;
+                }
+            });
+
+            statusHtml += '</div>';
+            
+            if (allGood) {
+                statusHtml = '<strong>🎉 모든 시스템이 정상입니다!</strong><br>' + statusHtml;
+                showResult('system-status', statusHtml, 'success');
+            } else {
+                statusHtml = '<strong>⚠️ 일부 시스템에 문제가 있습니다:</strong><br>' + statusHtml;
+                showResult('system-status', statusHtml, 'error');
+            }
+        }
+
+        // 3. 매물 목록 로드
+        async function loadProperties() {
+            log('매물 목록 로드 시작', 'info');
+            document.getElementById('load-btn').disabled = true;
+            
+            try {
+                if (!window.getProperties) {
+                    throw new Error('getProperties 함수가 없습니다');
+                }
+                
+                log('getProperties 함수 호출 중...', 'info');
+                const { data, error, count } = await window.getProperties(10, 0); // 처음 10개만
+                
+                if (error) {
+                    throw new Error(`매물 조회 오류: ${error.message}`);
+                }
+                
+                propertiesList = data || [];
+                log(`매물 ${propertiesList.length}개 로드 완료 (전체: ${count}개)`, 'success');
+                
+                if (propertiesList.length === 0) {
+                    showResult('property-count', '⚠️ 매물이 없습니다. 먼저 매물을 등록해주세요.', 'warning');
+                    return;
+                }
+                
+                // 매물 목록 표시
+                displayProperties();
+                showResult('property-count', `✅ ${propertiesList.length}개 매물 로드 완료`, 'success');
+                
+            } catch (error) {
+                log(`매물 로드 오류: ${error.message}`, 'error');
+                showResult('property-count', `❌ 매물 로드 실패: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('load-btn').disabled = false;
+            }
+        }
+
+        // 매물 목록 표시
+        function displayProperties() {
+            const listElement = document.getElementById('property-list');
+            listElement.innerHTML = '';
+            
+            propertiesList.forEach((property, index) => {
+                const item = document.createElement('div');
+                item.className = 'property-item';
+                item.onclick = () => selectProperty(property, index);
+                
+                item.innerHTML = `
+                    <strong>${property.property_name || '이름없음'}</strong> | 
+                    ${property.address || '주소없음'} | 
+                    상태: ${property.status || '미정'} | 
+                    담당자: ${property.manager || '미정'}
+                `;
+                
+                listElement.appendChild(item);
+            });
+            
+            listElement.style.display = 'block';
+            log(`${propertiesList.length}개 매물 목록 표시 완료`, 'info');
+        }
+
+        // 매물 선택
+        function selectProperty(property, index) {
+            selectedProperty = property;
+            
+            // 선택 표시
+            document.querySelectorAll('.property-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.property-item')[index].classList.add('selected');
+            
+            // 선택된 매물 정보 표시
+            const selectedInfo = `
+                <strong>선택된 매물:</strong><br>
+                📋 ${property.property_name || '이름없음'}<br>
+                📍 ${property.address || '주소없음'}<br>
+                📊 현재 상태: <strong>${property.status || '미정'}</strong><br>
+                👤 담당자: ${property.manager || '미정'}
+            `;
+            
+            showResult('selected-property', selectedInfo, 'info');
+            
+            // 상태 변경 UI 표시
+            displayStatusSelector(property.status);
+            
+            log(`매물 선택: ${property.property_name || property.id}`, 'info');
+        }
+
+        // 상태 선택 UI 표시
+        function displayStatusSelector(currentStatus) {
+            const selector = document.getElementById('status-selector');
+            selector.style.display = 'block';
+            
+            // 현재 상태 표시
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('current');
+                if (btn.textContent === currentStatus) {
+                    btn.classList.add('current');
+                }
+            });
+        }
+
+        // 상태 변경
+        async function changeStatus(newStatus) {
+            if (!selectedProperty) {
+                log('매물을 먼저 선택해주세요', 'warning');
+                return;
+            }
+            
+            const oldStatus = selectedProperty.status;
+            
+            if (oldStatus === newStatus) {
+                log('동일한 상태로는 변경할 수 없습니다', 'warning');
+                return;
+            }
+            
+            log(`상태 변경 시작: ${oldStatus} → ${newStatus}`, 'info');
+            
+            try {
+                // 매물 데이터 업데이트
+                const updateData = { ...selectedProperty, status: newStatus };
+                
+                log('updateProperty 함수 호출 중...', 'info');
+                const result = await window.updateProperty(selectedProperty.id, updateData);
+                
+                if (!result.success) {
+                    throw new Error(result.error?.message || '매물 업데이트 실패');
+                }
+                
+                log('매물 상태 업데이트 완료', 'success');
+                
+                // 선택된 매물 정보 업데이트
+                selectedProperty.status = newStatus;
+                selectProperty(selectedProperty, propertiesList.findIndex(p => p.id === selectedProperty.id));
+                
+                log(`✅ 상태 변경 완료: ${oldStatus} → ${newStatus}`, 'success');
+                
+                // 1초 대기 후 알림 전송 여부 확인
+                setTimeout(() => {
+                    log('슬랙 알림 전송 여부를 콘솔에서 확인하세요', 'info');
+                }, 1000);
+                
+            } catch (error) {
+                log(`상태 변경 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 알림 함수 직접 테스트
+        async function testNotificationFunction() {
+            log('알림 함수 직접 테스트 시작', 'info');
+            
+            try {
+                if (!window.notifyStatusChange) {
+                    throw new Error('notifyStatusChange 함수가 없습니다');
+                }
+                
+                const testProperty = {
+                    id: 'DIRECT_TEST_' + Date.now(),
+                    property_name: '직접 테스트 매물',
+                    property_number: 'TEST' + Date.now(),
+                    trade_type: '매매',
+                    price: '5억',
+                    address: '서울시 강남구 테스트동',
+                    dong: '101',
+                    ho: '1501',
+                    manager: '직접 테스터',
+                    status: '거래완료'
+                };
+                
+                log('notifyStatusChange 함수 직접 호출 중...', 'info');
+                const result = await window.notifyStatusChange(testProperty, '거래가능', '거래완료');
+                
+                if (result) {
+                    showResult('notification-result', '✅ 알림 함수 호출 성공! 슬랙 채널을 확인하세요.', 'success');
+                    log('알림 함수 호출 성공', 'success');
+                } else {
+                    showResult('notification-result', '⚠️ 알림 함수 호출은 성공했지만 결과가 false입니다.', 'warning');
+                    log('알림 함수 호출 결과: false', 'warning');
+                }
+                
+            } catch (error) {
+                log(`알림 함수 테스트 오류: ${error.message}`, 'error');
+                showResult('notification-result', `❌ 알림 함수 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        function clearLog() {
+            debugLog = '';
+            document.getElementById('debug-log').textContent = '';
+        }
+
+        // 페이지 로드 시 자동 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            log('페이지 로드 완료', 'info');
+            setTimeout(() => {
+                initializeSystem();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

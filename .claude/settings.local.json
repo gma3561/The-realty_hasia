@@ -24,7 +24,16 @@
       "Bash(git commit:*)",
       "Bash(git commit:*)",
       "Bash(npx playwright test:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(open /Users/hasanghyeon/final_the_realty/create-square-logo.html)",
+      "Bash(pkill:*)",
+      "Bash(mkdir:*)",
+      "Bash(open http://localhost:8888/tests/test-delete-function.html)",
+      "Bash(open http://localhost:8888/tests/test-supabase-query.html)",
+      "Bash(open http://localhost:8888/tests/test-unicode-cleanup.html)",
+      "Bash(grep:*)",
+      "WebFetch(domain:gma3561.github.io)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

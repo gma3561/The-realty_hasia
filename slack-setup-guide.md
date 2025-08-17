@@ -1,139 +1,216 @@
-# 슬랙 연동 설정 가이드
+# 🔔 슬랙 알림 시스템 설정 가이드
 
-## 1. 슬랙 웹훅 URL 생성
+## 📋 개요
+더부동산중개법인 매물관리시스템의 슬랙 알림 기능을 설정하는 방법을 안내합니다.
 
-### 1.1 Slack App 생성
-1. [Slack API](https://api.slack.com/apps) 접속
-2. "Create New App" 클릭
-3. "From scratch" 선택
-4. App 이름: "더부동산 매물 알림" (또는 원하는 이름)
-5. Workspace 선택
+## 🚀 주요 기능
+- **새 매물 등록 알림**: 새로운 매물이 등록될 때 자동 알림
+- **매물 상태 변경 알림**: 매물 상태가 변경될 때 자동 알림  
+- **슬랙 전송 알림**: 매물 정보를 슬랙으로 전송할 때 알림
+- **실시간 알림**: 즉시 슬랙 채널로 전송
 
-### 1.2 Incoming Webhooks 활성화
-1. 좌측 메뉴에서 "Incoming Webhooks" 클릭
-2. "Activate Incoming Webhooks" 토글 ON
-3. "Add New Webhook to Workspace" 클릭
-4. 메시지를 받을 채널 선택
-5. "Allow" 클릭
+## ⚙️ 1단계: 슬랙 앱 생성
 
-### 1.3 Webhook URL 복사
-1. 생성된 Webhook URL 복사
-   예: `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX`
+### 1.1 슬랙 워크스페이스 접속
+- [Slack 워크스페이스](https://slack.com)에 로그인
+- 알림을 받을 워크스페이스 선택
 
-## 2. 코드에 웹훅 URL 설정
+### 1.2 슬랙 앱 생성
+1. [Slack API 웹사이트](https://api.slack.com/apps) 접속
+2. **"Create New App"** 클릭
+3. **"From scratch"** 선택
+4. 앱 이름 입력: `더부동산-알림봇`
+5. 워크스페이스 선택 후 **"Create App"** 클릭
 
-### 2.1 slack-config.js 파일 수정
+### 1.3 Incoming Webhooks 활성화
+1. 왼쪽 메뉴에서 **"Incoming Webhooks"** 클릭
+2. **"Activate Incoming Webhooks"** 토글 ON
+3. **"Add New Webhook to Workspace"** 클릭
+4. 알림을 받을 채널 선택 (예: `#매물관리`)
+5. **"Allow"** 클릭하여 권한 부여
+6. **Webhook URL** 복사 (이 URL을 사용합니다)
+
+## 🔧 2단계: 코드 설정
+
+### 2.1 웹훅 URL 설정
+`slack-config.js` 파일에서 다음 부분을 수정:
+
 ```javascript
-// slack-config.js 파일 열기
 const SLACK_WEBHOOK_URL = 'YOUR_SLACK_WEBHOOK_URL'; // 여기에 복사한 URL 붙여넣기
 ```
 
-실제 예시:
+예시:
 ```javascript
-const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX';
+const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T1234567890/B1234567890/abcdefghijklmnopqrstuvwx';
 ```
 
-## 3. 사용 방법
-
-### 3.1 매물 상세 페이지에서 전송
-1. 매물 목록에서 매물 클릭
-2. 상세 정보 패널/모달 열림
-3. "🔗 슬랙으로 전송" 버튼 클릭
-4. 슬랙 채널에 메시지 전송됨
-
-### 3.2 전송되는 정보
-- 매물 기본 정보 (번호, 상태, 담당자)
-- 거래 정보 (유형, 금액)
-- 위치 정보 (주소, 동/호)
-- 면적 정보 (㎡, 평, 층수)
-- 특이사항
-- 담당자 메모
-
-## 4. 메시지 형식 커스터마이징
-
-### 4.1 이모지 변경
-`slack-config.js`의 `formatPropertyForSlack` 함수에서 수정:
+### 2.2 채널 설정 (선택사항)
+기본 채널 외에 추가 채널을 설정하려면:
 
 ```javascript
-const statusEmoji = {
-    '거래가능': '🟢',  // 원하는 이모지로 변경
-    '거래완료': '🔴',
-    '거래철회': '⚫',
-    '매물검토': '🟡'
-};
-```
-
-### 4.2 메시지 필드 추가/제거
-`blocks` 배열에서 섹션 추가/제거:
-
-```javascript
-// 새 섹션 추가 예시
-blocks.push({
-    type: "section",
-    text: {
-        type: "mrkdwn",
-        text: `*추가 정보:*\n${property.custom_field}`
+const notificationSettings = {
+    channels: {
+        default: '#매물관리',    // 기본 채널
+        urgent: '#긴급매물'      // 긴급 채널
     }
-});
-```
-
-## 5. 보안 주의사항
-
-### ⚠️ 중요
-- **절대 GitHub 등 공개 저장소에 실제 Webhook URL을 올리지 마세요**
-- 환경변수나 별도 설정 파일로 관리 권장
-- `.gitignore`에 설정 파일 추가
-
-### 5.1 환경변수 사용 (Vercel)
-1. Vercel 대시보드 > Settings > Environment Variables
-2. 변수 추가: `SLACK_WEBHOOK_URL`
-3. 코드에서 사용:
-```javascript
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL || 'YOUR_SLACK_WEBHOOK_URL';
-```
-
-## 6. 테스트
-
-### 6.1 연결 테스트
-브라우저 콘솔에서:
-```javascript
-testSlackConnection()
-```
-
-### 6.2 문제 해결
-- **CORS 에러**: Webhook URL이 올바른지 확인
-- **404 에러**: Webhook URL이 유효한지 확인
-- **메시지 안 옴**: 슬랙 채널 및 권한 확인
-
-## 7. 추가 기능 (선택사항)
-
-### 7.1 자동 알림 활성화
-`slack-integration.js`에서 주석 해제:
-```javascript
-// 페이지 로드 시 자동 알림 설정
-document.addEventListener('DOMContentLoaded', function() {
-    setupAutoNotifications(); // 주석 해제
-});
-```
-
-이렇게 하면:
-- 새 매물 등록 시 자동 알림
-- 매물 상태 변경 시 자동 알림
-
-### 7.2 채널별 전송
-다른 채널로 전송하려면:
-1. 각 채널별 Webhook URL 생성
-2. 조건에 따라 다른 URL 사용
-
-```javascript
-const SLACK_URLS = {
-    general: 'https://hooks.slack.com/...',
-    urgent: 'https://hooks.slack.com/...',
-    completed: 'https://hooks.slack.com/...'
 };
-
-// 상태에 따라 다른 채널로 전송
-const webhookUrl = property.status === '거래완료' 
-    ? SLACK_URLS.completed 
-    : SLACK_URLS.general;
 ```
+
+## 🧪 3단계: 테스트 및 확인
+
+### 3.1 알림 설정 페이지 접속
+1. 메인 페이지에서 **🔔** 버튼 클릭
+2. `notification-settings.html` 페이지로 이동
+
+### 3.2 연결 테스트
+1. **"슬랙 연결 테스트"** 버튼 클릭
+2. 성공 메시지 확인
+
+### 3.3 알림 테스트
+각 알림 유형별로 테스트:
+- **새 매물 등록 알림 테스트**
+- **상태 변경 알림 테스트**  
+- **슬랙 전송 알림 테스트**
+
+## 📱 4단계: 알림 설정 관리
+
+### 4.1 알림 ON/OFF 설정
+- ✅ **새 매물 등록 알림**: 새 매물 등록 시 알림
+- ✅ **매물 상태 변경 알림**: 상태 변경 시 알림
+- ✅ **슬랙 전송 알림**: 슬랙 전송 시 알림
+
+### 4.2 채널 설정
+- **기본 채널**: 일반적인 알림 전송
+- **긴급 채널**: 중요한 알림 전송
+
+## 🔍 5단계: 문제 해결
+
+### 5.1 연결 실패 시
+1. 웹훅 URL 확인
+2. 슬랙 앱 권한 확인
+3. 채널명 정확성 확인 (예: `#매물관리`)
+
+### 5.2 알림이 오지 않을 때
+1. 알림 설정이 ON인지 확인
+2. 슬랙 채널에 봇이 초대되었는지 확인
+3. 브라우저 콘솔에서 오류 메시지 확인
+
+### 5.3 권한 문제
+1. 슬랙 워크스페이스 관리자에게 문의
+2. 봇이 채널에 메시지를 보낼 권한이 있는지 확인
+
+## 📊 6단계: 알림 메시지 예시
+
+### 6.1 새 매물 등록 알림
+```
+🆕 새 매물이 등록되었습니다!
+
+🏠 매물 정보
+• 매물명: 강남 신축 아파트
+• 매물번호: 20241201001
+• 거래유형: 매매
+• 금액: 5억
+
+📍 위치 정보
+• 주소: 서울시 강남구
+• 동/호: 101동 1001호
+
+👤 담당자 정보
+• 담당자: 김부동산
+• 등록일: 2024-12-01
+
+🏢 더부동산중개법인 | 🕐 2024. 12. 1. 오후 2:30:00
+```
+
+### 6.2 상태 변경 알림
+```
+🔄 매물 상태가 변경되었습니다!
+
+🏠 매물 정보
+• 매물명: 강남 신축 아파트
+• 매물번호: 20241201001
+• 거래유형: 매매
+• 담당자: 김부동산
+
+📋 상태 변경 정보
+• 변경 항목: 매물 상태
+• 이전 상태: 🟢 거래가능
+• 새로운 상태: 🔴 거래완료
+• 변경일시: 2024. 12. 1. 오후 3:15:00
+
+🏢 더부동산중개법인 | 🕐 2024. 12. 1. 오후 3:15:00
+```
+
+### 6.3 슬랙 전송 알림
+```
+📤 매물 정보가 슬랙으로 전송되었습니다!
+
+🏠 매물 정보
+• 매물명: 강남 신축 아파트
+• 매물번호: 20241201001
+• 거래유형: 매매
+• 금액: 5억
+
+📍 위치 정보
+• 주소: 서울시 강남구
+• 동/호: 101동 1001호
+
+👤 담당자 정보
+• 담당자: 김부동산
+• 전송일시: 2024. 12. 1. 오후 3:20:00
+
+📤 전송 상세
+• 전송 채널: #매물관리
+• 전송자: 사용자
+• 전송 목적: 고객 문의/팀 공유
+
+🏢 더부동산중개법인 | 🕐 2024. 12. 1. 오후 3:20:00
+```
+
+## 🎯 7단계: 고급 설정
+
+### 7.1 커스텀 메시지
+`slack-config.js`에서 메시지 포맷 수정 가능:
+
+```javascript
+function formatNewPropertyMessage(property) {
+    // 메시지 블록 커스터마이징
+    const blocks = [
+        // ... 커스텀 블록 구성
+    ];
+    return { text: '커스텀 메시지', blocks: blocks };
+}
+```
+
+### 7.2 조건부 알림
+특정 조건에서만 알림을 보내도록 설정:
+
+```javascript
+// 가격이 10억 이상인 매물만 알림
+if (parseInt(property.price) >= 1000000000) {
+    await notifyNewProperty(property);
+}
+```
+
+## 📞 지원 및 문의
+
+### 기술 지원
+- **개발팀**: 개발 관련 문의
+- **시스템 관리자**: 권한 및 설정 문의
+
+### 유용한 링크
+- [Slack API 문서](https://api.slack.com/)
+- [Incoming Webhooks 가이드](https://api.slack.com/messaging/webhooks)
+- [슬랙 앱 관리](https://api.slack.com/apps)
+
+---
+
+**⚠️ 주의사항**
+- 웹훅 URL은 외부에 노출되지 않도록 주의
+- 슬랙 앱 권한은 필요한 최소한으로 설정
+- 알림 빈도가 너무 높지 않도록 주의
+
+**✅ 권장사항**
+- 정기적으로 알림 설정 확인
+- 팀원들과 알림 채널 공유
+- 중요 알림은 별도 채널로 분리

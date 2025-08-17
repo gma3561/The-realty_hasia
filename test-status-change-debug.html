@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상태 변경 알림 디버그 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 상태 변경 알림 디버그 테스트</h1>
+        
+        <div class="test-section">
+            <h3>1. 스크립트 로드 상태 확인</h3>
+            <button class="test-button" onclick="checkScriptLoading()">스크립트 로드 상태 확인</button>
+            <div id="script-status" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. 슬랙 웹훅 연결 테스트</h3>
+            <button class="test-button" onclick="testSlackWebhook()">슬랙 웹훅 테스트</button>
+            <div id="webhook-status" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. 상태 변경 알림 함수 직접 테스트</h3>
+            <button class="test-button" onclick="testStatusChangeFunction()">상태 변경 알림 함수 테스트</button>
+            <div id="function-status" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. 디버그 로그</h3>
+            <button class="test-button" onclick="clearLog()">로그 지우기</button>
+            <div id="debug-log" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 실제 프로젝트 스크립트들 로드 -->
+    <script src="config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="slack-config.js"></script>
+
+    <script>
+        let debugLog = '';
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog += `[${timestamp}] ${message}\n`;
+            document.getElementById('debug-log').textContent = debugLog;
+            console.log(message);
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+            log(`${type.toUpperCase()}: ${message}`);
+        }
+
+        // 1. 스크립트 로드 상태 확인
+        function checkScriptLoading() {
+            log('=== 스크립트 로드 상태 확인 시작 ===');
+            
+            const checks = [
+                { name: 'window.__CONFIG__', value: window.__CONFIG__ },
+                { name: 'window.supabase', value: window.supabase },
+                { name: 'window.supabaseClient', value: window.supabaseClient },
+                { name: 'window.updateProperty', value: window.updateProperty },
+                { name: 'window.notifyStatusChange', value: window.notifyStatusChange },
+                { name: 'window.notificationSettings', value: window.notificationSettings },
+                { name: 'SLACK_WEBHOOK_URL defined', value: typeof SLACK_WEBHOOK_URL !== 'undefined' ? SLACK_WEBHOOK_URL : undefined }
+            ];
+
+            let allLoaded = true;
+            let statusText = '';
+
+            checks.forEach(check => {
+                const status = check.value !== undefined ? '✅' : '❌';
+                const message = `${status} ${check.name}: ${check.value !== undefined ? 'OK' : 'NOT FOUND'}`;
+                statusText += message + '\n';
+                log(message);
+                
+                if (check.value === undefined) {
+                    allLoaded = false;
+                }
+            });
+
+            if (window.notificationSettings) {
+                log(`알림 설정: statusChange=${window.notificationSettings.statusChange}`);
+                statusText += `\n알림 설정: statusChange=${window.notificationSettings.statusChange}`;
+            }
+
+            showResult('script-status', statusText, allLoaded ? 'success' : 'error');
+            log('=== 스크립트 로드 상태 확인 완료 ===');
+        }
+
+        // 2. 슬랙 웹훅 연결 테스트
+        async function testSlackWebhook() {
+            log('=== 슬랙 웹훅 연결 테스트 시작 ===');
+            
+            try {
+                const webhookUrl = 'https://hooks.slack.com/services/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';
+                log(`웹훅 URL: ${webhookUrl}`);
+                
+                const testMessage = {
+                    text: '🔧 디버그 테스트: 슬랙 연결 확인 - ' + new Date().toLocaleString('ko-KR')
+                };
+                
+                log(`전송 메시지: ${JSON.stringify(testMessage)}`);
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testMessage)
+                });
+                
+                log(`응답 상태: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    showResult('webhook-status', `✅ 슬랙 연결 성공! 상태: ${response.status}`, 'success');
+                } else {
+                    showResult('webhook-status', `❌ 슬랙 연결 실패! 상태: ${response.status}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`슬랙 연결 오류: ${error.message}`);
+                showResult('webhook-status', `❌ 슬랙 연결 오류: ${error.message}`, 'error');
+            }
+            
+            log('=== 슬랙 웹훅 연결 테스트 완료 ===');
+        }
+
+        // 3. 상태 변경 알림 함수 직접 테스트
+        async function testStatusChangeFunction() {
+            log('=== 상태 변경 알림 함수 테스트 시작 ===');
+            
+            try {
+                if (!window.notifyStatusChange) {
+                    throw new Error('notifyStatusChange 함수가 로드되지 않음');
+                }
+
+                const testProperty = {
+                    id: 'DEBUG_TEST_' + Date.now(),
+                    property_name: '디버그 테스트 매물',
+                    property_number: 'DEBUG' + Date.now(),
+                    trade_type: '매매',
+                    price: '5억원',
+                    address: '서울시 강남구',
+                    dong: '101',
+                    ho: '1501',
+                    manager: '디버그 테스터',
+                    status: '거래완료'
+                };
+
+                log(`테스트 매물: ${JSON.stringify(testProperty, null, 2)}`);
+                log('상태 변경: 거래가능 → 거래완료');
+
+                // 알림 설정 확인
+                if (window.notificationSettings) {
+                    log(`현재 알림 설정: ${JSON.stringify(window.notificationSettings, null, 2)}`);
+                    
+                    if (!window.notificationSettings.statusChange) {
+                        log('⚠️ 상태 변경 알림이 비활성화되어 있습니다!');
+                        showResult('function-status', '⚠️ 상태 변경 알림이 비활성화되어 있습니다. 설정을 확인하세요.', 'error');
+                        return;
+                    }
+                } else {
+                    log('⚠️ notificationSettings가 로드되지 않음');
+                }
+
+                // 상태 변경 알림 함수 직접 호출
+                log('notifyStatusChange 함수 호출 중...');
+                const result = await window.notifyStatusChange(testProperty, '거래가능', '거래완료');
+                
+                log(`함수 실행 결과: ${result}`);
+                
+                if (result) {
+                    showResult('function-status', '✅ 상태 변경 알림 함수 실행 성공!', 'success');
+                } else {
+                    showResult('function-status', '❌ 상태 변경 알림 함수 실행 실패', 'error');
+                }
+                
+            } catch (error) {
+                log(`상태 변경 알림 함수 오류: ${error.message}`);
+                log(`스택 트레이스: ${error.stack}`);
+                showResult('function-status', `❌ 오류: ${error.message}`, 'error');
+            }
+            
+            log('=== 상태 변경 알림 함수 테스트 완료 ===');
+        }
+
+        function clearLog() {
+            debugLog = '';
+            document.getElementById('debug-log').textContent = '';
+        }
+
+        // 페이지 로드 시 자동으로 스크립트 상태 확인
+        window.addEventListener('DOMContentLoaded', () => {
+            log('페이지 로드 완료');
+            setTimeout(() => {
+                checkScriptLoading();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

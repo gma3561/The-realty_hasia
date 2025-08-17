@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Supabase Query Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+</head>
+<body>
+    <h1>Supabase Query Test</h1>
+    <button onclick="testQueries()">Test Queries</button>
+    <pre id="result"></pre>
+    
+    <script>
+        async function testQueries() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing...\n\n';
+            
+            // Wait for Supabase to initialize
+            if (!window.supabaseClient) {
+                resultDiv.textContent += 'Waiting for Supabase...\n';
+                setTimeout(testQueries, 1000);
+                return;
+            }
+            
+            try {
+                // Test 1: Simple select
+                resultDiv.textContent += '1. Simple select test:\n';
+                const { data: selectData, error: selectError } = await window.supabaseClient
+                    .from('properties')
+                    .select('id, status')
+                    .limit(1);
+                
+                if (selectError) {
+                    resultDiv.textContent += 'Error: ' + JSON.stringify(selectError) + '\n';
+                } else {
+                    resultDiv.textContent += 'Success: ' + JSON.stringify(selectData) + '\n';
+                }
+                
+                if (!selectData || selectData.length === 0) {
+                    resultDiv.textContent += 'No data found\n';
+                    return;
+                }
+                
+                const testId = selectData[0].id;
+                resultDiv.textContent += '\nTest ID: ' + testId + '\n\n';
+                
+                // Test 2: Update without select
+                resultDiv.textContent += '2. Update without select:\n';
+                const { data: updateData1, error: updateError1 } = await window.supabaseClient
+                    .from('properties')
+                    .update({ status: '테스트중' })
+                    .eq('id', testId);
+                
+                if (updateError1) {
+                    resultDiv.textContent += 'Error: ' + JSON.stringify(updateError1) + '\n';
+                } else {
+                    resultDiv.textContent += 'Success (data is null as expected): ' + (updateData1 === null) + '\n';
+                }
+                
+                // Test 3: Update with select (NEW SYNTAX)
+                resultDiv.textContent += '\n3. Update with select (new syntax):\n';
+                const { data: updateData2, error: updateError2 } = await window.supabaseClient
+                    .from('properties')
+                    .update({ status: '삭제됨' })
+                    .eq('id', testId)
+                    .select();
+                
+                if (updateError2) {
+                    resultDiv.textContent += 'Error: ' + JSON.stringify(updateError2) + '\n';
+                } else {
+                    resultDiv.textContent += 'Success: ' + JSON.stringify(updateData2) + '\n';
+                }
+                
+                // Test 4: Restore original status
+                resultDiv.textContent += '\n4. Restore original status:\n';
+                const { error: restoreError } = await window.supabaseClient
+                    .from('properties')
+                    .update({ status: selectData[0].status })
+                    .eq('id', testId);
+                
+                if (restoreError) {
+                    resultDiv.textContent += 'Error: ' + JSON.stringify(restoreError) + '\n';
+                } else {
+                    resultDiv.textContent += 'Success: Status restored\n';
+                }
+                
+            } catch (err) {
+                resultDiv.textContent += '\nUnexpected error: ' + err.message + '\n';
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

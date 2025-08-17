@@ -1,0 +1,1484 @@
+[
+  {
+    "index": 2,
+    "property_name": "우면동 34-4",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 3,
+    "property_name": "우면동 34-4",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 184,
+    "property_name": "코인세탁실",
+    "status": "골프연습장",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 198,
+    "property_name": "H",
+    "status": "B",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 203,
+    "property_name": "타워팰리스1차",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 207,
+    "property_name": "타워팰리스1차",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 222,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 223,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 225,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 226,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 230,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 231,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 260,
+    "property_name": "방배동 더에이치헤렌 1존",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 293,
+    "property_name": "액정TV",
+    "status": "김치냉장고",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 297,
+    "property_name": "힐탑트레져",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 315,
+    "property_name": "GTX-A 신분당선 계획,,,,,,,O,X,,,,,,,,㈜에스케이앤제이,110111-2,010-7648-1548,",
+    "status": "광화문",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 317,
+    "property_name": "GTX-A 신분당선 계획,,,,,,,O,X,,,,,,,,㈜에스케이앤제이,110111-2,010-7648-1548,",
+    "status": "광화문",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 319,
+    "property_name": "GTX-A 신분당선 계획,,,,,,,O,X,,,,,,,,㈜에스케이앤제이,110111-2,010-7648-1548,",
+    "status": "광화문",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 353,
+    "property_name": "방으로사용가능)",
+    "status": "공용화장실",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 360,
+    "property_name": "중동고(자사고엘레베이터 O,,,,,,,,,,,,,,,,㈜대명,201311-0,010-5247-1220,",
+    "status": "대명중(여) - 중산고",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 387,
+    "property_name": "아페르한강 2차",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 390,
+    "property_name": "아페르한강",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 396,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 398,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 402,
+    "property_name": "테라스",
+    "status": "마스터존",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 423,
+    "property_name": "파크힐 단독주택",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 424,
+    "property_name": "파크힐 단독주택",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 430,
+    "property_name": "주차4대",
+    "status": "테라스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 433,
+    "property_name": "강변역)",
+    "status": "기흥역 2정거장)",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 434,
+    "property_name": "동백세브란스병원",
+    "status": "코스트코",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 441,
+    "property_name": "생어커스틴",
+    "status": "스타벅스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 442,
+    "property_name": "상암DMC",
+    "status": "강남",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 443,
+    "property_name": "한가람 아파트",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 460,
+    "property_name": "907-10",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 465,
+    "property_name": "벽결이에어컨1 옵션",
+    "status": "인덕션",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 468,
+    "property_name": "각종 판매점)",
+    "status": "음식점",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 470,
+    "property_name": "각종 판매점)",
+    "status": "음식점",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 471,
+    "property_name": "258-48",
+    "status": "거래보류",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 478,
+    "property_name": "성북동 브라운메이",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 501,
+    "property_name": "178-35",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 551,
+    "property_name": "힐스테이트서울숲리버",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 553,
+    "property_name": "강변역)",
+    "status": "기흥역 2정거장)",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 554,
+    "property_name": "동백세브란스병원",
+    "status": "코스트코",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 557,
+    "property_name": "분식집",
+    "status": "서브웨이",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 563,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 564,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 566,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 567,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 569,
+    "property_name": "글로벌힐",
+    "status": "거래보류",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 576,
+    "property_name": "성수두산위브",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 600,
+    "property_name": "464-7",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 615,
+    "property_name": "아치울마을 이스트베일",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 630,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 631,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 633,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 634,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 637,
+    "property_name": "방배동 레드니체서리풀",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 662,
+    "property_name": "1-152",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 680,
+    "property_name": "스타일러,,,,,,2024.08.27~2026.08.27,,,,,,,,,,,,010-3275-2368,",
+    "status": "세탁기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 682,
+    "property_name": "스타일러,,,,,,2024.08.27~2026.08.27,,,,,,,,,,,,010-3275-2368,",
+    "status": "세탁기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 692,
+    "property_name": "동산빌라",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 693,
+    "property_name": "현대오티움",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 731,
+    "property_name": "464-7",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 737,
+    "property_name": "동산빌라",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 740,
+    "property_name": "비데",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 742,
+    "property_name": "507-1",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 749,
+    "property_name": "비데",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 776,
+    "property_name": "강변역)",
+    "status": "기흥역 2정거장)",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 791,
+    "property_name": "마당",
+    "status": "욕실",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 832,
+    "property_name": "연희동 라온채",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 834,
+    "property_name": "부티크시네마",
+    "status": "골프연습장",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 884,
+    "property_name": "570-3",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 902,
+    "property_name": "카페테리아",
+    "status": "골프연습장",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 904,
+    "property_name": "카페테리아",
+    "status": "골프연습장",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 905,
+    "property_name": "한남동 현대빌라",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 907,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 908,
+    "property_name": "컨시어즈",
+    "status": "케이터링/룸서비스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 910,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 911,
+    "property_name": "컨시어즈",
+    "status": "케이터링/룸서비스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 915,
+    "property_name": "카페테리아",
+    "status": "골프연습장",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 918,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 919,
+    "property_name": "컨시어즈",
+    "status": "케이터링/룸서비스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 921,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 922,
+    "property_name": "컨시어즈",
+    "status": "케이터링/룸서비스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 965,
+    "property_name": "이태원동 운산빌라2차",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 978,
+    "property_name": "330-247",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 992,
+    "property_name": "한남동 헤렌하우스",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 993,
+    "property_name": "이태원동 청화아파트",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1008,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1040,
+    "property_name": "90B",
+    "status": "77",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1082,
+    "property_name": "건덕빌라",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1101,
+    "property_name": "75평형",
+    "status": "60평형",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1105,
+    "property_name": "75평형",
+    "status": "60평형",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1108,
+    "property_name": "75평형",
+    "status": "60평형",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1114,
+    "property_name": "숙명여고 등 강남 8학군",
+    "status": "영동고",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1118,
+    "property_name": "그 외 다양한 편의시설 이용 편리,,,,,,,X,X,,매매 계속진행,,,,,,• 장경희",
+    "status": "한옥마을",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1120,
+    "property_name": "그 외 다양한 편의시설 이용 편리,,,,렌트,1",
+    "status": "한옥마을",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1127,
+    "property_name": "세탁서비스",
+    "status": "펫케어",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1153,
+    "property_name": "구기동 건덕빌라",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1188,
+    "property_name": "생어커스틴",
+    "status": "스타벅스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1189,
+    "property_name": "상암DMC",
+    "status": "강남",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1195,
+    "property_name": "큐브룸 구성",
+    "status": "욕실2",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1196,
+    "property_name": "쿡탑 등)",
+    "status": "에어컨",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1197,
+    "property_name": "콜러 등,,,,월세,월세 600,25년 3월~26년 3월,O,X,,거래완료,,,,,,민지원,740616-2,010-5115-7855",
+    "status": "보쉬",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1199,
+    "property_name": "큐브룸 구성",
+    "status": "욕실2",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1200,
+    "property_name": "쿡탑 등)",
+    "status": "에어컨",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1201,
+    "property_name": "콜러 등,,공실,,,,,O,X,,,,,,,,민지원,740616-2,010-5115-7855",
+    "status": "보쉬",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1203,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1204,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1206,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1207,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1209,
+    "property_name": "냉장고",
+    "status": "블라인드",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1210,
+    "property_name": "인덕션",
+    "status": "싱크대",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1227,
+    "property_name": "촬영지 등으로 이용가능",
+    "status": "돌잔치",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1232,
+    "property_name": "그레이빌라",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1247,
+    "property_name": "힐탑트레져",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1249,
+    "property_name": "성북동 330-512",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1256,
+    "property_name": "330-128",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1276,
+    "property_name": "키즈카페",
+    "status": "스카이라운지",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1299,
+    "property_name": "리원하우스 101호,201호,301호,401호",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1300,
+    "property_name": "리원하우스 101호,201호,301호,401호",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1315,
+    "property_name": "공신아파트",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1345,
+    "property_name": "주차 4대",
+    "status": "화장실3",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1351,
+    "property_name": "큐브룸 구성",
+    "status": "욕실2",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1352,
+    "property_name": "쿡탑 등)",
+    "status": "에어컨",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1353,
+    "property_name": "콜러 등,,공실,,,,,예정,예정,,,,,,,,주식회사무궁화신탁,110111-2,010-6283-9986",
+    "status": "보쉬",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1355,
+    "property_name": "큐브룸 구성",
+    "status": "욕실2",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1356,
+    "property_name": "쿡탑 등)",
+    "status": "에어컨",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1357,
+    "property_name": "콜러 등,,,,전세,26억,25년 3월 ~ 27년 3월,예정,예정,,거래완료,,,,,,주식회사무궁화신탁,110111-2,010-6283-9986",
+    "status": "보쉬",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1369,
+    "property_name": "서초 더샵 오데움 아파트",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1396,
+    "property_name": "경부고속도로근접",
+    "status": "올림픽대교",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1398,
+    "property_name": "경부고속도로근접",
+    "status": "올림픽대교",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1408,
+    "property_name": "경부고속도로근접",
+    "status": "올림픽대교",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1420,
+    "property_name": "경부고속도로근접",
+    "status": "올림픽대교",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1447,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1464,
+    "property_name": "욕실)",
+    "status": "마스터존(침실",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1466,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1468,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1473,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1475,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1478,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1485,
+    "property_name": "사우나실",
+    "status": "파티룸",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1498,
+    "property_name": "대형베이커리카페",
+    "status": "CGV",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1500,
+    "property_name": "대형베이커리카페",
+    "status": "CGV",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1507,
+    "property_name": "큐브룸 구성",
+    "status": "욕실2",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1508,
+    "property_name": "쿡탑 등)",
+    "status": "에어컨",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1509,
+    "property_name": "콜러 등,,,,전세,26억,25년 3월 ~ 27년 3월,예정,예정,,,,,,,,주식회사무궁화신탁,110111-2,010-6283-9986, 김연주",
+    "status": "보쉬",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1521,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1522,
+    "property_name": "건국대학교,*양도세 66%라서 정상거래 시 p8~9억",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1524,
+    "property_name": "컨시어즈",
+    "status": "케이터링/룸서비스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1537,
+    "property_name": "빌라/연립",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1545,
+    "property_name": "테크노빌",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1556,
+    "property_name": "명동 M타워 빌딩",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1558,
+    "property_name": "명동 M타워 빌딩",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1560,
+    "property_name": "명동 M타워 빌딩",
+    "status": "거래완료",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1616,
+    "property_name": "식기세척기",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1649,
+    "property_name": "청담 범신칼릭스빌2차",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1650,
+    "property_name": "청담 범신칼릭스빌2차",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1663,
+    "property_name": "102",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1666,
+    "property_name": "동백SK아펠바움 3차",
+    "status": "거래가능",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1677,
+    "property_name": "443-9, 11, 13",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1679,
+    "property_name": "메이드룸",
+    "status": "서브방",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1696,
+    "property_name": "잠실 올림픽 아이파크",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1700,
+    "property_name": "알파임하우스2차",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1701,
+    "property_name": "브라이튼논현",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1707,
+    "property_name": "한남더힐",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1719,
+    "property_name": "방배 상지리츠빌 4차",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1726,
+    "property_name": "534-18",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1728,
+    "property_name": "옥수동 레미테지",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1766,
+    "property_name": "밤섬리버베르빌",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1769,
+    "property_name": "방배롯데캐슬로제",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1770,
+    "property_name": "브라이튼논현",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1777,
+    "property_name": "삼성아펠바움",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1782,
+    "property_name": "실내골프클럽",
+    "status": "피트니스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1784,
+    "property_name": "실내골프클럽",
+    "status": "피트니스",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1812,
+    "property_name": "나인원한남 듀플렉스",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1813,
+    "property_name": "나인원한남 듀플렉스",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1815,
+    "property_name": "도곡동 로덴하우스이스트빌리지",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1825,
+    "property_name": "수경재배시설등",
+    "status": "티하우스",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1837,
+    "property_name": "롯데캐슬이스트폴",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1838,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1839,
+    "property_name": "건국대학교,양도세 66%라서 정상거래 시 p8~9억",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1853,
+    "property_name": "판교 산운 아펠바움",
+    "status": "거래보류",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1879,
+    "property_name": "서초아트자이 펜트하우스",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1882,
+    "property_name": "시그니엘 100I",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1932,
+    "property_name": "376-3",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1938,
+    "property_name": "평창동 신한빌라",
+    "status": "거래가능",
+    "error": "value too long for type character varying(10)"
+  },
+  {
+    "index": 1959,
+    "property_name": "한남동 리버웨이",
+    "status": "거래가능",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1960,
+    "property_name": "한남동 리버웨이",
+    "status": "거래가능",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 1996,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 1997,
+    "property_name": "건국대학교,매매는 고려중,,공실,,,,,,,시행사매물,,,,,,,,,",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2001,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2002,
+    "property_name": "건국대학교,,,,,,,,,,,,그레이스(뱅크)",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2046,
+    "property_name": "서재",
+    "status": "가족실 / 2층 - 거실",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2065,
+    "property_name": "아페르한강",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2081,
+    "property_name": "화장실",
+    "status": "건조기",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2082,
+    "property_name": "올리브영 등",
+    "status": "아웃백",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2085,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2086,
+    "property_name": "건국대학교,,,공실,,,,,,,,,,,,,황현욱,840904-1,010-7300-0494,황현욱",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2097,
+    "property_name": "PH129 (더펜트하우스청담)",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2137,
+    "property_name": "덕동 반포빌라트",
+    "status": "매물철회",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2148,
+    "property_name": "실내골프클럽",
+    "status": "피트니스",
+    "error": "value too long for type character varying(50)"
+  },
+  {
+    "index": 2153,
+    "property_name": "문화센터",
+    "status": "쇼핑몰",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2154,
+    "property_name": "건국대학교, 양도세 66%라서 정상거래 시 p8~9억",
+    "status": "건대부중",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2163,
+    "property_name": "자이압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2166,
+    "property_name": "디에이치신사동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2171,
+    "property_name": "센트럴파크서초동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2172,
+    "property_name": "포레나잠실동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2182,
+    "property_name": "엘크루방배동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2188,
+    "property_name": "센트럴파크잠실동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2190,
+    "property_name": "자이논현동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2191,
+    "property_name": "힐스테이트도곡동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2194,
+    "property_name": "디에이치반포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2202,
+    "property_name": "롯데캐슬서초동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2203,
+    "property_name": "타워팰리스신사동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2210,
+    "property_name": "디에이치청담동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2212,
+    "property_name": "힐스테이트압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2228,
+    "property_name": "아이파크잠실동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2237,
+    "property_name": "디에이치신사동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2240,
+    "property_name": "더샵잠실동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2242,
+    "property_name": "롯데캐슬논현동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2245,
+    "property_name": "자이반포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2247,
+    "property_name": "더샵잠실동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2249,
+    "property_name": "아이파크도곡동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2250,
+    "property_name": "자이대치동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2251,
+    "property_name": "더샵개포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2255,
+    "property_name": "트리마제압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2266,
+    "property_name": "래미안개포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2271,
+    "property_name": "힐스테이트개포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2274,
+    "property_name": "브라운스톤신사동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2275,
+    "property_name": "아이파크논현동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2279,
+    "property_name": "갤러리아포레개포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2280,
+    "property_name": "포레나청담동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2286,
+    "property_name": "트리마제논현동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2298,
+    "property_name": "더샵반포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2301,
+    "property_name": "롯데캐슬압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2309,
+    "property_name": "트리마제압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2311,
+    "property_name": "아이파크압구정동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2317,
+    "property_name": "브라운스톤역삼동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2318,
+    "property_name": "센트럴파크개포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2321,
+    "property_name": "타워팰리스청담동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2325,
+    "property_name": "브라운스톤방배동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2332,
+    "property_name": "브라운스톤대치동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2343,
+    "property_name": "힐스테이트반포동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2345,
+    "property_name": "갤러리아포레논현동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2347,
+    "property_name": "래미안도곡동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  },
+  {
+    "index": 2352,
+    "property_name": "타워팰리스도곡동점",
+    "status": "확인필요",
+    "error": "new row for relation \"properties\" violates check constraint \"properties_status_check\""
+  }
+]

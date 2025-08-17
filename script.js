@@ -4211,6 +4211,7 @@ function renderTable(data) {
     updatePagination(totalItems);
 }
 
+
 // 페이지네이션 UI 업데이트
 function updatePagination(totalItems) {
     // 현재 표시 건수 계산

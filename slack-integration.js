@@ -1,4 +1,4 @@
-// 슬랙 연동 스크립트 - 매물 정보 전송 기능
+// 슬랙 연동 스크립트 - 매물 정보 전송 및 알림 기능
 
 // 현재 표시 중인 매물 정보 가져오기
 async function getCurrentPropertyData() {
@@ -66,7 +66,34 @@ function collectPropertyDataFromDOM() {
     return property;
 }
 
-// 현재 매물을 슬랙으로 전송
+// 현재 매물을 슬랙으로 전송 (기존 함수와 호환성 유지)
+async function sendPropertyToSlack(property) {
+    try {
+        // 로딩 표시
+        showSlackLoading(true);
+        
+        // 새로운 알림 시스템 사용
+        const result = await notifySlackSend(property, '사용자');
+        
+        if (result) {
+            showSlackSuccess();
+            console.log('슬랙 전송 성공');
+        } else {
+            throw new Error('슬랙 전송 실패');
+        }
+        
+        return result;
+        
+    } catch (error) {
+        console.error('슬랙 전송 중 오류:', error);
+        showSlackError(error.message);
+        return false;
+    } finally {
+        showSlackLoading(false);
+    }
+}
+
+// 현재 매물을 슬랙으로 전송 (새로운 함수명)
 async function sendCurrentPropertyToSlack() {
     try {
         // 매물 데이터 가져오기
@@ -92,7 +119,7 @@ async function sendCurrentPropertyToSlack() {
     }
 }
 
-// 매물 등록 후 자동 알림 (옵션)
+// 매물 등록 후 자동 알림 설정
 function setupAutoNotifications() {
     // 원래 insertProperty 함수를 래핑
     if (window.insertProperty) {
@@ -101,7 +128,7 @@ function setupAutoNotifications() {
             const result = await originalInsert(propertyData);
             
             // 성공적으로 등록되면 슬랙 알림
-            if (result && result.data && !result.error) {
+            if (result && result.success && !result.error) {
                 await notifyNewProperty(result.data);
             }
             
@@ -123,7 +150,7 @@ function setupAutoNotifications() {
             const result = await originalUpdate(id, propertyData);
             
             // 상태가 변경되면 슬랙 알림
-            if (result && result.data && !result.error) {
+            if (result && result.success && !result.error) {
                 if (oldStatus && oldStatus !== result.data.status) {
                     await notifyStatusChange(result.data, oldStatus, result.data.status);
                 }
@@ -132,6 +159,50 @@ function setupAutoNotifications() {
             return result;
         };
     }
+}
+
+// UI 피드백 함수들
+function showSlackLoading(show) {
+    const button = document.querySelector('.slack-send-btn');
+    if (button) {
+        if (show) {
+            button.disabled = true;
+            button.textContent = '전송 중...';
+            button.classList.add('loading');
+        } else {
+            button.disabled = false;
+            button.textContent = '슬랙으로 전송';
+            button.classList.remove('loading');
+        }
+    }
+}
+
+function showSlackSuccess() {
+    // 성공 토스트 메시지
+    const toast = document.createElement('div');
+    toast.className = 'slack-toast success';
+    toast.innerHTML = `
+        <span>✅ 슬랙으로 전송되었습니다!</span>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+function showSlackError(message) {
+    // 에러 토스트 메시지
+    const toast = document.createElement('div');
+    toast.className = 'slack-toast error';
+    toast.innerHTML = `
+        <span>❌ 전송 실패: ${message}</span>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
 }
 
 // 슬랙 토스트 스타일 추가
@@ -221,11 +292,13 @@ if (!document.querySelector('#slack-styles')) {
     document.head.appendChild(styleElement.firstElementChild);
 }
 
-// 페이지 로드 시 자동 알림 설정 (선택사항)
+// 페이지 로드 시 자동 알림 설정
 document.addEventListener('DOMContentLoaded', function() {
-    // 자동 알림을 원하지 않으면 아래 줄을 주석 처리
-    // setupAutoNotifications();
+    // 자동 알림 설정
+    setupAutoNotifications();
 });
 
 // 전역 함수로 노출
 window.sendCurrentPropertyToSlack = sendCurrentPropertyToSlack;
+window.sendPropertyToSlack = sendPropertyToSlack;
+window.setupAutoNotifications = setupAutoNotifications;

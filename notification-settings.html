@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림 설정 - 더부동산중개법인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            background: #fafafa;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .setting-description {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .channel-input {
+            width: 200px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .channel-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .test-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .test-section h2 {
+            color: white;
+        }
+
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .save-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #e0e0e0;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .channel-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 상태 변경 알림 설정</h1>
+            <p>매물 상태 변경 시 슬랙 자동 알림을 설정할 수 있습니다</p>
+        </div>
+
+        <div class="content">
+            <button class="back-button" onclick="goBack()">← 목록으로 돌아가기</button>
+
+            <div id="statusMessage"></div>
+
+            <!-- 알림 설정 섹션 -->
+            <div class="section">
+                <h2>⚙️ 상태 변경 알림 설정</h2>
+                
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">매물 상태 변경 알림</div>
+                            <div class="setting-description">매물 상태가 변경될 때 슬랙으로 자동 알림을 받습니다 (거래가능 → 거래완료 등)</div>
+                        </div>
+                        <div class="toggle-switch active" id="statusChangeToggle" onclick="toggleSetting('statusChange')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 채널 설정 섹션 -->
+            <div class="section">
+                <h2>📢 채널 설정</h2>
+                
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">기본 채널</div>
+                            <div class="setting-description">일반적인 알림이 전송되는 채널입니다</div>
+                        </div>
+                        <input type="text" class="channel-input" id="defaultChannel" placeholder="#매물관리" value="#매물관리">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">긴급 채널</div>
+                            <div class="setting-description">중요한 알림이 전송되는 채널입니다</div>
+                        </div>
+                        <input type="text" class="channel-input" id="urgentChannel" placeholder="#긴급매물" value="#긴급매물">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 연결 상태 섹션 -->
+            <div class="section test-section">
+                <h2>🔗 연결 상태</h2>
+                <p>슬랙 연결 상태를 확인할 수 있습니다</p>
+                
+                <button class="test-button" onclick="testSlackConnection()">슬랙 연결 확인</button>
+            </div>
+
+            <button class="save-button" onclick="saveSettings()">💾 설정 저장</button>
+        </div>
+    </div>
+
+    <script src="slack-config.js"></script>
+    <script>
+        // 페이지 로드 시 설정 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+        });
+
+        // 설정 로드
+        function loadSettings() {
+            if (window.notificationSettings) {
+                // 상태 변경 알림 토글만 설정
+                document.getElementById('statusChangeToggle').classList.toggle('active', window.notificationSettings.statusChange);
+
+                // 채널 설정
+                document.getElementById('defaultChannel').value = window.notificationSettings.channels.default;
+                document.getElementById('urgentChannel').value = window.notificationSettings.channels.urgent;
+            }
+        }
+
+        // 토글 설정 변경
+        function toggleSetting(settingName) {
+            const toggle = document.getElementById(settingName + 'Toggle');
+            const isActive = toggle.classList.contains('active');
+            
+            toggle.classList.toggle('active', !isActive);
+            
+            if (window.notificationSettings) {
+                window.notificationSettings[settingName] = !isActive;
+            }
+        }
+
+        // 설정 저장
+        function saveSettings() {
+            if (window.updateNotificationSettings) {
+                const newSettings = {
+                    newProperty: false, // 항상 비활성화
+                    statusChange: document.getElementById('statusChangeToggle').classList.contains('active'),
+                    slackSend: false, // 항상 비활성화
+                    channels: {
+                        default: document.getElementById('defaultChannel').value,
+                        urgent: document.getElementById('urgentChannel').value
+                    }
+                };
+
+                window.updateNotificationSettings(newSettings);
+                showStatusMessage('상태 변경 알림 설정이 저장되었습니다!', 'success');
+            } else {
+                showStatusMessage('알림 시스템이 로드되지 않았습니다.', 'error');
+            }
+        }
+
+        // 상태 메시지 표시
+        function showStatusMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+
+
+        // 슬랙 연결 테스트
+        async function testSlackConnection() {
+            if (window.testSlackConnection) {
+                try {
+                    const result = await window.testSlackConnection();
+                    if (result) {
+                        showStatusMessage('슬랙 연결이 정상입니다!', 'success');
+                    } else {
+                        showStatusMessage('슬랙 연결에 실패했습니다.', 'error');
+                    }
+                } catch (error) {
+                    showStatusMessage('슬랙 연결 테스트 실패: ' + error.message, 'error');
+                }
+            } else {
+                showStatusMessage('알림 시스템이 로드되지 않았습니다.', 'error');
+            }
+        }
+
+        // 목록으로 돌아가기
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

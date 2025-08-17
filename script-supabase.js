@@ -27,6 +27,11 @@ function goToForm() {
     window.location.href = 'form.html';
 }
 
+// 알림 설정 페이지로 이동
+function goToNotificationSettings() {
+    window.location.href = 'notification-settings.html';
+}
+
 // 매물 목록 로드
 async function loadProperties() {
     if (!window.supabaseClient) {
@@ -38,8 +43,8 @@ async function loadProperties() {
         // 로딩 표시
         showLoadingState();
         
-        // Supabase에서 데이터 조회
-        const { data, error, count } = await getProperties(100, 0);
+        // Supabase에서 데이터 조회 (전체 데이터)
+        const { data, error, count } = await getProperties(null, 0);
         
         if (error) {
             throw error;

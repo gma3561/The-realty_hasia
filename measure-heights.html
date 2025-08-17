@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>높이 측정</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>헤더 및 필터바 높이 측정</h1>
+    <div id="results"></div>
+    
+    <script>
+        function measureHeights() {
+            // 임시로 메인 페이지의 스타일을 적용
+            const iframe = document.createElement('iframe');
+            iframe.src = 'index.html';
+            iframe.style.width = '100%';
+            iframe.style.height = '600px';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                setTimeout(() => {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const header = iframeDoc.querySelector('.header');
+                    const filterBar = iframeDoc.querySelector('.filter-bar');
+                    
+                    const results = document.getElementById('results');
+                    
+                    if (header) {
+                        const headerHeight = header.offsetHeight;
+                        results.innerHTML += `<div class="result">헤더 높이: ${headerHeight}px</div>`;
+                    }
+                    
+                    if (filterBar) {
+                        const filterHeight = filterBar.offsetHeight;
+                        results.innerHTML += `<div class="result">필터바 높이: ${filterHeight}px</div>`;
+                    }
+                    
+                    if (header && filterBar) {
+                        const totalHeight = header.offsetHeight + filterBar.offsetHeight;
+                        results.innerHTML += `<div class="result">총 높이: ${totalHeight}px</div>`;
+                        results.innerHTML += `<div class="result">테이블 헤더 top 권장값: ${totalHeight}px</div>`;
+                    }
+                }, 2000);
+            };
+        }
+        
+        // 페이지 로드 후 측정
+        setTimeout(measureHeights, 1000);
+    </script>
+</body>
+</html>

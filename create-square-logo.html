@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더부동산중개법인 정사각형 로고 생성기</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input[type="color"], input[type="number"], select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input[type="color"] {
+            width: 60px;
+            height: 40px;
+            cursor: pointer;
+        }
+        
+        .color-presets {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .preset-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .logos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .logo-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .logo-canvas {
+            margin: 0 auto 15px;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .download-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #0056b3;
+        }
+        
+        .info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .info h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .size-info {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 더부동산중개법인 정사각형 로고 생성기</h1>
+        
+        <div class="info">
+            <h3>사용 방법</h3>
+            <p>1. 원하는 배경색을 선택하거나 추천 색상을 클릭하세요</p>
+            <p>2. 로고 크기를 조정할 수 있습니다 (기본: 512x512px)</p>
+            <p>3. 마음에 드는 로고를 다운로드하세요</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="bgColor">배경색 선택:</label>
+                <input type="color" id="bgColor" value="#ffffff">
+                
+                <div class="color-presets">
+                    <button class="preset-btn" onclick="setColor('#ffffff')">⚪ 흰색</button>
+                    <button class="preset-btn" onclick="setColor('#f8f9fa')">🌫️ 밝은 회색</button>
+                    <button class="preset-btn" onclick="setColor('#e9ecef')">🌪️ 연한 회색</button>
+                    <button class="preset-btn" onclick="setColor('#1a1a1a')">⚫ 검정</button>
+                    <button class="preset-btn" onclick="setColor('#003366')">🌊  네이비</button>
+                    <button class="preset-btn" onclick="setColor('#0066cc')">💙 파랑</button>
+                    <button class="preset-btn" onclick="setColor('#28a745')">💚 초록</button>
+                    <button class="preset-btn" onclick="setColor('#ffc107')">💛 노랑</button>
+                    <button class="preset-btn" onclick="setColor('#dc3545')">❤️ 빨강</button>
+                    <button class="preset-btn" onclick="setColor('#6f42c1')">💜 보라</button>
+                    <button class="preset-btn" onclick="setColor('#fd7e14')">🧡 주황</button>
+                    <button class="preset-btn" onclick="setColor('#20c997')">🟢 민트</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="logoSize">로고 크기:</label>
+                <select id="logoSize" onchange="updateLogos()">
+                    <option value="256">256 x 256 px (작은 크기)</option>
+                    <option value="512" selected>512 x 512 px (기본)</option>
+                    <option value="1024">1024 x 1024 px (고해상도)</option>
+                    <option value="2048">2048 x 2048 px (초고해상도)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="logos-grid">
+            <div class="logo-container">
+                <canvas id="canvas1" class="logo-canvas"></canvas>
+                <button class="download-btn" onclick="downloadCanvas('canvas1', 'the-realty-logo-square')">PNG 다운로드</button>
+                <div class="size-info">정사각형 로고</div>
+            </div>
+            
+            <div class="logo-container">
+                <canvas id="canvas2" class="logo-canvas"></canvas>
+                <button class="download-btn" onclick="downloadCanvas('canvas2', 'the-realty-logo-rounded')">둥근 모서리 다운로드</button>
+                <div class="size-info">둥근 모서리 버전</div>
+            </div>
+            
+            <div class="logo-container">
+                <canvas id="canvas3" class="logo-canvas"></canvas>
+                <button class="download-btn" onclick="downloadCanvas('canvas3', 'the-realty-logo-circle')">원형 다운로드</button>
+                <div class="size-info">원형 버전</div>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h3>💡 팁</h3>
+            <p>• 웹사이트용: 512x512px 추천</p>
+            <p>• 인쇄용: 1024x1024px 이상 추천</p>
+            <p>• SNS 프로필: 원형 버전 사용 추천</p>
+            <p>• 파비콘용: 256x256px 후 32x32로 리사이즈</p>
+        </div>
+    </div>
+    
+    <script>
+        let logoImg = new Image();
+        logoImg.src = 'logo_black@2x.png';
+        
+        logoImg.onload = function() {
+            updateLogos();
+        };
+        
+        function setColor(color) {
+            document.getElementById('bgColor').value = color;
+            updateLogos();
+        }
+        
+        function updateLogos() {
+            const bgColor = document.getElementById('bgColor').value;
+            const size = parseInt(document.getElementById('logoSize').value);
+            
+            // 기본 정사각형
+            drawLogo('canvas1', bgColor, size, 'square');
+            
+            // 둥근 모서리
+            drawLogo('canvas2', bgColor, size, 'rounded');
+            
+            // 원형
+            drawLogo('canvas3', bgColor, size, 'circle');
+        }
+        
+        function drawLogo(canvasId, bgColor, size, style) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 캔버스 표시 크기 설정 (반응형)
+            const displaySize = Math.min(300, size);
+            canvas.style.width = displaySize + 'px';
+            canvas.style.height = displaySize + 'px';
+            
+            // 배경 그리기
+            if (style === 'circle') {
+                // 원형 배경
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+                ctx.fillStyle = bgColor;
+                ctx.fill();
+                ctx.closePath();
+            } else if (style === 'rounded') {
+                // 둥근 모서리 (반지름 size/10)
+                const radius = size / 10;
+                ctx.beginPath();
+                ctx.moveTo(radius, 0);
+                ctx.lineTo(size - radius, 0);
+                ctx.quadraticCurveTo(size, 0, size, radius);
+                ctx.lineTo(size, size - radius);
+                ctx.quadraticCurveTo(size, size, size - radius, size);
+                ctx.lineTo(radius, size);
+                ctx.quadraticCurveTo(0, size, 0, size - radius);
+                ctx.lineTo(0, radius);
+                ctx.quadraticCurveTo(0, 0, radius, 0);
+                ctx.fillStyle = bgColor;
+                ctx.fill();
+                ctx.closePath();
+            } else {
+                // 정사각형 배경
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, size, size);
+            }
+            
+            // 로고 이미지 그리기
+            if (logoImg.complete && logoImg.naturalHeight !== 0) {
+                // 원본 이미지 비율 유지하면서 정사각형에 맞추기
+                const padding = size * 0.15; // 15% 패딩
+                const maxWidth = size - (padding * 2);
+                const maxHeight = size - (padding * 2);
+                
+                // 이미지 비율 계산
+                const imgRatio = logoImg.width / logoImg.height;
+                let drawWidth, drawHeight;
+                
+                if (imgRatio > 1) {
+                    // 가로가 더 긴 경우
+                    drawWidth = maxWidth;
+                    drawHeight = maxWidth / imgRatio;
+                } else {
+                    // 세로가 더 긴 경우
+                    drawHeight = maxHeight;
+                    drawWidth = maxHeight * imgRatio;
+                }
+                
+                // 중앙 정렬
+                const x = (size - drawWidth) / 2;
+                const y = (size - drawHeight) / 2;
+                
+                // 원형인 경우 클리핑 마스크 적용
+                if (style === 'circle') {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+                    ctx.clip();
+                }
+                
+                ctx.drawImage(logoImg, x, y, drawWidth, drawHeight);
+                
+                if (style === 'circle') {
+                    ctx.restore();
+                }
+            }
+        }
+        
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename + '-' + canvas.width + 'px.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // 배경색 변경 이벤트
+        document.getElementById('bgColor').addEventListener('input', updateLogos);
+    </script>
+</body>
+</html>
