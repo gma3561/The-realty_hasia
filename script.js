@@ -4035,13 +4035,31 @@ async function loadStoredData() {
 
 // Supabase 데이터를 UI 형식으로 변환
 function transformSupabaseToUI(property) {
+    // 날짜 포맷 변환 함수
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date)) return '';
+            return date.toISOString().split('T')[0];
+        } catch {
+            return '';
+        }
+    };
+    
+    // households 값 생성 (층수 정보)
+    let households = '';
+    if (property.floor_current || property.floor_total) {
+        households = `${property.floor_current || ''}/${property.floor_total || ''}`;
+    }
+    
     return {
         id: property.id,
-        property_number: property.property_number,
-        date: property.register_date ? new Date(property.register_date).toISOString().split('T')[0] : '',
+        property_number: property.property_number || '',
+        date: formatDate(property.register_date),
         shared: property.shared || false,
         manager: property.manager || '',
-        status: property.status || '',
+        status: property.status || '거래가능',
         type: property.property_type || '',
         trade: property.trade_type || '',
         price: property.price || '',
@@ -4050,7 +4068,7 @@ function transformSupabaseToUI(property) {
         unit: property.ho || '',
         supply: property.supply_area_sqm || '',
         pyeong: property.supply_area_pyeong || '',
-        households: `${property.floor_current || ''}/${property.floor_total || ''}`,
+        households: households,
         address: property.address || '',
         reason: property.re_register_reason || '',
         memo: property.manager_memo || '',
@@ -4058,12 +4076,26 @@ function transformSupabaseToUI(property) {
         owner: property.owner_name || '',
         ownerContact: property.owner_contact || '',
         contactRelation: property.contact_relation || '',
-        moveInDate: property.move_in_date || '',
-        approvalDate: property.approval_date || '',
+        moveInDate: formatDate(property.move_in_date),
+        approvalDate: formatDate(property.approval_date),
         management: property.management_fee || '',
         parking: property.parking || '',
         direction: property.direction || '',
-        rooms: property.rooms || ''
+        rooms: property.rooms || '',
+        // 추가 필드들
+        completion_date: formatDate(property.completion_date),
+        resident: property.resident || '',
+        rent_type: property.rent_type || '',
+        rent_amount: property.rent_amount || '',
+        contract_period: property.contract_period || '',
+        has_photo: property.has_photo || false,
+        has_video: property.has_video || false,
+        has_appearance: property.has_appearance || false,
+        joint_brokerage: property.joint_brokerage || '',
+        joint_contact: property.joint_contact || '',
+        ad_status: property.ad_status || '',
+        ad_period: property.ad_period || '',
+        registration_number: property.registration_number || ''
     };
 }
 
@@ -4135,7 +4167,7 @@ function renderTable(data) {
         
         tr.innerHTML = `
             <td>${row.date}</td>
-            <td>${row.propertyNumber || '-'}</td>
+            <td>${row.property_number || '-'}</td>
             <td><span class="status-${getStatusClass(row.status)}">${row.status}</span></td>
             <td><span class="type-${getTypeClass(row.type)}">${row.type}</span></td>
             <td><span class="trade-${getTradeClass(row.trade)}">${row.trade}</span></td>
