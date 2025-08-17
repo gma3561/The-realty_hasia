@@ -96,7 +96,7 @@ async function saveProperty() {
         price: document.getElementById('price').value || null,
         supply_area_sqm: document.getElementById('supplyArea').value || null,
         supply_area_pyeong: document.getElementById('supplyPyeong').value || null,
-        floor_current: document.getElementById('floor').value || null,
+        floor_current: document.getElementById('floorInfo')?.value?.split('/')[0] || null,
         floor_total: document.getElementById('floorInfo')?.value?.split('/')[1] || null,
         rooms: document.getElementById('rooms').value || null,
         direction: document.getElementById('direction').value || null,
@@ -119,10 +119,12 @@ async function saveProperty() {
     }
 
     // 로딩 표시
-    const saveButton = document.querySelector('.btn-primary');
-    const originalText = saveButton.textContent;
-    saveButton.textContent = '저장 중...';
-    saveButton.disabled = true;
+    const saveButton = document.querySelector('.btn-save');
+    const originalText = saveButton ? saveButton.textContent : '저장하기';
+    if (saveButton) {
+        saveButton.textContent = '저장 중...';
+        saveButton.disabled = true;
+    }
 
     try {
         // 수정 모드 확인
@@ -164,8 +166,10 @@ async function saveProperty() {
         alert(`매물 ${action} 중 오류가 발생했습니다: ` + error.message);
     } finally {
         // 버튼 상태 복구
-        saveButton.textContent = originalText;
-        saveButton.disabled = false;
+        if (saveButton) {
+            saveButton.textContent = originalText;
+            saveButton.disabled = false;
+        }
     }
 }
 
@@ -268,10 +272,11 @@ function fillFormWithSupabaseData(data) {
     document.getElementById('price').value = data.price || '';
     document.getElementById('supplyArea').value = data.supply_area_sqm || '';
     document.getElementById('supplyPyeong').value = data.supply_area_pyeong || '';
-    document.getElementById('floor').value = data.floor_current || '';
     
     if (data.floor_current && data.floor_total) {
         document.getElementById('floorInfo').value = `${data.floor_current}/${data.floor_total}`;
+    } else if (data.floor_current) {
+        document.getElementById('floorInfo').value = data.floor_current;
     }
     
     document.getElementById('rooms').value = data.rooms || '';
@@ -284,7 +289,10 @@ function fillFormWithSupabaseData(data) {
     document.getElementById('managerMemo').value = data.manager_memo || '';
     
     // 버튼 텍스트 변경
-    document.querySelector('.btn-primary').textContent = '수정';
+    const primaryBtn = document.querySelector('.btn-save');
+    if (primaryBtn) {
+        primaryBtn.textContent = '수정';
+    }
     
     // 저장 함수를 수정 함수로 변경
     window.saveProperty = async function() {
@@ -315,7 +323,7 @@ async function updatePropertyData(propertyId) {
         price: document.getElementById('price').value || null,
         supply_area_sqm: document.getElementById('supplyArea').value || null,
         supply_area_pyeong: document.getElementById('supplyPyeong').value || null,
-        floor_current: document.getElementById('floor').value || null,
+        floor_current: document.getElementById('floorInfo')?.value?.split('/')[0] || null,
         floor_total: document.getElementById('floorInfo')?.value?.split('/')[1] || null,
         rooms: document.getElementById('rooms').value || null,
         direction: document.getElementById('direction').value || null,
@@ -327,10 +335,12 @@ async function updatePropertyData(propertyId) {
         manager_memo: document.getElementById('managerMemo')?.value || null
     };
 
-    const saveButton = document.querySelector('.btn-primary');
-    const originalText = saveButton.textContent;
-    saveButton.textContent = '수정 중...';
-    saveButton.disabled = true;
+    const saveButton = document.querySelector('.btn-save');
+    const originalText = saveButton ? saveButton.textContent : '수정';
+    if (saveButton) {
+        saveButton.textContent = '수정 중...';
+        saveButton.disabled = true;
+    }
 
     try {
         const { data, error } = await updateProperty(propertyId, formData);
@@ -346,8 +356,10 @@ async function updatePropertyData(propertyId) {
         console.error('수정 오류:', error);
         alert('매물 수정 중 오류가 발생했습니다: ' + error.message);
     } finally {
-        saveButton.textContent = originalText;
-        saveButton.disabled = false;
+        if (saveButton) {
+            saveButton.textContent = originalText;
+            saveButton.disabled = false;
+        }
     }
 }
 
