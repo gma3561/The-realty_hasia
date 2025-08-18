@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 // 검수 목표: CRUD 기능의 완전성, 안정성, 사용자 경험 검증
 // 페르소나: 초보 사용자, 숙련 사용자, 모바일 사용자, 관리자

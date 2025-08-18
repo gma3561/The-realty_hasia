@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 // 슬랙 알림 시스템 종합 검수 테스트
 test.describe('슬랙 알림 시스템 CRUD 연동 검수', () => {

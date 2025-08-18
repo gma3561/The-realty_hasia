@@ -598,6 +598,9 @@
             const table = document.querySelector('.data-table');
             if (table) {
                 table.style.marginTop = marginTop;
+                console.log(`테이블 margin-top 설정: ${marginTop}`);
+            } else {
+                console.log('테이블 요소를 찾을 수 없음');
             }
             
             console.log(`테이블 헤더 위치 조정: ${topValue} (모바일: ${isMobile})`);
