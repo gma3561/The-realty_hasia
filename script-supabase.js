@@ -80,18 +80,20 @@ function displayProperties(properties) {
     tableBody.innerHTML = properties.map(property => `
         <tr onclick="showPropertyDetails(${property.id})" style="cursor: pointer;">
             <td>${formatDate(property.register_date)}</td>
-            <td>${property.shared === true ? '공유' : property.shared === false ? '비공유' : '-'}</td>
-            <td>${property.manager || '-'}</td>
+            <td>${property.property_number || '-'}</td>
             <td><span class="status-badge ${getStatusClass(property.status)}">${property.status || '-'}</span></td>
             <td>${property.property_type || '-'}</td>
             <td>${property.trade_type || '-'}</td>
             <td>${property.price || '-'}</td>
             <td>${property.property_name || '-'}</td>
-            <td>${property.floor_current || '-'}</td>
+            <td>${property.address || '-'}</td>
+            <td>${property.dong || '-'}</td>
             <td>${property.ho || '-'}</td>
             <td>${property.supply_area_sqm || '-'}</td>
             <td>${property.supply_area_pyeong || '-'}</td>
             <td>${property.floor_current && property.floor_total ? `${property.floor_current}/${property.floor_total}` : '-'}</td>
+            <td>${property.shared === true ? '공유' : property.shared === false ? '비공유' : '-'}</td>
+            <td>${property.manager || '-'}</td>
         </tr>
     `).join('');
 }
