@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슬랙 알림 직접 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 슬랙 알림 직접 테스트</h1>
+        
+        <div class="test-section">
+            <h3>1. 슬랙 설정 확인</h3>
+            <button onclick="checkSlackConfig()">슬랙 설정 확인</button>
+            <div id="configResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 간단한 테스트 메시지 전송</h3>
+            <button onclick="sendTestMessage()">테스트 메시지 전송</button>
+            <div id="testResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 매물 등록 알림 시뮬레이션</h3>
+            <button onclick="simulatePropertyNotification()">매물 등록 알림 시뮬레이션</button>
+            <div id="propertyResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 상태 변경 알림 시뮬레이션</h3>
+            <button onclick="simulateStatusChangeNotification()">상태 변경 알림 시뮬레이션</button>
+            <div id="statusResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. 네트워크 연결 테스트</h3>
+            <button onclick="testNetworkConnection()">네트워크 연결 테스트</button>
+            <div id="networkResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- 슬랙 설정 파일 로드 -->
+    <script src="slack-config.js"></script>
+    
+    <script>
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function checkSlackConfig() {
+            showResult('configResult', '슬랙 설정 확인 중...', 'info');
+            
+            try {
+                const config = {
+                    webhookUrl: typeof SLACK_WEBHOOK_URL !== 'undefined' ? SLACK_WEBHOOK_URL : 'undefined',
+                    notificationSettings: typeof notificationSettings !== 'undefined' ? notificationSettings : 'undefined'
+                };
+                
+                let result = '슬랙 설정 상태:\n\n';
+                result += `웹훅 URL: ${config.webhookUrl ? '✅ 설정됨' : '❌ 미설정'}\n`;
+                result += `웹훅 URL 길이: ${config.webhookUrl?.length || 0}자\n\n`;
+                
+                if (config.notificationSettings && typeof config.notificationSettings === 'object') {
+                    result += '알림 설정:\n';
+                    result += `- 새 매물 알림: ${config.notificationSettings.newProperty ? '✅ 활성화' : '❌ 비활성화'}\n`;
+                    result += `- 상태 변경 알림: ${config.notificationSettings.statusChange ? '✅ 활성화' : '❌ 비활성화'}\n`;
+                    result += `- 슬랙 전송 알림: ${config.notificationSettings.slackSend ? '✅ 활성화' : '❌ 비활성화'}\n`;
+                } else {
+                    result += '❌ 알림 설정을 찾을 수 없음\n';
+                }
+                
+                showResult('configResult', result, 'info');
+            } catch (error) {
+                showResult('configResult', `설정 확인 중 오류: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTestMessage() {
+            showResult('testResult', '테스트 메시지 전송 중...', 'info');
+            
+            try {
+                const testMessage = {
+                    text: `🧪 슬랙 알림 테스트 - ${new Date().toLocaleString()}`,
+                    channel: "#general"
+                };
+                
+                const response = await fetch(SLACK_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testMessage)
+                });
+                
+                let result = `요청 상태: ${response.status} ${response.statusText}\n`;
+                result += `응답 시간: ${new Date().toLocaleString()}\n`;
+                
+                if (response.ok) {
+                    result += `✅ 슬랙 메시지 전송 성공!`;
+                    showResult('testResult', result, 'success');
+                } else {
+                    const errorText = await response.text();
+                    result += `❌ 전송 실패: ${errorText}`;
+                    showResult('testResult', result, 'error');
+                }
+            } catch (error) {
+                showResult('testResult', `❌ 네트워크 오류: ${error.message}`, 'error');
+            }
+        }
+
+        async function simulatePropertyNotification() {
+            showResult('propertyResult', '매물 등록 알림 시뮬레이션 중...', 'info');
+            
+            try {
+                // 가상의 매물 데이터
+                const mockProperty = {
+                    property_name: '테스트 아파트',
+                    property_type: '아파트',
+                    trade_type: '매매',
+                    address: '서울시 강남구 테스트동',
+                    price: '50,000',
+                    manager: '김규민',
+                    status: '거래가능'
+                };
+                
+                // notifyNewProperty 함수가 존재하는지 확인
+                if (typeof notifyNewProperty === 'function') {
+                    const result = await notifyNewProperty(mockProperty);
+                    
+                    let message = `매물 등록 알림 결과: ${result ? '✅ 성공' : '❌ 실패'}\n`;
+                    message += `매물명: ${mockProperty.property_name}\n`;
+                    message += `처리 시간: ${new Date().toLocaleString()}`;
+                    
+                    showResult('propertyResult', message, result ? 'success' : 'error');
+                } else {
+                    showResult('propertyResult', '❌ notifyNewProperty 함수를 찾을 수 없음', 'error');
+                }
+            } catch (error) {
+                showResult('propertyResult', `❌ 매물 알림 오류: ${error.message}`, 'error');
+            }
+        }
+
+        async function simulateStatusChangeNotification() {
+            showResult('statusResult', '상태 변경 알림 시뮬레이션 중...', 'info');
+            
+            try {
+                const mockStatusChange = {
+                    property_name: '테스트 오피스텔',
+                    old_status: '거래가능',
+                    new_status: '계약진행중',
+                    manager: '김규민',
+                    changed_at: new Date().toISOString()
+                };
+                
+                // notifyStatusChange 함수가 존재하는지 확인
+                if (typeof notifyStatusChange === 'function') {
+                    const result = await notifyStatusChange(mockStatusChange);
+                    
+                    let message = `상태 변경 알림 결과: ${result ? '✅ 성공' : '❌ 실패'}\n`;
+                    message += `매물명: ${mockStatusChange.property_name}\n`;
+                    message += `상태 변경: ${mockStatusChange.old_status} → ${mockStatusChange.new_status}\n`;
+                    message += `처리 시간: ${new Date().toLocaleString()}`;
+                    
+                    showResult('statusResult', message, result ? 'success' : 'error');
+                } else {
+                    showResult('statusResult', '❌ notifyStatusChange 함수를 찾을 수 없음', 'error');
+                }
+            } catch (error) {
+                showResult('statusResult', `❌ 상태 변경 알림 오류: ${error.message}`, 'error');
+            }
+        }
+
+        async function testNetworkConnection() {
+            showResult('networkResult', '네트워크 연결 테스트 중...', 'info');
+            
+            try {
+                // 1. 일반 인터넷 연결 확인
+                const internetTest = await fetch('https://httpbin.org/get', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                let result = `인터넷 연결: ${internetTest.ok ? '✅ 정상' : '❌ 실패'}\n`;
+                
+                // 2. 슬랙 API 연결 확인
+                try {
+                    const slackTest = await fetch('https://slack.com/api/api.test', {
+                        method: 'GET'
+                    });
+                    
+                    result += `슬랙 API 연결: ${slackTest.ok ? '✅ 정상' : '❌ 실패'}\n`;
+                } catch (slackError) {
+                    result += `슬랙 API 연결: ❌ 실패 (${slackError.message})\n`;
+                }
+                
+                // 3. CORS 정책 확인
+                result += '\n네트워크 환경 정보:\n';
+                result += `현재 도메인: ${window.location.hostname}\n`;
+                result += `프로토콜: ${window.location.protocol}\n`;
+                result += `사용자 에이전트: ${navigator.userAgent.substring(0, 50)}...\n`;
+                
+                showResult('networkResult', result, 'info');
+                
+            } catch (error) {
+                showResult('networkResult', `❌ 네트워크 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 페이지 로드 시 자동으로 설정 확인
+        window.addEventListener('load', function() {
+            console.log('🔔 슬랙 알림 직접 테스트 페이지 로드됨');
+            
+            // 3초 후 자동으로 설정 확인
+            setTimeout(() => {
+                checkSlackConfig();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

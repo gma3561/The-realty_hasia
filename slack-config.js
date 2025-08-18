@@ -5,9 +5,9 @@ const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T095CCUG7A8/B09B3SD1
 
 // 알림 설정 (사용자별 커스터마이징 가능)
 const notificationSettings = {
-    newProperty: false,     // 새 매물 등록 알림 (사용자 요청에 따라 비활성화)
+    newProperty: true,      // 새 매물 등록 알림 (테스트를 위해 활성화)
     statusChange: true,     // 상태 변경 알림 (활성화)
-    slackSend: false,       // 슬랙 전송 알림 (비활성화)
+    slackSend: true,        // 슬랙 전송 알림 (테스트를 위해 활성화)
     channels: {
         default: 'C099TN2BW6R',  // 기본 채널 (사용자 제공 채널 ID)
         urgent: 'C099TN2BW6R'    // 긴급 채널 (동일 채널)

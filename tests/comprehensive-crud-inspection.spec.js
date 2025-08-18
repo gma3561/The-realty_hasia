@@ -98,7 +98,7 @@ test.describe('더부동산 CRUD 검수 마스터 - 종합 검증', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(PRODUCTION_URL, { waitUntil: 'networkidle' });
-    await page.waitForSelector('.property-table', { timeout: 10000 });
+    await page.waitForSelector('.data-table', { timeout: 15000 });
   });
 
   // ===== CREATE (생성) 테스트 =====

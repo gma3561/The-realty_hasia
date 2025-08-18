@@ -585,8 +585,8 @@
             if (!thead) return;
             
             const isMobile = window.innerWidth <= 768;
-            const topValue = isMobile ? '121px' : '164px';
-            const marginTop = isMobile ? '-121px' : '-164px';
+            const topValue = isMobile ? '84px' : '115px'; // 앱 헤더 바로 아래
+            const marginTop = '0px'; // 마진 조정 제거
             
             // 테이블 헤더 스타일 설정
             thead.style.position = 'sticky';
