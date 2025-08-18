@@ -586,11 +586,19 @@
             
             const isMobile = window.innerWidth <= 768;
             const topValue = isMobile ? '121px' : '164px';
+            const marginTop = isMobile ? '-121px' : '-164px';
             
+            // 테이블 헤더 스타일 설정
             thead.style.position = 'sticky';
             thead.style.top = topValue;
             thead.style.zIndex = '50';
             thead.style.background = '#f8f9fa';
+            
+            // 테이블 전체를 위로 올려서 헤더가 필터 바 바로 아래에 오도록 조정
+            const table = document.querySelector('.data-table');
+            if (table) {
+                table.style.marginTop = marginTop;
+            }
             
             console.log(`테이블 헤더 위치 조정: ${topValue} (모바일: ${isMobile})`);
         }
