@@ -111,7 +111,7 @@
 
         <div class="table-container">
             <table class="data-table" id="dataTable">
-                <thead>
+                <thead style="position: sticky !important; top: 121px !important; z-index: 50 !important; background: #f8f9fa !important;" data-desktop-top="164" data-mobile-top="121">
                     <tr>
                         <th class="sortable">등록일 <span class="sort-arrow">↓</span></th>
                         <th>매물번호</th>
@@ -578,6 +578,32 @@
             deferredPrompt = e;
             // 설치 버튼 표시 (필요시 구현)
         });
+        
+        // 테이블 헤더 위치 동적 조정
+        function adjustTableHeaderPosition() {
+            const thead = document.querySelector('.data-table thead');
+            if (!thead) return;
+            
+            const isMobile = window.innerWidth <= 768;
+            const topValue = isMobile ? '121px' : '164px';
+            
+            thead.style.position = 'sticky';
+            thead.style.top = topValue;
+            thead.style.zIndex = '50';
+            thead.style.background = '#f8f9fa';
+            
+            console.log(`테이블 헤더 위치 조정: ${topValue} (모바일: ${isMobile})`);
+        }
+        
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', adjustTableHeaderPosition);
+        
+        // 화면 크기 변경 시 실행
+        window.addEventListener('resize', adjustTableHeaderPosition);
+        
+        // 추가 보장을 위해 타이머로도 실행
+        setTimeout(adjustTableHeaderPosition, 1000);
+        setTimeout(adjustTableHeaderPosition, 3000);
     </script>
 </body>
 </html>

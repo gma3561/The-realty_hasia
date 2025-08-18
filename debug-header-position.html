@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>헤더 위치 디버깅</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f0f0f0; }
+        .debug-info { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .current-values { color: #d63384; font-weight: bold; }
+        .expected-values { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>테이블 헤더 위치 디버깅</h1>
+    <div class="debug-info">
+        <h3>현재 측정값</h3>
+        <div id="current-measurements"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h3>예상값 vs 실제값</h3>
+        <div id="comparison"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h3>CSS Computed Style</h3>
+        <div id="css-style"></div>
+    </div>
+    
+    <button onclick="loadAndMeasure()" style="padding: 10px 20px; font-size: 16px;">
+        실제 사이트에서 측정하기
+    </button>
+    
+    <script>
+        async function loadAndMeasure() {
+            try {
+                // iframe을 사용해서 실제 사이트 로드
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://gma3561.github.io/The-realty_hasia/';
+                iframe.style.width = '375px';
+                iframe.style.height = '667px';
+                iframe.style.border = '1px solid #ccc';
+                iframe.style.position = 'fixed';
+                iframe.style.top = '10px';
+                iframe.style.right = '10px';
+                iframe.style.zIndex = '9999';
+                
+                document.body.appendChild(iframe);
+                
+                iframe.onload = () => {
+                    setTimeout(() => {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            const header = iframeDoc.querySelector('.header');
+                            const filterBar = iframeDoc.querySelector('.filter-bar');
+                            const tableHeader = iframeDoc.querySelector('.data-table thead');
+                            
+                            const headerRect = header ? header.getBoundingClientRect() : null;
+                            const filterRect = filterBar ? filterBar.getBoundingClientRect() : null;
+                            const tableRect = tableHeader ? tableHeader.getBoundingClientRect() : null;
+                            
+                            const computedStyle = tableHeader ? iframe.contentWindow.getComputedStyle(tableHeader) : null;
+                            
+                            // 결과 표시
+                            document.getElementById('current-measurements').innerHTML = `
+                                <div><strong>헤더:</strong> y=${headerRect?.y}, height=${headerRect?.height}</div>
+                                <div><strong>필터바:</strong> y=${filterRect?.y}, height=${filterRect?.height}</div>
+                                <div><strong>테이블헤더:</strong> y=${tableRect?.y}, height=${tableRect?.height}</div>
+                                <div><strong>헤더+필터 끝:</strong> ${(headerRect?.y || 0) + (headerRect?.height || 0) + (filterRect?.height || 0)}</div>
+                            `;
+                            
+                            document.getElementById('comparison').innerHTML = `
+                                <div class="expected-values">예상: 테이블헤더가 121px에 위치해야 함</div>
+                                <div class="current-values">실제: 테이블헤더가 ${tableRect?.y}px에 위치</div>
+                                <div><strong>차이:</strong> ${(tableRect?.y || 0) - 121}px</div>
+                            `;
+                            
+                            document.getElementById('css-style').innerHTML = `
+                                <div><strong>position:</strong> ${computedStyle?.position}</div>
+                                <div><strong>top:</strong> ${computedStyle?.top}</div>
+                                <div><strong>z-index:</strong> ${computedStyle?.zIndex}</div>
+                                <div><strong>background:</strong> ${computedStyle?.backgroundColor}</div>
+                            `;
+                            
+                        } catch (error) {
+                            document.getElementById('current-measurements').innerHTML = 
+                                `<div style="color: red;">접근 오류: ${error.message}</div>`;
+                        }
+                    }, 3000);
+                };
+                
+            } catch (error) {
+                alert('측정 실패: ' + error.message);
+            }
+        }
+        
+        // 페이지 로드 시 자동 실행
+        window.onload = () => {
+            setTimeout(loadAndMeasure, 1000);
+        };
+    </script>
+</body>
+</html>
