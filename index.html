@@ -582,28 +582,40 @@
         // 테이블 헤더 위치 동적 조정
         function adjustTableHeaderPosition() {
             const thead = document.querySelector('.data-table thead');
-            if (!thead) return;
+            const tbody = document.querySelector('.data-table tbody');
+            const tableContainer = document.querySelector('.table-container');
             
-            const isMobile = window.innerWidth <= 768;
-            const topValue = isMobile ? '84px' : '115px'; // 앱 헤더 바로 아래
-            const marginTop = '0px'; // 마진 조정 제거
+            if (!thead || !tbody || !tableContainer) return;
             
-            // 테이블 헤더 스타일 설정
-            thead.style.position = 'sticky';
-            thead.style.top = topValue;
-            thead.style.zIndex = '50';
+            // 필터바 아래 위치 계산
+            const filterBar = document.querySelector('.filter-bar');
+            const filterBottom = filterBar ? filterBar.getBoundingClientRect().bottom : 164;
+            
+            // THEAD를 테이블 컨테이너 최상단에 고정
+            thead.style.position = 'fixed';
+            thead.style.top = `${filterBottom}px`;
+            thead.style.left = '0';
+            thead.style.right = '0';
+            thead.style.zIndex = '90';
             thead.style.background = '#f8f9fa';
+            thead.style.width = '100%';
             
-            // 테이블 전체를 위로 올려서 헤더가 필터 바 바로 아래에 오도록 조정
-            const table = document.querySelector('.data-table');
-            if (table) {
-                table.style.marginTop = marginTop;
-                console.log(`테이블 margin-top 설정: ${marginTop}`);
-            } else {
-                console.log('테이블 요소를 찾을 수 없음');
-            }
+            // TBODY에 padding-top 추가하여 THEAD 공간 확보
+            const theadHeight = thead.offsetHeight || 34;
+            tbody.style.display = 'block';
+            tbody.style.paddingTop = `${theadHeight}px`;
             
-            console.log(`테이블 헤더 위치 조정: ${topValue} (모바일: ${isMobile})`);
+            // 테이블 컨테이너 스크롤 시 THEAD 위치 조정
+            tableContainer.addEventListener('scroll', () => {
+                const scrollTop = tableContainer.scrollTop;
+                if (scrollTop > 0) {
+                    thead.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                } else {
+                    thead.style.boxShadow = 'none';
+                }
+            });
+            
+            console.log(`테이블 헤더 fixed 위치: ${filterBottom}px`);
         }
         
         // 페이지 로드 시 실행
