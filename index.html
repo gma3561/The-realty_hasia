@@ -111,7 +111,7 @@
 
         <div class="table-container">
             <table class="data-table" id="dataTable">
-                <thead style="position: sticky !important; top: 164px !important; z-index: 50 !important; background: #f8f9fa !important;" data-desktop-top="164" data-mobile-top="121">
+                <thead style="position: sticky !important; top: 0 !important; z-index: 50 !important; background: #f8f9fa !important;">
                     <tr>
                         <th class="sortable">등록일 <span class="sort-arrow">↓</span></th>
                         <th>매물번호</th>
@@ -582,25 +582,16 @@
         // 테이블 헤더 위치 동적 조정
         function adjustTableHeaderPosition() {
             const thead = document.querySelector('.data-table thead');
-            const filterBar = document.querySelector('.filter-bar');
             
             if (!thead) return;
             
-            const isMobile = window.innerWidth <= 768;
-            
-            // 헤더와 필터바의 전체 높이 계산
-            const header = document.querySelector('.header');
-            const headerHeight = header ? header.offsetHeight : 60;
-            const filterHeight = filterBar ? filterBar.offsetHeight : 60;
-            const totalTopHeight = headerHeight + filterHeight;
-            
-            // sticky 포지션으로 테이블 헤더 고정
+            // sticky 포지션으로 테이블 헤더를 테이블 컨테이너 상단에 고정
             thead.style.position = 'sticky';
-            thead.style.top = isMobile ? '121px' : `${totalTopHeight}px`;
+            thead.style.top = '0'; // 테이블 컨테이너 상단
             thead.style.zIndex = '50';
             thead.style.background = '#f8f9fa';
             
-            console.log(`테이블 헤더 sticky 위치: ${isMobile ? '121px' : totalTopHeight + 'px'}`);
+            console.log('테이블 헤더 sticky 위치: 테이블 컨테이너 상단 (0px)');
         }
         
         // 페이지 로드 시 실행
