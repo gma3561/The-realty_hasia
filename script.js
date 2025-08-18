@@ -4370,17 +4370,26 @@ function showFilterMenu(event, filterType) {
     // 메뉴 옵션 생성
     populateFilterOptions(filterType);
     
-    // 클릭 이벤트 리스너 추가
+    // 클릭 이벤트 리스너 추가 - 메뉴 외부 클릭 시에만 닫기
     setTimeout(() => {
-        document.addEventListener('click', closeFilterMenu);
+        document.addEventListener('click', handleFilterMenuClick);
     }, 100);
+}
+
+// 필터 메뉴 클릭 처리
+function handleFilterMenuClick(event) {
+    const menu = document.getElementById('filterMenu');
+    // 메뉴 내부 클릭인지 확인
+    if (!menu.contains(event.target)) {
+        closeFilterMenu();
+    }
 }
 
 // 필터 메뉴 닫기
 function closeFilterMenu() {
     const menu = document.getElementById('filterMenu');
     menu.classList.remove('show');
-    document.removeEventListener('click', closeFilterMenu);
+    document.removeEventListener('click', handleFilterMenuClick);
 }
 
 // 필터 옵션 생성

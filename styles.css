@@ -189,7 +189,7 @@ body {
 .table-container {
     background: white;
     flex: 1 1 auto;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-bottom: 70px; /* 고정 페이지네이션을 위한 하단 패딩 */
     padding-top: 0; /* padding 제거 */
     overflow-x: auto;
@@ -207,25 +207,23 @@ body {
 }
 
 .data-table thead {
-    position: absolute !important;
-    top: 0 !important; /* 테이블 컨테이너 최상단 */
-    left: 0 !important;
-    right: 0 !important;
+    position: sticky !important;
+    top: 164px !important; /* 헤더+필터바 높이 */
     z-index: 50 !important;
     background: #f8f9fa !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 모바일에서도 테이블 컨테이너 상단에 고정 */
+/* 모바일에서는 더 작은 top 값 사용 */
 @media (max-width: 768px) {
     .data-table thead {
-        top: 0 !important; /* 테이블 컨테이너 최상단 */
+        top: 121px !important; /* 모바일 헤더+필터바 높이 */
     }
 }
 
 @media (max-width: 480px) {
     .data-table thead {
-        top: 0 !important; /* 테이블 컨테이너 최상단 */
+        top: 121px !important; /* 모바일 헤더+필터바 높이 */
     }
 }
 

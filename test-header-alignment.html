@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>헤더 정렬 테스트</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 테이블 헤더 정렬 테스트</h1>
+        
+        <div class="test-section">
+            <div class="test-title">1. 현재 페이지 확인</div>
+            <button onclick="testHeaderAlignment()">헤더 정렬 테스트</button>
+            <button onclick="testScrollBehavior()">스크롤 동작 테스트</button>
+            <button onclick="testResponsive()">반응형 테스트</button>
+            <div id="testResult" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">2. 실제 페이지 미리보기</div>
+            <iframe id="previewFrame" src="index.html"></iframe>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">3. 측정 결과</div>
+            <div id="measurementResult" class="test-result">
+                테스트 버튼을 클릭하여 측정을 시작하세요.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const resultDiv = document.getElementById('testResult');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : 
+                            type === 'warning' ? 'warning' : 
+                            type === 'error' ? 'error' : '';
+            
+            resultDiv.innerHTML += `
+                <div class="test-result ${className}">
+                    [${timestamp}] ${message}
+                </div>
+            `;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('testResult').innerHTML = '';
+        }
+
+        async function testHeaderAlignment() {
+            clearLog();
+            log('헤더 정렬 테스트 시작...', 'info');
+            
+            const iframe = document.getElementById('previewFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            // 테이블 요소들 찾기
+            const table = iframeDoc.querySelector('.data-table');
+            const thead = iframeDoc.querySelector('.data-table thead');
+            const tbody = iframeDoc.querySelector('.data-table tbody');
+            const firstRow = tbody ? tbody.querySelector('tr') : null;
+            
+            if (!table || !thead) {
+                log('테이블 또는 헤더를 찾을 수 없습니다.', 'error');
+                return;
+            }
+            
+            // 헤더 스타일 확인
+            const theadStyles = window.getComputedStyle(thead);
+            log(`헤더 position: ${theadStyles.position}`, 'info');
+            log(`헤더 top: ${theadStyles.top}`, 'info');
+            log(`헤더 z-index: ${theadStyles.zIndex}`, 'info');
+            
+            // 헤더와 첫 번째 데이터 행의 컬럼 너비 비교
+            if (thead && firstRow) {
+                const headerCells = thead.querySelectorAll('th');
+                const dataCells = firstRow.querySelectorAll('td');
+                
+                log(`헤더 컬럼 수: ${headerCells.length}개`, 'info');
+                log(`데이터 컬럼 수: ${dataCells.length}개`, 'info');
+                
+                if (headerCells.length !== dataCells.length) {
+                    log('⚠️ 헤더와 데이터 컬럼 수가 일치하지 않습니다!', 'warning');
+                }
+                
+                // 각 컬럼의 너비 비교
+                let alignmentIssues = 0;
+                for (let i = 0; i < Math.min(headerCells.length, dataCells.length); i++) {
+                    const headerWidth = headerCells[i].offsetWidth;
+                    const dataWidth = dataCells[i].offsetWidth;
+                    const diff = Math.abs(headerWidth - dataWidth);
+                    
+                    if (diff > 5) { // 5px 이상 차이나면 정렬 문제로 간주
+                        log(`컬럼 ${i + 1}: 헤더 ${headerWidth}px, 데이터 ${dataWidth}px (차이: ${diff}px)`, 'warning');
+                        alignmentIssues++;
+                    }
+                }
+                
+                if (alignmentIssues === 0) {
+                    log('✅ 모든 컬럼이 올바르게 정렬되어 있습니다!', 'success');
+                } else {
+                    log(`⚠️ ${alignmentIssues}개 컬럼에 정렬 문제가 있습니다.`, 'warning');
+                }
+            } else {
+                log('데이터 행이 없어 정렬을 확인할 수 없습니다.', 'warning');
+            }
+            
+            // 테이블 컨테이너 확인
+            const tableContainer = iframeDoc.querySelector('.table-container');
+            if (tableContainer) {
+                const containerStyles = window.getComputedStyle(tableContainer);
+                log(`테이블 컨테이너 overflow-y: ${containerStyles.overflowY}`, 'info');
+                log(`테이블 컨테이너 height: ${containerStyles.height}`, 'info');
+            }
+        }
+
+        async function testScrollBehavior() {
+            clearLog();
+            log('스크롤 동작 테스트 시작...', 'info');
+            
+            const iframe = document.getElementById('previewFrame');
+            const iframeWin = iframe.contentWindow;
+            const iframeDoc = iframe.contentDocument || iframeWin.document;
+            
+            const tableContainer = iframeDoc.querySelector('.table-container');
+            const thead = iframeDoc.querySelector('.data-table thead');
+            
+            if (!tableContainer || !thead) {
+                log('테이블 컨테이너 또는 헤더를 찾을 수 없습니다.', 'error');
+                return;
+            }
+            
+            // 초기 위치 기록
+            const initialTop = thead.getBoundingClientRect().top;
+            log(`초기 헤더 위치: ${initialTop}px`, 'info');
+            
+            // 스크롤 테스트
+            iframeWin.scrollTo(0, 200);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            const afterScrollTop = thead.getBoundingClientRect().top;
+            log(`스크롤 후 헤더 위치: ${afterScrollTop}px`, 'info');
+            
+            if (Math.abs(afterScrollTop - initialTop) < 10) {
+                log('✅ 헤더가 sticky로 올바르게 고정되어 있습니다!', 'success');
+            } else {
+                log('⚠️ 헤더가 스크롤과 함께 움직입니다.', 'warning');
+            }
+            
+            // 원위치로 복귀
+            iframeWin.scrollTo(0, 0);
+        }
+
+        async function testResponsive() {
+            clearLog();
+            log('반응형 테스트 시작...', 'info');
+            
+            const iframe = document.getElementById('previewFrame');
+            const viewports = [
+                { width: 1200, height: 800, name: 'Desktop' },
+                { width: 768, height: 1024, name: 'Tablet' },
+                { width: 375, height: 667, name: 'Mobile' }
+            ];
+            
+            for (const viewport of viewports) {
+                iframe.style.width = `${viewport.width}px`;
+                iframe.style.height = `${viewport.height}px`;
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const thead = iframeDoc.querySelector('.data-table thead');
+                
+                if (thead) {
+                    const styles = iframe.contentWindow.getComputedStyle(thead);
+                    log(`${viewport.name} (${viewport.width}x${viewport.height}):`, 'info');
+                    log(`  - Position: ${styles.position}`, 'info');
+                    log(`  - Top: ${styles.top}`, 'info');
+                    log(`  - Display: ${thead.style.display || 'default'}`, 'info');
+                }
+            }
+            
+            // 원래 크기로 복원
+            iframe.style.width = '100%';
+            iframe.style.height = '600px';
+            
+            log('✅ 반응형 테스트 완료', 'success');
+        }
+
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const iframe = document.getElementById('previewFrame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                const measurementDiv = document.getElementById('measurementResult');
+                
+                // 기본 측정 정보 표시
+                const table = iframeDoc.querySelector('.data-table');
+                const thead = iframeDoc.querySelector('.data-table thead');
+                const tbody = iframeDoc.querySelector('.data-table tbody');
+                
+                if (table && thead && tbody) {
+                    const headerCells = thead.querySelectorAll('th');
+                    const rows = tbody.querySelectorAll('tr');
+                    
+                    measurementDiv.innerHTML = `
+                        <strong>테이블 구조 정보:</strong><br>
+                        - 헤더 컬럼 수: ${headerCells.length}개<br>
+                        - 데이터 행 수: ${rows.length}개<br>
+                        - 테이블 너비: ${table.offsetWidth}px<br>
+                        - 헤더 높이: ${thead.offsetHeight}px<br>
+                        <br>
+                        <strong>헤더 스타일 정보:</strong><br>
+                        - Position: ${window.getComputedStyle(thead).position}<br>
+                        - Top: ${window.getComputedStyle(thead).top}<br>
+                        - Z-index: ${window.getComputedStyle(thead).zIndex}<br>
+                    `;
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -111,7 +111,7 @@
 
         <div class="table-container">
             <table class="data-table" id="dataTable">
-                <thead style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 90 !important; background: #f8f9fa !important;" data-desktop-top="164" data-mobile-top="121">
+                <thead style="position: sticky !important; top: 164px !important; z-index: 50 !important; background: #f8f9fa !important;" data-desktop-top="164" data-mobile-top="121">
                     <tr>
                         <th class="sortable">등록일 <span class="sort-arrow">↓</span></th>
                         <th>매물번호</th>
@@ -582,39 +582,25 @@
         // 테이블 헤더 위치 동적 조정
         function adjustTableHeaderPosition() {
             const thead = document.querySelector('.data-table thead');
-            const tbody = document.querySelector('.data-table tbody');
-            const tableContainer = document.querySelector('.table-container');
-            
-            if (!thead || !tbody || !tableContainer) return;
-            
-            // 필터바 아래 위치 계산
             const filterBar = document.querySelector('.filter-bar');
-            const filterBottom = filterBar ? filterBar.getBoundingClientRect().bottom : 164;
             
-            // THEAD를 테이블 컨테이너 최상단에 고정
-            thead.style.position = 'fixed';
-            thead.style.top = `${filterBottom}px`;
-            thead.style.left = '0';
-            thead.style.right = '0';
-            thead.style.zIndex = '90';
+            if (!thead) return;
+            
+            const isMobile = window.innerWidth <= 768;
+            
+            // 헤더와 필터바의 전체 높이 계산
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.offsetHeight : 60;
+            const filterHeight = filterBar ? filterBar.offsetHeight : 60;
+            const totalTopHeight = headerHeight + filterHeight;
+            
+            // sticky 포지션으로 테이블 헤더 고정
+            thead.style.position = 'sticky';
+            thead.style.top = isMobile ? '121px' : `${totalTopHeight}px`;
+            thead.style.zIndex = '50';
             thead.style.background = '#f8f9fa';
-            thead.style.width = '100%';
             
-            // TBODY 스타일 초기화 (padding 제거)
-            tbody.style.display = 'table-row-group';
-            tbody.style.paddingTop = '0';
-            
-            // 테이블 컨테이너 스크롤 시 THEAD 위치 조정
-            tableContainer.addEventListener('scroll', () => {
-                const scrollTop = tableContainer.scrollTop;
-                if (scrollTop > 0) {
-                    thead.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                } else {
-                    thead.style.boxShadow = 'none';
-                }
-            });
-            
-            console.log(`테이블 헤더 fixed 위치: ${filterBottom}px`);
+            console.log(`테이블 헤더 sticky 위치: ${isMobile ? '121px' : totalTopHeight + 'px'}`);
         }
         
         // 페이지 로드 시 실행
