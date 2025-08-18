@@ -80,7 +80,7 @@ function displayProperties(properties) {
     tableBody.innerHTML = properties.map(property => `
         <tr onclick="showPropertyDetails(${property.id})" style="cursor: pointer;">
             <td>${formatDate(property.register_date)}</td>
-            <td>${property.shared ? '공유' : '-'}</td>
+            <td>${property.shared === true ? '공유' : property.shared === false ? '비공유' : '-'}</td>
             <td>${property.manager || '-'}</td>
             <td><span class="status-badge ${getStatusClass(property.status)}">${property.status || '-'}</span></td>
             <td>${property.property_type || '-'}</td>
@@ -132,7 +132,7 @@ function showSidePanel(property) {
     
     // 매물 정보 업데이트
     document.getElementById('sidePanelTitle').textContent = property.property_name || '매물 정보';
-    document.getElementById('sideShared').textContent = property.shared ? '공유' : '비공유';
+    document.getElementById('sideShared').textContent = property.shared === true ? '공유' : property.shared === false ? '비공유' : '-';
     document.getElementById('sideManager').textContent = property.manager || '-';
     document.getElementById('sideStatus').textContent = property.status || '-';
     document.getElementById('sideReason').textContent = property.re_register_reason || '-';
@@ -167,7 +167,7 @@ function showModal(property) {
     
     // 매물 정보 업데이트
     document.getElementById('modalTitle').textContent = property.property_name || '매물 정보';
-    document.getElementById('mobileShared').textContent = property.shared ? '공유' : '비공유';
+    document.getElementById('mobileShared').textContent = property.shared === true ? '공유' : property.shared === false ? '비공유' : '-';
     document.getElementById('mobileManager').textContent = property.manager || '-';
     document.getElementById('mobileStatus').textContent = property.status || '-';
     document.getElementById('mobileReason').textContent = property.re_register_reason || '-';
