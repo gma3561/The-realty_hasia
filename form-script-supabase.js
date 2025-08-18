@@ -152,6 +152,17 @@ async function saveProperty() {
         if (propertyId) {
             // 수정 모드: 기존 매물 업데이트
             console.log('매물 수정 시작, ID:', propertyId);
+            
+            // 기존 데이터 가져오기 (상태 변경 확인용)
+            const { data: existingData } = await window.supabaseClient
+                .from('properties')
+                .select('status')
+                .eq('id', propertyId)
+                .single();
+            
+            const oldStatus = existingData?.status;
+            const newStatus = formData.status;
+            
             const result = await updateProperty(propertyId, formData);
             console.log('매물 수정 결과:', result);
             
@@ -161,6 +172,23 @@ async function saveProperty() {
             
             data = result.data;
             error = result.error;
+            
+            // 상태가 변경된 경우 슬랙 알림 전송
+            if (oldStatus !== newStatus && window.notifyStatusChange && typeof window.notifyStatusChange === 'function') {
+                console.log(`상태 변경 감지: ${oldStatus} → ${newStatus}`);
+                try {
+                    await window.notifyStatusChange({
+                        property_name: formData.property_name,
+                        property_number: propertyId,
+                        id: propertyId,
+                        trade_type: formData.trade_type,
+                        manager: formData.manager
+                    }, oldStatus, newStatus);
+                    console.log('상태 변경 슬랙 알림 전송 완료');
+                } catch (slackError) {
+                    console.error('상태 변경 슬랙 알림 전송 실패:', slackError);
+                }
+            }
             
             // 수정 완료 후 확인 시 목록으로 이동 (뒤로가기 방지)
             if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
@@ -181,6 +209,36 @@ async function saveProperty() {
             
             data = result.data;
             error = result.error;
+            
+            // 슬랙 알림 전송 (새 매물 등록)
+            if (window.notifyNewProperty && typeof window.notifyNewProperty === 'function') {
+                console.log('슬랙 알림 전송 시도...');
+                try {
+                    await window.notifyNewProperty({
+                        property_name: formData.property_name,
+                        property_number: data[0]?.id || 'N/A',
+                        id: data[0]?.id,
+                        trade_type: formData.trade_type,
+                        price: formData.price,
+                        address: formData.address,
+                        dong: formData.dong,
+                        ho: formData.ho,
+                        supply_area_sqm: formData.supply_area_sqm,
+                        supply_area_pyeong: formData.supply_area_pyeong,
+                        floor_current: formData.floor_info ? formData.floor_info.split('/')[0] : null,
+                        floor_total: formData.floor_info ? formData.floor_info.split('/')[1] : null,
+                        rooms: formData.rooms,
+                        manager: formData.manager,
+                        register_date: formData.register_date
+                    });
+                    console.log('슬랙 알림 전송 완료');
+                } catch (slackError) {
+                    console.error('슬랙 알림 전송 실패:', slackError);
+                    // 슬랙 전송 실패해도 저장은 성공했으므로 계속 진행
+                }
+            } else {
+                console.log('슬랙 알림 함수를 찾을 수 없음');
+            }
             
             // alert 확인 후 목록으로 이동 (뒤로가기 방지)
             if (confirm('매물이 성공적으로 등록되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {

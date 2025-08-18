@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>슬랙 알림 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+        }
+        .error {
+            background: #f44336;
+            color: white;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>슬랙 알림 테스트</h1>
+    
+    <div>
+        <button onclick="testNewProperty()">신규 매물 알림 테스트</button>
+        <button onclick="testStatusChange()">상태 변경 알림 테스트</button>
+        <button onclick="testDirectWebhook()">웹훅 직접 테스트</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script src="slack-config.js"></script>
+    <script>
+        function log(message) {
+            const result = document.getElementById('result');
+            result.innerHTML += message + '\n';
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('result').innerHTML = '';
+        }
+        
+        async function testNewProperty() {
+            clearLog();
+            log('=== 신규 매물 알림 테스트 시작 ===');
+            
+            if (typeof window.notifyNewProperty !== 'function') {
+                log('❌ notifyNewProperty 함수를 찾을 수 없음');
+                return;
+            }
+            
+            const testProperty = {
+                property_name: '테스트 아파트 ' + Date.now(),
+                property_number: 'TEST-001',
+                id: 1,
+                trade_type: '매매',
+                price: '100,000',
+                address: '서울시 강남구 테스트동',
+                dong: '101',
+                ho: '1001',
+                supply_area_sqm: '84.5',
+                supply_area_pyeong: '25.5',
+                floor_current: '15',
+                floor_total: '25',
+                rooms: '3/2',
+                manager: '김규민',
+                register_date: new Date().toISOString()
+            };
+            
+            try {
+                log('📤 슬랙 전송 시도...');
+                const result = await window.notifyNewProperty(testProperty);
+                
+                if (result) {
+                    log('✅ 슬랙 알림 전송 성공!');
+                } else {
+                    log('❌ 슬랙 알림 전송 실패');
+                }
+            } catch (error) {
+                log('❌ 오류 발생: ' + error.message);
+            }
+        }
+        
+        async function testStatusChange() {
+            clearLog();
+            log('=== 상태 변경 알림 테스트 시작 ===');
+            
+            if (typeof window.notifyStatusChange !== 'function') {
+                log('❌ notifyStatusChange 함수를 찾을 수 없음');
+                return;
+            }
+            
+            const testProperty = {
+                property_name: '상태변경 테스트 ' + Date.now(),
+                property_number: 'TEST-002',
+                id: 2,
+                trade_type: '전세',
+                manager: '하상현'
+            };
+            
+            try {
+                log('📤 슬랙 전송 시도...');
+                const result = await window.notifyStatusChange(testProperty, '거래가능', '거래완료');
+                
+                if (result) {
+                    log('✅ 슬랙 알림 전송 성공!');
+                } else {
+                    log('❌ 슬랙 알림 전송 실패');
+                }
+            } catch (error) {
+                log('❌ 오류 발생: ' + error.message);
+            }
+        }
+        
+        async function testDirectWebhook() {
+            clearLog();
+            log('=== 웹훅 직접 테스트 시작 ===');
+            
+            const webhookUrl = window.SLACK_WEBHOOK_URL;
+            if (!webhookUrl) {
+                log('❌ 웹훅 URL을 찾을 수 없음');
+                return;
+            }
+            
+            log('웹훅 URL: ' + webhookUrl.substring(0, 50) + '...');
+            
+            const testMessage = {
+                text: '🧪 웹훅 직접 테스트 메시지 - ' + new Date().toLocaleString('ko-KR')
+            };
+            
+            try {
+                log('📤 웹훅 요청 전송...');
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testMessage)
+                });
+                
+                log('응답 상태: ' + response.status);
+                
+                if (response.ok) {
+                    log('✅ 웹훅 테스트 성공!');
+                } else {
+                    const text = await response.text();
+                    log('❌ 웹훅 테스트 실패: ' + text);
+                }
+            } catch (error) {
+                log('❌ 오류 발생: ' + error.message);
+            }
+        }
+        
+        // 페이지 로드 시 상태 확인
+        window.addEventListener('load', () => {
+            log('=== 슬랙 설정 상태 ===');
+            log('notifyNewProperty: ' + (typeof window.notifyNewProperty === 'function' ? '✅' : '❌'));
+            log('notifyStatusChange: ' + (typeof window.notifyStatusChange === 'function' ? '✅' : '❌'));
+            log('SLACK_WEBHOOK_URL: ' + (window.SLACK_WEBHOOK_URL ? '✅' : '❌'));
+            log('notificationSettings.newProperty: ' + window.notificationSettings.newProperty);
+            log('notificationSettings.statusChange: ' + window.notificationSettings.statusChange);
+            log('notificationSettings.slackSend: ' + window.notificationSettings.slackSend);
+            log('');
+        });
+    </script>
+</body>
+</html>
