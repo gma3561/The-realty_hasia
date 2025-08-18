@@ -1,0 +1,420 @@
+{
+  "date": "2025-08-18T09:33:17.130Z",
+  "criteria": "register_date >= 2025-08-15",
+  "totalCount": 40,
+  "dateDistribution": {
+    "2025-08-18": [
+      {
+        "id": "cf0471ce-354f-4f33-ae32-8cae11fcecee",
+        "property_name": "아울스 타운",
+        "address": "서울 용산구 동빙고동 1-36,",
+        "register_date": "2025-08-18T00:00:00+00:00",
+        "created_at": "2025-08-18T05:05:02.771594+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "82d99856-1d7a-4d6e-97f2-8ba58c332148",
+        "property_name": "테스트",
+        "address": "입니다",
+        "register_date": "2025-08-18T00:00:00+00:00",
+        "created_at": "2025-08-18T01:39:25.63007+00:00",
+        "status": "거래완료",
+        "manager": "정연서"
+      }
+    ],
+    "2025-08-17": [
+      {
+        "id": "f2950402-4cb4-4920-abf7-94710e6a3d87",
+        "property_name": "영등포 다빈치 펜트",
+        "address": "영등포구 양평로 8",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:29.189222+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "12c4878b-2204-4873-a035-28384e015a24",
+        "property_name": "3/2개",
+        "address": "2대",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:27.839211+00:00",
+        "status": "거래가능",
+        "manager": "25억(네고가능)"
+      },
+      {
+        "id": "ee83faac-e9a7-450a-8c5d-ff0625b61362",
+        "property_name": "삼성 라테라스",
+        "address": "삼성동 110-2",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:24.123624+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "3151ccc8-1f70-47bd-b331-f4b40418e5a4",
+        "property_name": "브라운스톤로얄스위트논현",
+        "address": "논현동 43-3",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:19.22994+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "ca949cdf-c24e-46e7-a972-d7740adf7dc3",
+        "property_name": "우면동 34-4",
+        "address": "우면동",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:19.326737+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "d72f3fc7-ec8e-4607-8c60-10eb693f7aee",
+        "property_name": "베스티아3차",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:19.682691+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "3f98fc15-57c5-4c06-9a5a-752b5e0785f3",
+        "property_name": "운중동 산운1단지 월든힐스",
+        "address": "운중동 875",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:20.519867+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "92b8a1a2-eb99-4e5d-be59-8b52b2844c56",
+        "property_name": "방배갤러리하우스3A",
+        "address": "방배동 1-7",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:22.266736+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "c454b17e-c3b6-418b-9543-26e1c1d88389",
+        "property_name": "O",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:24.38365+00:00",
+        "status": "거래가능",
+        "manager": null
+      },
+      {
+        "id": "83210690-4a73-495b-ad2e-8d22a54f9415",
+        "property_name": "청담대우멤버스카운티6차",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:28.594396+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "c576c5ca-4524-4200-a4a2-7e37669c668a",
+        "property_name": "GTX-A 신분당선 계획",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:30.226093+00:00",
+        "status": "거래가능",
+        "manager": "광화문 생활권 진출입"
+      },
+      {
+        "id": "3e8570a3-96b8-43f7-8527-ca0849db183f",
+        "property_name": "논현빌라",
+        "address": "논현동42-1",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:19.836724+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "cd3dec63-5bd5-4843-bd02-4d323109025e",
+        "property_name": "갤러리아포레",
+        "address": "서울숲2길32-14",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:21.892721+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "c1268151-ae14-4ca2-8958-b0245c9f9473",
+        "property_name": "O",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:22.957118+00:00",
+        "status": "거래가능",
+        "manager": null
+      },
+      {
+        "id": "c975411b-21f4-419f-8c65-7ff9402a6bdb",
+        "property_name": "한장있음",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:24.525344+00:00",
+        "status": "거래가능",
+        "manager": null
+      },
+      {
+        "id": "f71a503f-3b2d-4522-b46a-8ff705fc5b90",
+        "property_name": "구의동 래미안파크스위트",
+        "address": "구의동668",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:27.069205+00:00",
+        "status": "거래가능",
+        "manager": "정윤식"
+      },
+      {
+        "id": "95dd3929-0b21-43f5-b41a-eb0669d06cfe",
+        "property_name": "영등포 다빈치 펜트",
+        "address": "영등포구 양평로 8",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:29.223648+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "083a351d-5b59-4b0d-a0f0-f4fca2b257d1",
+        "property_name": "현대까르띠에710",
+        "address": "역삼동710",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:30.356003+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "359c5bff-e19e-4052-bb5a-1367b74d5b7b",
+        "property_name": "성북동빌리지",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:19.921341+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "96dc9d2b-675f-4363-89b2-96d81f423295",
+        "property_name": "갤러리아포레",
+        "address": "서울숲2길32-14",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:21.712103+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "bf7d286e-dadb-446b-b30e-f21b07c16b91",
+        "property_name": "A",
+        "address": "한남 힐사이드",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:20.016922+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "f4f9f61e-d913-4a2b-abad-4ac2d6607950",
+        "property_name": "운중동 산운1단지 월든힐스",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:20.482826+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "963f714d-6aa8-4af4-9947-282efecdd8c9",
+        "property_name": "빌라두오모 펜트세대",
+        "address": "방배동 800-1",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:21.496278+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "5fbca691-9c1f-438b-9c29-1057f4d98374",
+        "property_name": "르피에드 문정",
+        "address": "문정동652-3",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:22.744243+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "55d5799b-4727-4fc3-94f3-1332a6740822",
+        "property_name": "도무스",
+        "address": "서초동 1497-12",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:26.371526+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "45d585de-14ce-479c-9b05-699130ef7acf",
+        "property_name": "삼성동87",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:27.956766+00:00",
+        "status": "거래가능",
+        "manager": "삼성동최고급단지"
+      },
+      {
+        "id": "affe9321-e6b5-436d-8b93-85649b6e64bb",
+        "property_name": "1",
+        "address": "아나하(도시형)",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:28.79321+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "baff07db-ea97-475e-b1ee-08f936fbfb41",
+        "property_name": "101",
+        "address": "현대까르띠에710",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:29.297461+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "0f69a165-d026-49c1-9db2-58bca3e320b8",
+        "property_name": "코번하우스 B2 가든 고급빌라",
+        "address": "한남동 15-12",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:29.827379+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "508d2d71-7c54-4a41-aa8d-e8bfe8b4569e",
+        "property_name": "721212-2",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:22.297452+00:00",
+        "status": "거래가능",
+        "manager": null
+      },
+      {
+        "id": "e2e97693-b597-4d7e-b43e-a880889e7dab",
+        "property_name": "23년 9월 만기",
+        "address": null,
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:26.448198+00:00",
+        "status": "거래가능",
+        "manager": "임차인"
+      },
+      {
+        "id": "f1fdb174-ea7b-4051-b8d5-d6d4c04a4864",
+        "property_name": "101",
+        "address": "브라이튼 논현",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:26.703611+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "128e4013-b29d-434a-b382-d1f416c524aa",
+        "property_name": "성지라빌레뜨",
+        "address": "방배동 845-1",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:28.344815+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      },
+      {
+        "id": "5bfdc00a-d735-497c-8dc0-7f7dc7a004ff",
+        "property_name": "330-523",
+        "address": "성북동330-523",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:20.899799+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "d7aed77e-1006-414b-80c5-325f44c3a6b3",
+        "property_name": "벽산메가트리움",
+        "address": "한강로2가2-8",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:21.394808+00:00",
+        "status": "거래가능",
+        "manager": "박소현"
+      },
+      {
+        "id": "1b254f09-9994-4a40-8fd0-81f9e3b03890",
+        "property_name": "서초동 갤러리하우스",
+        "address": "서초동 1508-39",
+        "register_date": "2025-08-17T00:00:00+00:00",
+        "created_at": "2025-08-17T17:57:23.164937+00:00",
+        "status": "거래가능",
+        "manager": "회사매물"
+      }
+    ],
+    "2025-08-15": [
+      {
+        "id": "00fdfc43-b94b-4f57-b8e3-8bc62646066d",
+        "property_name": "롯데캐슬이스트폴",
+        "address": "자양동 680-63",
+        "register_date": "2025-08-15T00:00:00+00:00",
+        "created_at": "2025-08-17T17:55:06.109439+00:00",
+        "status": "거래완료",
+        "manager": "박소현"
+      },
+      {
+        "id": "0ec08ab0-be21-45ac-adf4-3b4f1788d5c2",
+        "property_name": "롯데캐슬이스트폴",
+        "address": "자양동 680-63",
+        "register_date": "2025-08-15T00:00:00+00:00",
+        "created_at": "2025-08-17T17:55:06.215694+00:00",
+        "status": "거래완료",
+        "manager": "박소현"
+      }
+    ]
+  },
+  "ids": [
+    "cf0471ce-354f-4f33-ae32-8cae11fcecee",
+    "82d99856-1d7a-4d6e-97f2-8ba58c332148",
+    "f2950402-4cb4-4920-abf7-94710e6a3d87",
+    "12c4878b-2204-4873-a035-28384e015a24",
+    "ee83faac-e9a7-450a-8c5d-ff0625b61362",
+    "3151ccc8-1f70-47bd-b331-f4b40418e5a4",
+    "ca949cdf-c24e-46e7-a972-d7740adf7dc3",
+    "d72f3fc7-ec8e-4607-8c60-10eb693f7aee",
+    "3f98fc15-57c5-4c06-9a5a-752b5e0785f3",
+    "92b8a1a2-eb99-4e5d-be59-8b52b2844c56",
+    "c454b17e-c3b6-418b-9543-26e1c1d88389",
+    "83210690-4a73-495b-ad2e-8d22a54f9415",
+    "c576c5ca-4524-4200-a4a2-7e37669c668a",
+    "3e8570a3-96b8-43f7-8527-ca0849db183f",
+    "cd3dec63-5bd5-4843-bd02-4d323109025e",
+    "c1268151-ae14-4ca2-8958-b0245c9f9473",
+    "c975411b-21f4-419f-8c65-7ff9402a6bdb",
+    "f71a503f-3b2d-4522-b46a-8ff705fc5b90",
+    "95dd3929-0b21-43f5-b41a-eb0669d06cfe",
+    "083a351d-5b59-4b0d-a0f0-f4fca2b257d1",
+    "359c5bff-e19e-4052-bb5a-1367b74d5b7b",
+    "96dc9d2b-675f-4363-89b2-96d81f423295",
+    "bf7d286e-dadb-446b-b30e-f21b07c16b91",
+    "f4f9f61e-d913-4a2b-abad-4ac2d6607950",
+    "963f714d-6aa8-4af4-9947-282efecdd8c9",
+    "5fbca691-9c1f-438b-9c29-1057f4d98374",
+    "55d5799b-4727-4fc3-94f3-1332a6740822",
+    "45d585de-14ce-479c-9b05-699130ef7acf",
+    "affe9321-e6b5-436d-8b93-85649b6e64bb",
+    "baff07db-ea97-475e-b1ee-08f936fbfb41",
+    "0f69a165-d026-49c1-9db2-58bca3e320b8",
+    "508d2d71-7c54-4a41-aa8d-e8bfe8b4569e",
+    "e2e97693-b597-4d7e-b43e-a880889e7dab",
+    "f1fdb174-ea7b-4051-b8d5-d6d4c04a4864",
+    "128e4013-b29d-434a-b382-d1f416c524aa",
+    "5bfdc00a-d735-497c-8dc0-7f7dc7a004ff",
+    "d7aed77e-1006-414b-80c5-325f44c3a6b3",
+    "1b254f09-9994-4a40-8fd0-81f9e3b03890",
+    "00fdfc43-b94b-4f57-b8e3-8bc62646066d",
+    "0ec08ab0-be21-45ac-adf4-3b4f1788d5c2"
+  ],
+  "summary": {
+    "2025-08-18": 2,
+    "2025-08-17": 36,
+    "2025-08-15": 2
+  }
+}

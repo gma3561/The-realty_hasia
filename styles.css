@@ -249,6 +249,11 @@ body {
     color: #374151;
 }
 
+/* 매물번호 헤더 너비 확보 */
+.data-table th:nth-child(2) {
+    min-width: 85px;
+}
+
 /* 모든 테이블 헤더 동일한 스타일 적용됨 */
 
 /* 소재지 컬럼 너비 1.5배 */
@@ -309,7 +314,6 @@ body {
 
 /* 테이블 데이터 - 좁은 컬럼들 */
 .data-table td:nth-child(1),  /* 등록일 */
-.data-table td:nth-child(2),  /* 매물번호 */
 .data-table td:nth-child(4),  /* 매물종류 */
 .data-table td:nth-child(5),  /* 거래유형 */
 .data-table td:nth-child(8),  /* 소재지 */
@@ -1547,7 +1551,6 @@ body {
 
     /* 좁은 컬럼들 */
     .data-table td:nth-child(1),  /* 등록일 */
-    .data-table td:nth-child(2),  /* 매물번호 */
     .data-table td:nth-child(3),  /* 매물상태 */
     .data-table td:nth-child(4),  /* 매물종류 */
     .data-table td:nth-child(5),  /* 거래유형 */
@@ -1557,6 +1560,14 @@ body {
     .data-table td:nth-child(15)  /* 담당자 */ {
         font-size: 10px;
         padding: 6px 3px;
+    }
+    
+    /* 매물번호는 더 넓게 표시 */
+    .data-table td:nth-child(2) {
+        font-size: 11px;
+        padding: 6px 4px;
+        min-width: 85px;
+        white-space: nowrap;
     }
 
     /* 필터 바 요소들 크기 증가 */

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공유여부 표시 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+            font-weight: bold;
+        }
+        .shared-true {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .shared-false {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>공유여부 표시 테스트</h1>
+    
+    <div id="log" class="log">테스트 로그가 여기에 표시됩니다...</div>
+    
+    <h2>최근 매물 데이터 (공유여부 확인)</h2>
+    <table id="propertyTable">
+        <thead>
+            <tr>
+                <th>매물명</th>
+                <th>공유여부 (DB값)</th>
+                <th>표시값</th>
+                <th>담당자</th>
+                <th>상태</th>
+                <th>등록일</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr><td colspan="6">데이터 로딩 중...</td></tr>
+        </tbody>
+    </table>
+
+    <h2>공유/비공유 통계</h2>
+    <div id="stats"></div>
+
+    <!-- Supabase 설정 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        const log = (message) => {
+            const logDiv = document.getElementById('log');
+            logDiv.textContent += message + '\n';
+            console.log(message);
+        };
+
+        async function testSharedDisplay() {
+            log('=== 공유여부 표시 테스트 시작 ===');
+            
+            if (!window.supabaseClient) {
+                log('❌ Supabase 클라이언트가 없습니다.');
+                return;
+            }
+
+            try {
+                // 최근 데이터 50개 가져오기
+                log('📥 최근 50개 데이터 조회 중...');
+                const { data: properties, error } = await window.supabaseClient
+                    .from('properties')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+
+                if (error) {
+                    log('❌ 오류: ' + error.message);
+                    return;
+                }
+
+                log(`✅ ${properties.length}개 데이터 조회 완료`);
+
+                // 통계 계산
+                let sharedTrue = 0;
+                let sharedFalse = 0;
+                let sharedNull = 0;
+
+                const tableBody = document.getElementById('tableBody');
+                let html = '';
+
+                properties.forEach(property => {
+                    // 공유여부 값 분석
+                    const sharedValue = property.shared;
+                    let displayValue = '';
+                    let className = '';
+
+                    if (sharedValue === true) {
+                        displayValue = '공유';
+                        className = 'shared-true';
+                        sharedTrue++;
+                    } else if (sharedValue === false) {
+                        displayValue = '비공유';
+                        className = 'shared-false';
+                        sharedFalse++;
+                    } else if (sharedValue === null || sharedValue === undefined) {
+                        displayValue = '미설정';
+                        className = '';
+                        sharedNull++;
+                    } else {
+                        displayValue = `기타: ${sharedValue}`;
+                        className = '';
+                    }
+
+                    html += `
+                        <tr>
+                            <td>${property.property_name || '-'}</td>
+                            <td>${sharedValue === null ? 'null' : sharedValue === undefined ? 'undefined' : sharedValue}</td>
+                            <td class="${className}">${displayValue}</td>
+                            <td>${property.manager || '-'}</td>
+                            <td>${property.status || '-'}</td>
+                            <td>${property.register_date ? new Date(property.register_date).toLocaleDateString('ko-KR') : '-'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableBody.innerHTML = html;
+
+                // 통계 표시
+                const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = `
+                    <p><strong>전체: ${properties.length}개</strong></p>
+                    <p style="color: #2e7d32;">✅ 공유 (true): ${sharedTrue}개 (${(sharedTrue/properties.length*100).toFixed(1)}%)</p>
+                    <p style="color: #c2185b;">❌ 비공유 (false): ${sharedFalse}개 (${(sharedFalse/properties.length*100).toFixed(1)}%)</p>
+                    <p style="color: #666;">⚪ 미설정 (null/undefined): ${sharedNull}개 (${(sharedNull/properties.length*100).toFixed(1)}%)</p>
+                `;
+
+                log('\n=== 통계 ===');
+                log(`공유: ${sharedTrue}개`);
+                log(`비공유: ${sharedFalse}개`);
+                log(`미설정: ${sharedNull}개`);
+
+                // 문제 진단
+                if (sharedNull > 0) {
+                    log('\n⚠️ 일부 데이터의 공유여부가 설정되지 않았습니다.');
+                }
+
+                if (sharedTrue === 0 && sharedFalse === 0) {
+                    log('\n❌ 모든 데이터의 공유여부가 미설정 상태입니다.');
+                    log('원인: CSV 업로드 시 공유여부 필드가 제대로 매핑되지 않았을 가능성');
+                }
+
+                log('\n✅ 테스트 완료');
+
+            } catch (error) {
+                log('❌ 오류 발생: ' + error.message);
+            }
+        }
+
+        // 페이지 로드 시 테스트 실행
+        window.addEventListener('load', () => {
+            setTimeout(testSharedDisplay, 1000);
+        });
+    </script>
+</body>
+</html>
