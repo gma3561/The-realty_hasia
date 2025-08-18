@@ -191,6 +191,7 @@ body {
     flex: 1 1 auto;
     overflow-y: scroll;
     padding-bottom: 70px; /* 고정 페이지네이션을 위한 하단 패딩 */
+    padding-top: 34px; /* 테이블 헤더 공간 확보 */
     overflow-x: auto;
     position: relative;
     -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
@@ -205,23 +206,25 @@ body {
 }
 
 .data-table thead {
-    position: sticky !important;
-    top: 164px !important; /* 헤더(115px) + 필터바(49px) = 164px (실측정값) */
+    position: absolute !important;
+    top: 0 !important; /* 테이블 컨테이너 최상단 */
+    left: 0 !important;
+    right: 0 !important;
     z-index: 50 !important;
     background: #f8f9fa !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 모바일에서 헤더 아래에 테이블 헤더 고정 */
+/* 모바일에서도 테이블 컨테이너 상단에 고정 */
 @media (max-width: 768px) {
     .data-table thead {
-        top: 121px !important; /* 모바일 헤더(84px) + 모바일 필터바(37px) = 121px (실측정값) */
+        top: 0 !important; /* 테이블 컨테이너 최상단 */
     }
 }
 
 @media (max-width: 480px) {
     .data-table thead {
-        top: 121px !important; /* 소형 모바일 헤더(84px) + 소형 모바일 필터바(37px) = 121px (실측정값) */
+        top: 0 !important; /* 테이블 컨테이너 최상단 */
     }
 }
 

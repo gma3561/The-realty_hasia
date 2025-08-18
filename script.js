@@ -4126,6 +4126,13 @@ let totalPages = 1;
 function renderTable(data) {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
+    
+    // 테이블 렌더링 후 헤더 위치 조정
+    setTimeout(() => {
+        if (typeof adjustTableHeaderPosition === 'function') {
+            adjustTableHeaderPosition();
+        }
+    }, 100);
 
     // 전체 데이터 수 업데이트
     const totalItems = data.length;
