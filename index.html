@@ -600,10 +600,9 @@
             thead.style.background = '#f8f9fa';
             thead.style.width = '100%';
             
-            // TBODY에 padding-top 추가하여 THEAD 공간 확보
-            const theadHeight = thead.offsetHeight || 34;
-            tbody.style.display = 'block';
-            tbody.style.paddingTop = `${theadHeight}px`;
+            // TBODY 스타일 초기화 (padding 제거)
+            tbody.style.display = 'table-row-group';
+            tbody.style.paddingTop = '0';
             
             // 테이블 컨테이너 스크롤 시 THEAD 위치 조정
             tableContainer.addEventListener('scroll', () => {

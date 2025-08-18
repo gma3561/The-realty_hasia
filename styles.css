@@ -191,7 +191,7 @@ body {
     flex: 1 1 auto;
     overflow-y: scroll;
     padding-bottom: 70px; /* 고정 페이지네이션을 위한 하단 패딩 */
-    padding-top: 34px; /* 테이블 헤더 공간 확보 */
+    padding-top: 0; /* padding 제거 */
     overflow-x: auto;
     position: relative;
     -webkit-overflow-scrolling: touch; /* iOS 스크롤 부드럽게 */
