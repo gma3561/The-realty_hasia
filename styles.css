@@ -203,6 +203,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
+    margin-top: 34px; /* 테이블 헤더 높이만큼 마진 추가 */
 }
 
 .data-table thead {
