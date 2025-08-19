@@ -1,0 +1,214 @@
+/* 관리자 기능 스타일 */
+
+/* 수정/삭제 버튼 스타일 */
+.admin-actions {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn-edit,
+.btn-delete {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit:hover {
+    background: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+
+.btn-edit svg {
+    stroke: #4CAF50;
+}
+
+.btn-edit:hover svg {
+    stroke: white;
+}
+
+.btn-delete:hover {
+    background: #f44336;
+    border-color: #f44336;
+    color: white;
+}
+
+.btn-delete svg {
+    stroke: #f44336;
+}
+
+.btn-delete:hover svg {
+    stroke: white;
+}
+
+/* 삭제된 매물 테이블 */
+.deleted-properties-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.deleted-properties-table th,
+.deleted-properties-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.deleted-properties-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+.deleted-properties-table tr:hover {
+    background: #f9f9f9;
+}
+
+.btn-restore,
+.btn-permanent-delete {
+    padding: 4px 12px;
+    margin: 0 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.btn-restore {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-restore:hover {
+    background: #45a049;
+}
+
+.btn-permanent-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-permanent-delete:hover {
+    background: #da190b;
+}
+
+/* 로딩 오버레이 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 알림 메시지 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    display: none;
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification.success {
+    background: #4CAF50;
+}
+
+.notification.error {
+    background: #f44336;
+}
+
+.notification.info {
+    background: #2196F3;
+}
+
+.notification.warning {
+    background: #ff9800;
+}
+
+/* 관리자 전용 컬럼 스타일 */
+.admin-only {
+    background: #fef9e7;
+    font-size: 12px;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .admin-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .btn-edit,
+    .btn-delete {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .deleted-properties-table {
+        font-size: 12px;
+    }
+    
+    .deleted-properties-table th,
+    .deleted-properties-table td {
+        padding: 4px 6px;
+    }
+    
+    .notification {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+    }
+}

@@ -64,11 +64,12 @@ async function loadProperties() {
 // 매물 목록 표시
 function displayProperties(properties) {
     const tableBody = document.getElementById('tableBody');
+    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
     
     if (!properties || properties.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="13" style="text-align: center; padding: 40px;">
+                <td colspan="${isAdmin ? '21' : '15'}" style="text-align: center; padding: 40px;">
                     등록된 매물이 없습니다.<br>
                     <button class="btn-primary" onclick="goToForm()" style="margin-top: 20px;">첫 매물 등록하기</button>
                 </td>
@@ -77,25 +78,33 @@ function displayProperties(properties) {
         return;
     }
     
-    tableBody.innerHTML = properties.map(property => `
-        <tr onclick="showPropertyDetails(${property.id})" style="cursor: pointer;">
-            <td>${formatDate(property.register_date)}</td>
-            <td>${property.property_number || '-'}</td>
-            <td><span class="status-badge ${getStatusClass(property.status)}">${property.status || '-'}</span></td>
-            <td>${property.property_type || '-'}</td>
-            <td>${property.trade_type || '-'}</td>
-            <td>${property.price || '-'}</td>
-            <td>${property.property_name || '-'}</td>
-            <td>${property.address || '-'}</td>
-            <td>${property.dong || '-'}</td>
-            <td>${property.ho || '-'}</td>
-            <td>${property.supply_area_sqm || '-'}</td>
-            <td>${property.supply_area_pyeong || '-'}</td>
-            <td>${property.floor_current && property.floor_total ? `${property.floor_current}/${property.floor_total}` : '-'}</td>
-            <td>${property.shared === true ? '공유' : property.shared === false ? '비공유' : '-'}</td>
-            <td>${property.manager || '-'}</td>
-        </tr>
-    `).join('');
+    // 관리자 모드일 때는 admin-functions.js의 generateAdminTableRow 사용
+    if (isAdmin && window.generateAdminTableRow) {
+        tableBody.innerHTML = properties.map(property => 
+            window.generateAdminTableRow(property)
+        ).join('');
+    } else {
+        // 일반 사용자 모드
+        tableBody.innerHTML = properties.map(property => `
+            <tr onclick="showPropertyDetails('${property.id}')" style="cursor: pointer;">
+                <td>${formatDate(property.register_date)}</td>
+                <td>${property.property_number || '-'}</td>
+                <td><span class="status-badge ${getStatusClass(property.status)}">${property.status || '-'}</span></td>
+                <td>${property.property_type || '-'}</td>
+                <td>${property.trade_type || '-'}</td>
+                <td>${property.price || '-'}</td>
+                <td>${property.property_name || '-'}</td>
+                <td>${property.address || '-'}</td>
+                <td>${property.dong || '-'}</td>
+                <td>${property.ho || '-'}</td>
+                <td>${property.supply_area_sqm || '-'}</td>
+                <td>${property.supply_area_pyeong || '-'}</td>
+                <td>${property.floor_current && property.floor_total ? `${property.floor_current}/${property.floor_total}` : '-'}</td>
+                <td>${property.shared === true ? '공유' : property.shared === false ? '비공유' : '-'}</td>
+                <td>${property.manager || '-'}</td>
+            </tr>
+        `).join('');
+    }
 }
 
 // 매물 상세 정보 표시

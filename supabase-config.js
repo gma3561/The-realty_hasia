@@ -95,12 +95,19 @@ async function generateUniquePropertyNumber() {
     return fallbackNumber;
 }
 
-// 매물 목록 조회 (전체 데이터 가져오기)
-async function getProperties(limit = null, offset = 0) {
+// 매물 목록 조회 (전체 데이터 가져오기 - 삭제된 항목 제외)
+async function getProperties(limit = null, offset = 0, includeDeleted = false) {
     try {
         let query = supabaseClient
             .from('properties')
-            .select('*', { count: 'exact' })
+            .select('*', { count: 'exact' });
+        
+        // 삭제된 항목 제외 (기본값)
+        if (!includeDeleted) {
+            query = query.or('deleted_at.is.null,is_deleted.is.false');
+        }
+        
+        query = query
             .order('register_date', { ascending: false })
             .order('created_at', { ascending: false });
         
@@ -363,7 +370,7 @@ async function updateProperty(id, propertyData) {
     }
 }
 
-// 매물 삭제 (상태값만 변경)
+// 매물 삭제 (소프트 삭제)
 async function deleteProperty(id) {
     try {
         console.log('deleteProperty 함수 시작, ID:', id);
@@ -373,21 +380,125 @@ async function deleteProperty(id) {
             return { success: false, error: new Error('데이터베이스 연결이 필요합니다.') };
         }
 
+        // 소프트 삭제: deleted_at 필드 설정
         const { data, error } = await supabaseClient
             .from('properties')
-            .update({ status: '삭제됨' })
-            .eq('id', id);
+            .update({ 
+                deleted_at: new Date().toISOString(),
+                status: '삭제됨' 
+            })
+            .eq('id', id)
+            .select();
 
         if (error) {
             console.error('매물 삭제 오류:', error);
             return { success: false, error };
         }
 
-        console.log('매물 삭제 완료 (상태 변경), ID:', id);
-        return { success: true, error: null, data: { id } };
+        console.log('매물 소프트 삭제 완료, ID:', id);
+        return { success: true, error: null, data: data[0] };
     } catch (err) {
         console.error('매물 삭제 중 예외 발생:', err);
         return { success: false, error: err };
+    }
+}
+
+// 매물 복구 (소프트 삭제된 항목 복구)
+async function restoreProperty(id) {
+    try {
+        console.log('restoreProperty 함수 시작, ID:', id);
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.') };
+        }
+
+        const { data, error } = await supabaseClient
+            .from('properties')
+            .update({ 
+                deleted_at: null,
+                status: '거래가능' 
+            })
+            .eq('id', id)
+            .select();
+
+        if (error) {
+            console.error('매물 복구 오류:', error);
+            return { success: false, error };
+        }
+
+        console.log('매물 복구 완료, ID:', id);
+        return { success: true, error: null, data: data[0] };
+    } catch (err) {
+        console.error('매물 복구 중 예외 발생:', err);
+        return { success: false, error: err };
+    }
+}
+
+// 매물 영구 삭제 (물리적 삭제 - 관리자 전용)
+async function permanentlyDeleteProperty(id) {
+    try {
+        console.log('permanentlyDeleteProperty 함수 시작, ID:', id);
+        
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.') };
+        }
+
+        // 관리자 권한 확인
+        const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+        if (!isAdmin) {
+            return { success: false, error: new Error('관리자 권한이 필요합니다.') };
+        }
+
+        const { error } = await supabaseClient
+            .from('properties')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('매물 영구 삭제 오류:', error);
+            return { success: false, error };
+        }
+
+        console.log('매물 영구 삭제 완료, ID:', id);
+        return { success: true, error: null };
+    } catch (err) {
+        console.error('매물 영구 삭제 중 예외 발생:', err);
+        return { success: false, error: err };
+    }
+}
+
+// 삭제된 매물 목록 조회 (관리자 전용)
+async function getDeletedProperties() {
+    try {
+        if (!supabaseClient) {
+            console.error('Supabase 클라이언트가 초기화되지 않음');
+            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: [] };
+        }
+
+        // 관리자 권한 확인
+        const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+        if (!isAdmin) {
+            return { success: false, error: new Error('관리자 권한이 필요합니다.'), data: [] };
+        }
+
+        const { data, error } = await supabaseClient
+            .from('properties')
+            .select('*')
+            .not('deleted_at', 'is', null)
+            .order('deleted_at', { ascending: false });
+
+        if (error) {
+            console.error('삭제된 매물 조회 오류:', error);
+            return { success: false, error, data: [] };
+        }
+
+        console.log(`삭제된 매물 ${data.length}개 조회 완료`);
+        return { success: true, error: null, data };
+    } catch (err) {
+        console.error('삭제된 매물 조회 중 예외 발생:', err);
+        return { success: false, error: err, data: [] };
     }
 }
 
@@ -395,6 +506,11 @@ async function deleteProperty(id) {
 async function getFilteredProperties(filters) {
     try {
         let query = supabaseClient.from('properties').select('*', { count: 'exact' });
+
+        // 삭제된 항목 제외 (기본값)
+        if (!filters.includeDeleted) {
+            query = query.or('deleted_at.is.null,is_deleted.is.false');
+        }
 
         // 필터 적용
         if (filters.property_type) {
@@ -544,6 +660,9 @@ window.getPropertyById = getPropertyById;
 window.insertProperty = insertProperty;
 window.updateProperty = updateProperty;
 window.deleteProperty = deleteProperty;
+window.restoreProperty = restoreProperty;
+window.permanentlyDeleteProperty = permanentlyDeleteProperty;
+window.getDeletedProperties = getDeletedProperties;
 window.getFilteredProperties = getFilteredProperties;
 window.subscribeToProperties = subscribeToProperties;
 window.subscribeToAuditLogs = subscribeToAuditLogs;
