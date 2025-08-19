@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             await loadProperties();
             // 실시간 구독 설정
             setupRealtimeSubscription();
+            // 관리자 UI 업데이트
+            if (window.updateAdminUI) {
+                window.updateAdminUI();
+            }
         }
     }, 1000);
     
@@ -51,6 +55,7 @@ async function loadProperties() {
         }
         
         currentProperties = data || [];
+        window.currentProperties = currentProperties; // 전역 변수로 노출
         displayProperties(currentProperties);
         
         console.log(`총 ${count}개의 매물을 불러왔습니다.`);
@@ -276,6 +281,7 @@ async function applyFilters() {
         }
         
         currentProperties = data || [];
+        window.currentProperties = currentProperties; // 전역 변수로 노출
         displayProperties(currentProperties);
         
     } catch (error) {
@@ -302,6 +308,7 @@ async function searchProperties(searchTerm) {
         }
         
         currentProperties = data || [];
+        window.currentProperties = currentProperties; // 전역 변수로 노출
         displayProperties(currentProperties);
         
         if (currentProperties.length === 0) {
@@ -368,6 +375,11 @@ function getStatusClass(status) {
         default: return '';
     }
 }
+
+// 전역 함수로 노출
+window.formatDate = formatDate;
+window.getStatusClass = getStatusClass;
+window.displayProperties = displayProperties;
 
 // 로딩 상태 표시
 function showLoadingState() {
