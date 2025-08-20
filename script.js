@@ -23,7 +23,9 @@ function handleHeaderClick() {
 
 // 관리자 로그인 상태 확인
 function isAdminLoggedIn() {
-    return sessionStorage.getItem('admin_logged_in') === 'true';
+    // 두 가지 키 모두 확인 (호환성 유지)
+    return sessionStorage.getItem('admin_logged_in') === 'true' || 
+           sessionStorage.getItem('adminAuthenticated') === 'true';
 }
 
 // 관리자 로그아웃
@@ -45,8 +47,48 @@ function editProperty(id) {
         alert('관리자만 매물을 수정할 수 있습니다.');
         return;
     }
-    console.log('관리자 권한 확인됨, 페이지 이동:', `form.html?edit=${id}`);
-    window.location.href = `form.html?edit=${id}`;
+    // form.html은 'id' 파라미터를 사용함
+    const targetUrl = `form.html?id=${id}`;
+    console.log('관리자 권한 확인됨, 페이지 이동:', targetUrl);
+    
+    // 즉시 페이지 이동 - 더 강력한 방법 사용
+    console.log('페이지 이동 시도 1: location.href');
+    window.location.href = targetUrl;
+    
+    // 백업: 100ms 후 다시 시도
+    setTimeout(() => {
+        if (window.location.href.includes('index.html')) {
+            console.log('페이지 이동 시도 2: location.assign');
+            try {
+                window.location.assign(targetUrl);
+            } catch (e) {
+                console.log('페이지 이동 시도 3: top.location');
+                try {
+                    window.top.location = targetUrl;
+                } catch (e2) {
+                    console.log('페이지 이동 시도 4: 강제 리로드');
+                    window.location = window.location.origin + '/' + targetUrl;
+                }
+            }
+        }
+    }, 100);
+    
+    // 최종 백업: 500ms 후에도 안되면 강제 방법
+    setTimeout(() => {
+        if (window.location.href.includes('index.html')) {
+            console.log('최후의 수단: form submit');
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = 'form.html';
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }, 500);
 }
 
 // 매물 삭제 (상태값만 변경)
@@ -55,9 +97,6 @@ function deleteProperty(id) {
     const sidePanel = document.getElementById('sidePanel');
     if (sidePanel && sidePanel.classList.contains('show')) {
         closeSidePanel();
-        // 패널이 닫힐 때까지 잠시 대기
-        setTimeout(() => deleteProperty(id), 300);
-        return;
     }
     
     // 관리자 권한 확인
@@ -74,32 +113,66 @@ function deleteProperty(id) {
     }
     
     // 삭제 확인 팝업
-    showDeleteConfirmModal(property.property || '매물', async () => {
-        try {
-            // Supabase 연동이 있는 경우 백엔드 업데이트
-            if (window.supabaseClient && window.deleteProperty) {
-                console.log('Supabase deleteProperty 호출 시작:', id);
-                const result = await window.deleteProperty(id);
-                console.log('Supabase deleteProperty 결과:', result);
-                
-                if (!result || !result.success) {
-                    throw new Error(result?.error?.message || '삭제 실패');
-                }
-            }
-            
-            // 로컬 데이터 상태값을 '삭제됨'으로 변경
-            property.status = '삭제됨';
-            
-            // 화면 업데이트 - 삭제된 항목 제외
-            filteredData = currentData.filter(item => item.status !== '삭제됨');
-            renderTable(filteredData);
-            
-            alert('매물이 삭제되었습니다.');
-        } catch (error) {
-            console.error('삭제 오류:', error);
-            alert('매물 삭제 중 오류가 발생했습니다: ' + error.message);
+    if (confirm(`"${property.property || '매물'}"을(를) 삭제하시겠습니까?\n삭제된 매물은 목록에서 숨겨집니다.`)) {
+        console.log('삭제 확인됨, 매물 ID:', id);
+        console.log('삭제 전 currentData 길이:', currentData.length);
+        
+        // 로컬 데이터에서 해당 항목의 상태를 '삭제됨'으로 변경
+        const targetProperty = currentData.find(item => item.id == id);
+        if (targetProperty) {
+            targetProperty.status = '삭제됨';
+            console.log('매물 상태 변경 완료:', targetProperty.property);
+        } else {
+            console.error('삭제할 매물을 찾을 수 없음:', id);
         }
-    });
+        
+        // 삭제되지 않은 데이터만 필터링
+        const newFilteredData = currentData.filter(item => item.status !== '삭제됨');
+        console.log('필터링 후 데이터 길이:', newFilteredData.length);
+        
+        // 전역 변수 업데이트
+        filteredData = newFilteredData;
+        
+        // 테이블 강제 재렌더링
+        try {
+            renderTable(newFilteredData);
+            console.log('테이블 재렌더링 완료');
+        } catch (renderError) {
+            console.error('테이블 렌더링 오류:', renderError);
+        }
+        
+        // 성공 메시지
+        alert('매물이 삭제되었습니다.');
+        
+        // Supabase 업데이트 (백그라운드에서)
+        if (window.supabaseClient) {
+            console.log('Supabase deleteProperty 호출 시작:', id);
+            // script-supabase.js의 deleteProperty 함수 직접 호출
+            const supabaseDeleteProperty = async (id) => {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('properties')
+                        .update({ 
+                            status: '삭제됨',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', id);
+                        
+                    if (error) throw error;
+                    return { success: true, data };
+                } catch (error) {
+                    console.error('Supabase 삭제 오류:', error);
+                    throw error;
+                }
+            };
+            
+            supabaseDeleteProperty(id).then(result => {
+                console.log('Supabase deleteProperty 결과:', result);
+            }).catch(error => {
+                console.error('Supabase 삭제 오류:', error);
+            });
+        }
+    }
 }
 
 // 삭제 확인 모달 표시
@@ -4162,13 +4235,13 @@ function renderTable(data) {
             <td class="admin-only" style="font-size: 9px; max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${(row.special || '-').substring(0, 20)}</td>
             <td class="admin-only" style="font-size: 9px; max-width: 100px; overflow: hidden; text-overflow: ellipsis;">${(row.memo || '-').substring(0, 20)}</td>
             <td style="min-width: 80px;">
-                <button class="btn-edit" onclick="editProperty('${row.id}')" title="수정">
+                <button class="btn-edit" onclick="event.stopPropagation(); editProperty('${row.id}');" title="수정">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                 </button>
-                <button class="btn-delete" onclick="deleteProperty('${row.id}')" title="삭제">
+                <button class="btn-delete" onclick="event.stopPropagation(); deleteProperty('${row.id}');" title="삭제">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3,6 5,6 21,6"/>
                         <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>

@@ -47,18 +47,21 @@ async function loadProperties() {
         // 로딩 표시
         showLoadingState();
         
-        // Supabase에서 데이터 조회 (전체 데이터)
-        const { data, error, count } = await getProperties(null, 0);
+        // Supabase에서 데이터 조회 (전체 데이터, 삭제된 항목 제외)
+        const { data, error, count } = await getProperties(null, 0, false);
         
         if (error) {
             throw error;
         }
         
-        currentProperties = data || [];
+        // 추가 필터링: is_deleted가 true인 항목 제외
+        const filteredData = (data || []).filter(item => !item.is_deleted);
+        
+        currentProperties = filteredData;
         window.currentProperties = currentProperties; // 전역 변수로 노출
         displayProperties(currentProperties);
         
-        console.log(`총 ${count}개의 매물을 불러왔습니다.`);
+        console.log(`총 ${currentProperties.length}개의 매물을 불러왔습니다.`);
         
     } catch (error) {
         console.error('매물 목록 로드 오류:', error);
@@ -376,10 +379,40 @@ function getStatusClass(status) {
     }
 }
 
+// Supabase 매물 삭제 함수 (상태를 '삭제됨'으로 변경)
+async function deleteProperty(id) {
+    try {
+        console.log(`Supabase 삭제 시작: ${id}`);
+        
+        const { data, error } = await supabaseClient
+            .from('properties')
+            .update({ 
+                status: '삭제됨',
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id);
+
+        if (error) {
+            console.error('Supabase 삭제 오류:', error);
+            throw error;
+        }
+
+        console.log(`Supabase 삭제 완료: ${id}`, data);
+        return { success: true, data };
+        
+    } catch (error) {
+        console.error('deleteProperty 함수 오류:', error);
+        throw error;
+    }
+}
+
 // 전역 함수로 노출
 window.formatDate = formatDate;
 window.getStatusClass = getStatusClass;
 window.displayProperties = displayProperties;
+window.loadProperties = loadProperties;
+window.showPropertyDetails = showPropertyDetails;
+window.deleteProperty = deleteProperty;
 
 // 로딩 상태 표시
 function showLoadingState() {

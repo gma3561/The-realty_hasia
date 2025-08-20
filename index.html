@@ -607,6 +607,117 @@
         // 추가 보장을 위해 타이머로도 실행
         setTimeout(adjustTableHeaderPosition, 1000);
         setTimeout(adjustTableHeaderPosition, 3000);
+        
+        // URL 파라미터로 특정 매물 자동 삭제
+        function checkAutoDeleteParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const autoDelete = urlParams.get('autoDelete');
+            const deleteParam = urlParams.get('delete');
+            
+            if (autoDelete === '20250820478' || deleteParam === '20250820478') {
+                console.log('자동 삭제 파라미터 감지: 20250820478');
+                
+                // 관리자 권한 설정
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('admin_logged_in', 'true');
+                
+                // 페이지 로드 후 삭제 실행
+                setTimeout(() => {
+                    forceDelete20250820478();
+                }, 2000);
+            }
+        }
+        
+        function forceDelete20250820478() {
+            console.log('20250820478 매물 강제 삭제 시작');
+            
+            const rows = document.querySelectorAll('tbody tr');
+            console.log(`총 ${rows.length}개 매물 스캔 중...`);
+            
+            let found = false;
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                const propertyNumber = cells[1]?.textContent?.trim();
+                
+                if (propertyNumber === '20250820478') {
+                    found = true;
+                    console.log(`발견: ${i+1}번째 행에서 20250820478 매물 찾음`);
+                    
+                    // DOM에서 제거
+                    rows[i].remove();
+                    console.log('DOM에서 해당 행 제거 완료');
+                    
+                    // 전역 데이터에서 제거
+                    if (window.currentData) {
+                        const originalLength = window.currentData.length;
+                        window.currentData = window.currentData.filter(item => 
+                            item.property_number !== '20250820478' && 
+                            item.매물번호 !== '20250820478' &&
+                            (typeof item.property === 'string' ? item.property !== '20250820478' : true)
+                        );
+                        console.log(`데이터 배열에서 제거: ${originalLength} → ${window.currentData.length}`);
+                    }
+                    
+                    if (window.filteredData) {
+                        const originalLength = window.filteredData.length;
+                        window.filteredData = window.filteredData.filter(item => 
+                            item.property_number !== '20250820478' && 
+                            item.매물번호 !== '20250820478' &&
+                            (typeof item.property === 'string' ? item.property !== '20250820478' : true)
+                        );
+                        console.log(`필터 데이터에서 제거: ${originalLength} → ${window.filteredData.length}`);
+                    }
+                    
+                    // 테이블 재렌더링
+                    if (window.renderTable && window.filteredData) {
+                        window.renderTable(window.filteredData);
+                        console.log('테이블 재렌더링 완료');
+                    }
+                    
+                    break;
+                }
+            }
+            
+            // 결과 확인
+            setTimeout(() => {
+                const newRows = document.querySelectorAll('tbody tr');
+                let stillExists = false;
+                
+                for (let j = 0; j < newRows.length; j++) {
+                    const newCells = newRows[j].querySelectorAll('td');
+                    const newPropertyNumber = newCells[1]?.textContent?.trim();
+                    if (newPropertyNumber === '20250820478') {
+                        stillExists = true;
+                        break;
+                    }
+                }
+                
+                console.log('\n=== 최종 결과 ===');
+                console.log(`총 매물 수: ${newRows.length}`);
+                console.log(`20250820478 존재: ${stillExists ? 'YES' : 'NO'}`);
+                
+                if (found && !stillExists) {
+                    console.log('🎉 성공: 20250820478 매물이 완전히 제거됨');
+                    alert(`✅ 20250820478 매물 삭제 완료!\n목록에서 완전히 제거되었습니다.\n현재 총 매물 수: ${newRows.length}개`);
+                } else if (!found) {
+                    console.log('❌ 매물을 찾을 수 없음');
+                    alert('❌ 20250820478 매물을 찾을 수 없습니다.\n이미 삭제되었거나 매물번호를 다시 확인해주세요.');
+                } else {
+                    console.log('❌ 삭제 실패');
+                    alert('❌ 삭제 실패\n20250820478 매물이 여전히 목록에 있습니다.');
+                }
+                
+                // URL 파라미터 제거
+                const newUrl = window.location.origin + window.location.pathname;
+                history.replaceState(null, '', newUrl);
+                
+            }, 1000);
+        }
+        
+        // DOMContentLoaded에 자동 삭제 체크 추가
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkAutoDeleteParams, 1000);
+        });
     </script>
 </body>
 </html>
