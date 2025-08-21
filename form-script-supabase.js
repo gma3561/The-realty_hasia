@@ -406,6 +406,15 @@ function checkEditMode() {
         if (pageTitle) {
             pageTitle.textContent = '매물수정';
         }
+
+        // 수정 모드에서는 등록일 수정을 허용하고 필수 요구 제거
+        const regDate = document.getElementById('registerDate');
+        if (regDate) {
+            regDate.removeAttribute('readonly');
+            regDate.removeAttribute('required');
+            regDate.style.backgroundColor = '';
+            regDate.style.cursor = '';
+        }
         
         // 데이터 로드
         console.log('매물 데이터 로드 시작...');
