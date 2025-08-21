@@ -4630,11 +4630,23 @@ function filterMenuSearch(event) {
     });
 }
 
+// 삭제된 항목 제외 로직
+function isVisibleItem(item) {
+    // Supabase 연동 데이터: is_deleted / deleted_at / status 사용
+    if (item == null) return false;
+    if (item.is_deleted === true) return false;
+    if (item.deleted_at) return false;
+    if (item.status === '삭제됨') return false;
+    return true;
+}
+
 // 필터 적용
 function applyFilters() {
     const searchTerm = document.querySelector('.search-input')?.value.toLowerCase();
     
     filteredData = currentData.filter(item => {
+        // 항상 삭제된 항목은 숨김
+        if (!isVisibleItem(item)) return false;
         // 매물상태 필터
         if (activeFilters.status.length > 0 && !activeFilters.status.includes(item.status)) {
             return false;
@@ -4691,8 +4703,8 @@ function resetFilters() {
     // 필터 헤더 초기화
     updateFilterHeaders();
     
-    // 전체 데이터 표시
-    filteredData = [...currentData];
+    // 전체 데이터 표시 (삭제된 항목 제외)
+    filteredData = currentData.filter(isVisibleItem);
     
     // 등록일 기준 최신순 정렬
     filteredData.sort((a, b) => {
