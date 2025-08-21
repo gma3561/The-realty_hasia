@@ -5,7 +5,7 @@
  * @param {string} unsafe - 이스케이프할 문자열
  * @returns {string} 안전한 문자열
  */
-export function escapeHtml(unsafe) {
+function escapeHtml(unsafe) {
     if (typeof unsafe !== 'string') return '';
     
     return unsafe
@@ -22,7 +22,7 @@ export function escapeHtml(unsafe) {
  * @param {HTMLElement} element - DOM 요소
  * @param {string} text - 설정할 텍스트
  */
-export function setSafeText(element, text) {
+function setSafeText(element, text) {
     if (!element) return;
     element.textContent = text || '';
 }
@@ -33,7 +33,7 @@ export function setSafeText(element, text) {
  * @param {string} html - HTML 문자열
  * @param {Array} allowedTags - 허용할 태그 목록
  */
-export function setSafeHtml(element, html, allowedTags = ['b', 'i', 'em', 'strong', 'span']) {
+function setSafeHtml(element, html, allowedTags = ['b', 'i', 'em', 'strong', 'span']) {
     if (!element) return;
     
     // 간단한 화이트리스트 기반 필터링
@@ -73,7 +73,7 @@ function sanitizeHtml(dirty, allowedTags) {
  * @param {string} type - 검증 타입
  * @returns {boolean} 유효성 여부
  */
-export function validateInput(input, type) {
+function validateInput(input, type) {
     const validators = {
         email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         phone: /^[0-9-()+ ]+$/,
@@ -96,7 +96,7 @@ export function validateInput(input, type) {
  * @param {string} input - 정화할 입력값
  * @returns {string} 정화된 입력값
  */
-export function sanitizeSqlParam(input) {
+function sanitizeSqlParam(input) {
     if (typeof input !== 'string') return '';
     
     // 위험한 SQL 키워드 제거
@@ -123,7 +123,7 @@ export function sanitizeSqlParam(input) {
  * CSRF 토큰 생성
  * @returns {string} CSRF 토큰
  */
-export function generateCSRFToken() {
+function generateCSRFToken() {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
@@ -133,7 +133,7 @@ export function generateCSRFToken() {
  * 세션 타임아웃 관리
  * @param {number} timeout - 타임아웃 시간 (밀리초)
  */
-export function setupSessionTimeout(timeout = 30 * 60 * 1000) { // 기본 30분
+function setupSessionTimeout(timeout = 30 * 60 * 1000) { // 기본 30분
     let timer;
     
     const resetTimer = () => {
@@ -159,7 +159,7 @@ export function setupSessionTimeout(timeout = 30 * 60 * 1000) { // 기본 30분
  * @param {string} jsonString - JSON 문자열
  * @returns {Object|null} 파싱된 객체 또는 null
  */
-export function safeJsonParse(jsonString) {
+function safeJsonParse(jsonString) {
     try {
         return JSON.parse(jsonString);
     } catch (e) {
@@ -171,7 +171,7 @@ export function safeJsonParse(jsonString) {
 /**
  * 보안 헤더 확인
  */
-export function checkSecurityHeaders() {
+function checkSecurityHeaders() {
     const warnings = [];
     
     // Content-Security-Policy 확인
@@ -193,7 +193,7 @@ export function checkSecurityHeaders() {
  * @param {string} type - 데이터 타입
  * @returns {string} 마스킹된 데이터
  */
-export function maskSensitiveData(data, type = 'default') {
+function maskSensitiveData(data, type = 'default') {
     if (!data) return '';
     
     const masks = {
@@ -207,7 +207,7 @@ export function maskSensitiveData(data, type = 'default') {
 }
 
 // 전역 보안 설정
-export function initializeSecurity() {
+function initializeSecurity() {
     // XSS 방지를 위한 기본 CSP 설정
     const csp = document.createElement('meta');
     csp.httpEquiv = 'Content-Security-Policy';

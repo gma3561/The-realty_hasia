@@ -202,14 +202,22 @@ async function getPropertyById(id) {
     }
 }
 
-// 매물 ID로 단일 조회 (최적화됨)
+// 매물 ID로 단일 조회 (최적화됨) - Supabase 초기화 대기 추가
 async function getPropertyById(id) {
     try {
         console.log('getPropertyById 함수 시작, ID:', id);
         
+        // supabaseClient 준비 대기 (최대 5초)
         if (!supabaseClient) {
-            console.error('Supabase 클라이언트가 초기화되지 않음');
-            return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+            let waited = 0;
+            while (!supabaseClient && waited < 50) { // 50 * 100ms = 5s
+                await new Promise(r => setTimeout(r, 100));
+                waited++;
+            }
+            if (!supabaseClient) {
+                console.error('Supabase 클라이언트가 초기화되지 않음');
+                return { success: false, error: new Error('데이터베이스 연결이 필요합니다.'), data: null };
+            }
         }
 
         const { data, error } = await supabaseClient

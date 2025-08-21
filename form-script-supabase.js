@@ -86,18 +86,32 @@ function goToList() {
 
 // 매물 저장 - 전역 함수로 등록
 async function saveProperty() {
-    // Supabase 클라이언트 확인 - 재시도 로직 추가
+    console.log('saveProperty 함수 시작');
+    
+    // Supabase 클라이언트 확인 - 개선된 대기 로직
     if (!window.supabaseClient) {
-        console.log('Supabase 아직 준비안됨, 3초 후 재시도...');
-        // 3초 대기 후 재시도
-        setTimeout(() => {
-            if (window.supabaseClient) {
-                saveProperty(); // 재귀 호출
-            } else {
-                alert('데이터베이스 연결이 필요합니다. 페이지를 새로고침해주세요.');
+        console.log('Supabase 클라이언트가 없음, 초기화 대기 중...');
+        
+        // 최대 10초 동안 100ms마다 확인
+        let waitCount = 0;
+        const maxWait = 100; // 10초 = 100 * 100ms
+        
+        while (!window.supabaseClient && waitCount < maxWait) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            waitCount++;
+            
+            if (waitCount % 10 === 0) { // 1초마다 로그
+                console.log(`Supabase 초기화 대기 중... (${waitCount/10}초)`);
             }
-        }, 3000);
-        return;
+        }
+        
+        if (!window.supabaseClient) {
+            console.error('Supabase 클라이언트 초기화 실패');
+            alert('데이터베이스 연결에 실패했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+            return;
+        }
+        
+        console.log('Supabase 클라이언트 초기화 완료');
     }
 
     // 폼 데이터 수집
@@ -179,13 +193,36 @@ async function saveProperty() {
             
             // updateProperty 함수 호출
             let result;
+            
+            // updateProperty 함수가 없으면 직접 Supabase 호출
             if (typeof window.updateProperty === 'function') {
+                console.log('window.updateProperty 함수 사용');
                 result = await window.updateProperty(propertyId, formData);
             } else if (typeof updateProperty === 'function') {
+                console.log('updateProperty 함수 사용');
                 result = await updateProperty(propertyId, formData);
             } else {
-                console.error('updateProperty 함수를 찾을 수 없음');
-                throw new Error('수정 기능을 사용할 수 없습니다.');
+                console.log('updateProperty 함수가 없음, 직접 Supabase 호출');
+                
+                // updateProperty 함수가 없으면 직접 구현
+                try {
+                    const { data: updateData, error: updateError } = await window.supabaseClient
+                        .from('properties')
+                        .update(formData)
+                        .eq('id', propertyId)
+                        .select();
+                    
+                    if (updateError) {
+                        result = { success: false, error: updateError, data: null };
+                    } else {
+                        result = { success: true, error: null, data: updateData[0] };
+                    }
+                    
+                    console.log('직접 Supabase 호출 결과:', result);
+                } catch (directError) {
+                    console.error('직접 Supabase 호출 실패:', directError);
+                    result = { success: false, error: directError, data: null };
+                }
             }
             
             console.log('매물 수정 결과:', result);
@@ -380,18 +417,64 @@ async function loadPropertyForEdit(propertyId) {
         
         // 로컬에서 찾지 못하면 Supabase에서 조회
         if (!window.supabaseClient) {
-            setTimeout(() => loadPropertyForEdit(propertyId), 500);
-            return;
+            console.log('Supabase 클라이언트가 없음, 대기 중...');
+            
+            // 최대 5초 동안 500ms마다 확인
+            let retryCount = 0;
+            const maxRetries = 10;
+            
+            while (!window.supabaseClient && retryCount < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                retryCount++;
+                console.log(`Supabase 클라이언트 대기 중... (${retryCount}/${maxRetries})`);
+            }
+            
+            if (!window.supabaseClient) {
+                console.error('Supabase 클라이언트를 찾을 수 없음');
+                alert('데이터베이스 연결에 실패했습니다. 페이지를 새로고침해주세요.');
+                return;
+            }
         }
 
-        const result = await window.getPropertyById(propertyId);
+        console.log('Supabase에서 매물 데이터 조회 시작, ID:', propertyId);
         
-        if (result.error) {
+        // getPropertyById가 없으면 직접 조회
+        let result;
+        if (typeof window.getPropertyById === 'function') {
+            result = await window.getPropertyById(propertyId);
+        } else {
+            console.log('getPropertyById 함수가 없음, 직접 Supabase 조회');
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('properties')
+                    .select('*')
+                    .eq('id', propertyId)
+                    .single();
+                
+                if (error) {
+                    result = { success: false, error, data: null };
+                } else {
+                    result = { success: true, error: null, data };
+                }
+            } catch (directError) {
+                result = { success: false, error: directError, data: null };
+            }
+        }
+        
+        console.log('매물 데이터 조회 결과:', result);
+        
+        if (result && result.error) {
+            console.error('매물 데이터 조회 오류:', result.error);
             throw result.error;
         }
         
-        if (result.data) {
+        if (result && result.data) {
+            console.log('매물 데이터 로드 성공, 폼에 데이터 채우기 시작');
             fillFormWithSupabaseData(result.data);
+            console.log('폼 데이터 채우기 완료');
+        } else {
+            console.warn('매물 데이터가 없음');
+            alert('매물 데이터를 찾을 수 없습니다.');
         }
         
     } catch (error) {
@@ -442,6 +525,24 @@ function getLocalPropertyById(id) {
     return null;
 }
 
+// 날짜값을 input[type="date"] 형식(YYYY-MM-DD)으로 변환
+function toInputDate(value) {
+    if (!value) return '';
+    // 이미 YYYY-MM-DD 형태면 그대로 사용
+    const m = /^\d{4}-\d{2}-\d{2}/.exec(String(value));
+    if (m) return m[0];
+    try {
+        const d = new Date(value);
+        if (isNaN(d.getTime())) return '';
+        const y = d.getFullYear();
+        const mo = String(d.getMonth() + 1).padStart(2, '0');
+        const da = String(d.getDate()).padStart(2, '0');
+        return `${y}-${mo}-${da}`;
+    } catch {
+        return '';
+    }
+}
+
 // 로컬 데이터로 폼 채우기
 function fillFormWithLocalData(data) {
     console.log('로컬 데이터로 폼 채우기:', data);
@@ -464,7 +565,7 @@ function fillFormWithLocalData(data) {
     };
     
     // Supabase 필드명과 매핑
-    setFieldValue('registerDate', data.register_date || data.date);
+    setFieldValue('registerDate', toInputDate(data.register_date || data.date));
     setCheckboxValue('shared', data.shared);
     setFieldValue('manager', data.manager);
     setFieldValue('status', data.status);
@@ -491,8 +592,8 @@ function fillFormWithLocalData(data) {
     setFieldValue('direction', data.direction);
     setFieldValue('management', data.management_fee);
     setFieldValue('parking', data.parking);
-    setFieldValue('moveInDate', data.move_in_date);
-    setFieldValue('approvalDate', data.approval_date);
+    setFieldValue('moveInDate', toInputDate(data.move_in_date));
+    setFieldValue('approvalDate', toInputDate(data.approval_date));
     setFieldValue('specialNotes', data.special_notes || data.special);
     setFieldValue('managerMemo', data.manager_memo || data.memo);
     
@@ -510,7 +611,7 @@ function fillFormWithLocalData(data) {
 
 // Supabase 데이터로 폼 채우기  
 function fillFormWithSupabaseData(data) {
-    document.getElementById('registerDate').value = data.register_date || '';
+    document.getElementById('registerDate').value = toInputDate(data.register_date) || '';
     document.getElementById('shared').checked = data.shared || false;
     document.getElementById('manager').value = data.manager || '';
     document.getElementById('status').value = data.status || '';
@@ -535,8 +636,8 @@ function fillFormWithSupabaseData(data) {
     document.getElementById('direction').value = data.direction || '';
     document.getElementById('management').value = data.management_fee || '';
     document.getElementById('parking').value = data.parking || '';
-    document.getElementById('moveInDate').value = data.move_in_date || '';
-    document.getElementById('approvalDate').value = data.approval_date || '';
+    document.getElementById('moveInDate').value = toInputDate(data.move_in_date) || '';
+    document.getElementById('approvalDate').value = toInputDate(data.approval_date) || '';
     document.getElementById('specialNotes').value = data.special_notes || '';
     document.getElementById('managerMemo').value = data.manager_memo || '';
     
