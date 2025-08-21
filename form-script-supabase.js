@@ -103,7 +103,7 @@ async function saveProperty() {
     // 폼 데이터 수집
     const formData = {
         register_date: document.getElementById('registerDate').value,
-        shared: document.getElementById('shared')?.value === 'true' || false,
+        shared: document.getElementById('shared')?.checked || false,
         manager: document.getElementById('manager').value,
         status: document.getElementById('status').value || null,
         re_register_reason: document.getElementById('reRegisterReason').value || null,
@@ -387,14 +387,14 @@ async function loadPropertyForEdit(propertyId) {
             return;
         }
 
-        const { data, error } = await getPropertyById(propertyId);
+        const result = await window.getPropertyById(propertyId);
         
-        if (error) {
-            throw error;
+        if (result.error) {
+            throw result.error;
         }
         
-        if (data) {
-            fillFormWithSupabaseData(data);
+        if (result.data) {
+            fillFormWithSupabaseData(result.data);
         }
         
     } catch (error) {
@@ -546,80 +546,7 @@ function fillFormWithSupabaseData(data) {
     // 버튼 텍스트 변경
     const primaryBtn = document.querySelector('.btn-save');
     if (primaryBtn) {
-        primaryBtn.textContent = '수정';
-    }
-    
-    // 저장 함수를 수정 함수로 변경
-    window.saveProperty = async function() {
-        await updatePropertyData(propertyId);
-    };
-}
-
-// 매물 수정
-async function updatePropertyData(propertyId) {
-    if (!window.supabaseClient) {
-        alert('데이터베이스 연결이 필요합니다.');
-        return;
-    }
-
-    // 폼 데이터 수집 (saveProperty와 동일)
-    const formData = {
-        register_date: document.getElementById('registerDate').value,
-        shared: document.getElementById('shared')?.value === 'true' || false,
-        manager: document.getElementById('manager').value,
-        status: document.getElementById('status').value || null,
-        re_register_reason: document.getElementById('reRegisterReason').value || null,
-        property_type: document.getElementById('propertyType').value || null,
-        property_name: document.getElementById('propertyName').value,
-        dong: document.getElementById('dong')?.value || null,
-        ho: document.getElementById('unit').value || null,
-        address: document.getElementById('address').value || null,
-        trade_type: document.getElementById('tradeType').value || null,
-        price: document.getElementById('price').value || null,
-        supply_area_sqm: document.getElementById('supplyArea').value || null,
-        supply_area_pyeong: document.getElementById('supplyPyeong').value || null,
-        floor_current: document.getElementById('floorInfo')?.value?.split('/')[0] || null,
-        floor_total: document.getElementById('floorInfo')?.value?.split('/')[1] || null,
-        rooms: document.getElementById('rooms').value || null,
-        direction: document.getElementById('direction').value || null,
-        management_fee: document.getElementById('management').value || null,
-        parking: document.getElementById('parking').value || null,
-        move_in_date: document.getElementById('moveInDate').value || null,
-        approval_date: document.getElementById('approvalDate').value || null,
-        special_notes: document.getElementById('specialNotes').value || null,
-        manager_memo: document.getElementById('managerMemo')?.value || null
-    };
-
-    const saveButton = document.querySelector('.btn-save');
-    const originalText = saveButton ? saveButton.textContent : '수정';
-    if (saveButton) {
-        saveButton.textContent = '수정 중...';
-        saveButton.disabled = true;
-    }
-
-    try {
-        const { data, error } = await updateProperty(propertyId, formData);
-
-        if (error) {
-            throw error;
-        }
-
-        // 수정 완료 후 확인 시 목록으로 이동 (뒤로가기 방지)
-        if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
-            window.location.replace('index.html');
-        } else {
-            // 취소를 눌러도 목록으로 이동 (뒤로가기 방지)
-            window.location.replace('index.html');
-        }
-        
-    } catch (error) {
-        console.error('수정 오류:', error);
-        alert('매물 수정 중 오류가 발생했습니다: ' + error.message);
-    } finally {
-        if (saveButton) {
-            saveButton.textContent = originalText;
-            saveButton.disabled = false;
-        }
+        primaryBtn.textContent = '수정하기';
     }
 }
 
