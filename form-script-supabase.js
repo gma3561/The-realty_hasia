@@ -151,11 +151,33 @@ async function saveProperty() {
         const urlParams = new URLSearchParams(window.location.search);
         const propertyId = urlParams.get('edit') || urlParams.get('id');
         
+        console.log('저장 시작 - propertyId:', propertyId);
+        console.log('Supabase 클라이언트 상태:', !!window.supabaseClient);
+        
         let data, error;
         
         if (propertyId) {
             // 수정 모드: 기존 매물 업데이트
             console.log('매물 수정 시작, ID:', propertyId);
+            
+            // Supabase 연결 확인
+            if (!window.supabaseClient) {
+                console.warn('Supabase 연결 없음 - 로컬 저장 모드');
+                // 로컬 저장 처리
+                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+                const index = properties.findIndex(p => p.id === propertyId);
+                if (index !== -1) {
+                    properties[index] = { ...properties[index], ...formData, id: propertyId };
+                    localStorage.setItem('properties', JSON.stringify(properties));
+                }
+                
+                alert('매물이 수정되었습니다 (로컬 모드).');
+                const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                    ? '/The-realty_hasia/' 
+                    : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                window.location.replace(basePath + 'index.html');
+                return;
+            }
             
             // 기존 데이터 가져오기 (상태 변경 확인용)
             const { data: existingData } = await window.supabaseClient
@@ -167,7 +189,17 @@ async function saveProperty() {
             const oldStatus = existingData?.status;
             const newStatus = formData.status;
             
-            const result = await updateProperty(propertyId, formData);
+            // updateProperty 함수 호출
+            let result;
+            if (typeof window.updateProperty === 'function') {
+                result = await window.updateProperty(propertyId, formData);
+            } else if (typeof updateProperty === 'function') {
+                result = await updateProperty(propertyId, formData);
+            } else {
+                console.error('updateProperty 함수를 찾을 수 없음');
+                throw new Error('수정 기능을 사용할 수 없습니다.');
+            }
+            
             console.log('매물 수정 결과:', result);
             
             if (!result || !result.success) {
@@ -208,7 +240,39 @@ async function saveProperty() {
         } else {
             // 등록 모드: 새 매물 추가
             console.log('매물 등록 시작');
-            const result = await insertProperty(formData);
+            
+            // Supabase 연결 확인
+            if (!window.supabaseClient) {
+                console.warn('Supabase 연결 없음 - 로컬 저장 모드');
+                // 로컬 저장 처리
+                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+                const newProperty = {
+                    ...formData,
+                    id: 'local_' + Date.now(),
+                    property_number: '2025' + String(Date.now()).slice(-8)
+                };
+                properties.push(newProperty);
+                localStorage.setItem('properties', JSON.stringify(properties));
+                
+                alert('매물이 등록되었습니다 (로컬 모드).');
+                const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                    ? '/The-realty_hasia/' 
+                    : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                window.location.replace(basePath + 'index.html');
+                return;
+            }
+            
+            // insertProperty 함수 호출
+            let result;
+            if (typeof window.insertProperty === 'function') {
+                result = await window.insertProperty(formData);
+            } else if (typeof insertProperty === 'function') {
+                result = await insertProperty(formData);
+            } else {
+                console.error('insertProperty 함수를 찾을 수 없음');
+                throw new Error('등록 기능을 사용할 수 없습니다.');
+            }
+            
             console.log('매물 등록 결과:', result);
             
             if (!result || !result.success) {
