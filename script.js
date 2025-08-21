@@ -14,10 +14,66 @@ function handleHeaderClick() {
         headerClickCount = 0;
     }, 5000);
     
-    // 5번 클릭 시 관리자 로그인 페이지로 이동
+    // 5번 클릭 시 관리자 로그인 모달 표시
     if (headerClickCount >= 5) {
         headerClickCount = 0;
-        window.location.href = "admin-login.html";
+        showAdminLoginModal();
+    }
+}
+
+// 관리자 로그인 모달 표시
+function showAdminLoginModal() {
+    // 기존 모달이 있으면 제거
+    const existingModal = document.getElementById('adminLoginModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 모달 HTML 생성
+    const modalHTML = `
+        <div id="adminLoginModal" class="modal" style="display: flex; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+            <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 10px; max-width: 400px; width: 90%;">
+                <h2 style="margin-bottom: 20px; color: #333;">관리자 로그인</h2>
+                <input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="checkAdminPassword()" style="flex: 1; padding: 10px; background-color: #000; color: white; border: none; border-radius: 5px; cursor: pointer;">확인</button>
+                    <button onclick="closeAdminModal()" style="flex: 1; padding: 10px; background-color: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">취소</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // 비밀번호 입력 필드에 포커스
+    document.getElementById('adminPassword').focus();
+    
+    // 엔터키 이벤트 추가
+    document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkAdminPassword();
+        }
+    });
+}
+
+// 관리자 비밀번호 확인
+function checkAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    if (password === '1234') {
+        sessionStorage.setItem('admin_logged_in', 'true');
+        alert('관리자 모드가 활성화되었습니다.');
+        closeAdminModal();
+        location.reload();
+    } else {
+        alert('비밀번호가 올바르지 않습니다.');
+    }
+}
+
+// 관리자 모달 닫기
+function closeAdminModal() {
+    const modal = document.getElementById('adminLoginModal');
+    if (modal) {
+        modal.remove();
     }
 }
 
