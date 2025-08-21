@@ -414,8 +414,14 @@
         }
         
         function confirmGoBack() {
-            // 뒤로가기 기능 비활성화
-            alert('뒤로가기는 지원되지 않습니다. 저장 후 자동으로 목록으로 이동됩니다.');
+            // 목록으로 돌아가기
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
+            if (confirm('작성 중인 내용이 저장되지 않습니다.\n목록으로 돌아가시겠습니까?')) {
+                window.location.href = basePath + 'index.html';
+            }
             return false;
         }
         

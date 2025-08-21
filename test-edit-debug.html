@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수정 기능 디버그 테스트</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: black;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-left: 3px solid #007bff;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error {
+            border-left-color: #dc3545;
+            color: #dc3545;
+        }
+        .success {
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 수정 기능 디버그 테스트</h1>
+        
+        <div class="test-section">
+            <h2>1. 테스트 데이터 생성</h2>
+            <button class="btn-primary" onclick="createTestData()">테스트 매물 생성</button>
+            <button class="btn-warning" onclick="clearAllData()">모든 데이터 삭제</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>2. 수정 테스트</h2>
+            <p>매물 ID: <input type="text" id="propertyId" placeholder="예: test_1234"></p>
+            <button class="btn-success" onclick="testEdit()">수정 페이지로 이동 테스트</button>
+            <button class="btn-primary" onclick="testLoadData()">데이터 로드 테스트</button>
+            <button class="btn-warning" onclick="testSaveData()">저장 테스트</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>3. 경로 테스트</h2>
+            <button class="btn-primary" onclick="testPaths()">경로 확인</button>
+            <button class="btn-success" onclick="testNavigation()">페이지 이동 테스트</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>4. 전체 플로우 테스트</h2>
+            <button class="btn-danger" onclick="runFullTest()">전체 CRUD 테스트 실행</button>
+        </div>
+        
+        <div class="log" id="logContainer">
+            <div class="log-entry">테스트 로그가 여기에 표시됩니다...</div>
+        </div>
+    </div>
+
+    <script>
+        // 로그 출력 함수
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+        
+        // 테스트 데이터 생성
+        function createTestData() {
+            log('테스트 데이터 생성 시작...');
+            
+            const testProperties = [
+                {
+                    id: 'test_' + Date.now(),
+                    property_number: '20250821_' + Math.floor(Math.random() * 1000),
+                    register_date: new Date().toISOString().split('T')[0],
+                    property_name: '테스트 아파트 ' + Date.now(),
+                    manager: '하상현',
+                    status: '거래가능',
+                    property_type: '아파트',
+                    trade_type: '매매',
+                    price: '75000',
+                    address: '서울시 강남구 역삼동',
+                    dong: '101',
+                    ho: '1501',
+                    supply_area_sqm: '84.5',
+                    supply_area_pyeong: '25.5',
+                    floor_current: '15',
+                    floor_total: '20',
+                    special_notes: '디버그 테스트용 매물',
+                    shared: false
+                }
+            ];
+            
+            // localStorage에 저장
+            let existingData = [];
+            try {
+                const stored = localStorage.getItem('properties');
+                if (stored) {
+                    existingData = JSON.parse(stored);
+                }
+            } catch (e) {
+                log('기존 데이터 파싱 오류: ' + e.message, 'error');
+            }
+            
+            existingData.push(...testProperties);
+            localStorage.setItem('properties', JSON.stringify(existingData));
+            
+            // window.currentData에도 저장
+            window.currentData = existingData;
+            
+            log(`✅ 테스트 매물 생성 완료: ID=${testProperties[0].id}`, 'success');
+            document.getElementById('propertyId').value = testProperties[0].id;
+            
+            return testProperties[0];
+        }
+        
+        // 모든 데이터 삭제
+        function clearAllData() {
+            localStorage.removeItem('properties');
+            window.currentData = [];
+            log('⚠️ 모든 데이터 삭제됨', 'warning');
+        }
+        
+        // 수정 페이지 이동 테스트
+        function testEdit() {
+            const propertyId = document.getElementById('propertyId').value;
+            if (!propertyId) {
+                log('매물 ID를 입력하세요', 'error');
+                return;
+            }
+            
+            log(`수정 페이지로 이동 테스트: ID=${propertyId}`);
+            
+            // 관리자 모드 설정
+            sessionStorage.setItem('admin_logged_in', 'true');
+            
+            // 경로 계산
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
+            const editUrl = `${basePath}form.html?id=${propertyId}`;
+            log(`이동할 URL: ${editUrl}`, 'success');
+            
+            // 새 창에서 열기
+            window.open(editUrl, '_blank');
+        }
+        
+        // 데이터 로드 테스트
+        function testLoadData() {
+            const propertyId = document.getElementById('propertyId').value;
+            if (!propertyId) {
+                log('매물 ID를 입력하세요', 'error');
+                return;
+            }
+            
+            log(`데이터 로드 테스트: ID=${propertyId}`);
+            
+            // localStorage에서 찾기
+            try {
+                const stored = localStorage.getItem('properties');
+                if (stored) {
+                    const properties = JSON.parse(stored);
+                    const found = properties.find(p => p.id === propertyId);
+                    
+                    if (found) {
+                        log('✅ 매물 데이터 발견:', 'success');
+                        log(JSON.stringify(found, null, 2));
+                    } else {
+                        log(`❌ ID=${propertyId} 매물을 찾을 수 없음`, 'error');
+                    }
+                }
+            } catch (e) {
+                log('데이터 로드 오류: ' + e.message, 'error');
+            }
+        }
+        
+        // 저장 테스트
+        function testSaveData() {
+            log('저장 기능 테스트...');
+            
+            // saveProperty 함수 존재 확인
+            if (typeof window.saveProperty === 'function') {
+                log('✅ saveProperty 함수 존재', 'success');
+            } else {
+                log('❌ saveProperty 함수가 없음', 'error');
+                
+                // 임시 saveProperty 함수 생성
+                window.saveProperty = function() {
+                    log('임시 saveProperty 함수 호출됨', 'warning');
+                    alert('저장 테스트 완료');
+                };
+                log('⚠️ 임시 saveProperty 함수 생성됨', 'warning');
+            }
+        }
+        
+        // 경로 테스트
+        function testPaths() {
+            log('=== 경로 테스트 ===');
+            log(`현재 URL: ${window.location.href}`);
+            log(`pathname: ${window.location.pathname}`);
+            
+            const isGitHubPages = window.location.pathname.includes('/The-realty_hasia/');
+            log(`GitHub Pages 환경: ${isGitHubPages ? 'YES' : 'NO'}`);
+            
+            const basePath = isGitHubPages 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
+            log(`계산된 기본 경로: ${basePath}`, 'success');
+            log(`index.html 경로: ${basePath}index.html`);
+            log(`form.html 경로: ${basePath}form.html`);
+        }
+        
+        // 페이지 이동 테스트
+        function testNavigation() {
+            log('페이지 이동 테스트...');
+            
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
+            const testUrls = [
+                basePath + 'index.html',
+                basePath + 'form.html',
+                basePath + 'form.html?id=test123'
+            ];
+            
+            testUrls.forEach(url => {
+                log(`테스트 URL: ${url}`);
+                // 실제로 이동하지 않고 URL만 검증
+                try {
+                    new URL(url, window.location.origin);
+                    log(`✅ 유효한 URL`, 'success');
+                } catch (e) {
+                    log(`❌ 잘못된 URL: ${e.message}`, 'error');
+                }
+            });
+        }
+        
+        // 전체 플로우 테스트
+        async function runFullTest() {
+            log('=== 전체 CRUD 플로우 테스트 시작 ===', 'warning');
+            
+            // 1. 테스트 데이터 생성
+            log('1단계: 테스트 데이터 생성');
+            const testData = createTestData();
+            await sleep(1000);
+            
+            // 2. 데이터 로드 확인
+            log('2단계: 데이터 로드 확인');
+            testLoadData();
+            await sleep(1000);
+            
+            // 3. 수정 페이지 이동 가능 확인
+            log('3단계: 수정 페이지 경로 확인');
+            testPaths();
+            await sleep(1000);
+            
+            // 4. 저장 함수 확인
+            log('4단계: 저장 함수 확인');
+            testSaveData();
+            await sleep(1000);
+            
+            log('=== 테스트 완료 ===', 'success');
+            log('✅ 생성된 테스트 매물 ID: ' + testData.id, 'success');
+            log('✅ 이제 "수정 페이지로 이동 테스트" 버튼을 클릭하여 수정 기능을 테스트하세요', 'success');
+        }
+        
+        // 유틸리티 함수
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            log('디버그 페이지 로드 완료', 'success');
+            
+            // 기존 데이터 확인
+            try {
+                const stored = localStorage.getItem('properties');
+                if (stored) {
+                    const properties = JSON.parse(stored);
+                    log(`기존 매물 ${properties.length}개 발견`, 'warning');
+                    if (properties.length > 0) {
+                        document.getElementById('propertyId').value = properties[0].id;
+                    }
+                }
+            } catch (e) {
+                log('기존 데이터 확인 실패', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

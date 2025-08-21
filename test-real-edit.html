@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실제 수정 기능 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+    <script src="admin-functions.js"></script>
+</head>
+<body>
+    <h1>실제 수정 기능 테스트</h1>
+    
+    <button onclick="testLoad()">데이터 로드 테스트</button>
+    <button onclick="testEdit()">수정 테스트</button>
+    
+    <div id="log"></div>
+    
+    <script>
+        function log(msg) {
+            document.getElementById('log').innerHTML += `<p>${msg}</p>`;
+            console.log(msg);
+        }
+        
+        async function testLoad() {
+            log('데이터 로드 시작...');
+            
+            // 관리자 모드 설정
+            sessionStorage.setItem('admin_logged_in', 'true');
+            
+            // loadProperties 함수 호출
+            if (typeof loadProperties === 'function') {
+                await loadProperties();
+                log(`데이터 로드 완료: ${window.currentData ? window.currentData.length : 0}개`);
+                
+                if (window.currentData && window.currentData.length > 0) {
+                    log('첫 번째 매물:');
+                    log(JSON.stringify(window.currentData[0], null, 2));
+                }
+            } else {
+                log('loadProperties 함수를 찾을 수 없음');
+            }
+        }
+        
+        function testEdit() {
+            if (!window.currentData || window.currentData.length === 0) {
+                log('데이터가 없습니다. 먼저 데이터를 로드하세요.');
+                return;
+            }
+            
+            const firstProperty = window.currentData[0];
+            log(`첫 번째 매물 수정 시도: ID=${firstProperty.id}`);
+            
+            // editProperty 함수 호출
+            if (typeof editProperty === 'function') {
+                editProperty(firstProperty.id);
+            } else if (typeof window.editProperty === 'function') {
+                window.editProperty(firstProperty.id);
+            } else {
+                log('editProperty 함수를 찾을 수 없음');
+            }
+        }
+        
+        // 페이지 로드 시 자동으로 데이터 로드
+        window.addEventListener('DOMContentLoaded', () => {
+            log('페이지 로드 완료');
+            setTimeout(testLoad, 1000);
+        });
+    </script>
+</body>
+</html>

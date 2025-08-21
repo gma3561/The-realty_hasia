@@ -77,7 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 목록으로 이동
 function goToList() {
-    window.location.href = 'index.html';
+    // GitHub Pages와 로컬 모두 지원
+    const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+        ? '/The-realty_hasia/' 
+        : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    window.location.href = basePath + 'index.html';
 }
 
 // 매물 저장 - 전역 함수로 등록
@@ -191,11 +195,15 @@ async function saveProperty() {
             }
             
             // 수정 완료 후 확인 시 목록으로 이동 (뒤로가기 방지)
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
             if (confirm('매물이 성공적으로 수정되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
-                window.location.replace('index.html');
+                window.location.replace(basePath + 'index.html');
             } else {
                 // 취소를 눌러도 목록으로 이동 (뒤로가기 방지)
-                window.location.replace('index.html');
+                window.location.replace(basePath + 'index.html');
             }
         } else {
             // 등록 모드: 새 매물 추가
@@ -241,11 +249,15 @@ async function saveProperty() {
             }
             
             // alert 확인 후 목록으로 이동 (뒤로가기 방지)
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            
             if (confirm('매물이 성공적으로 등록되었습니다.\n확인을 누르면 매물 목록으로 이동합니다.')) {
-                window.location.replace('index.html');
+                window.location.replace(basePath + 'index.html');
             } else {
                 // 취소를 눌러도 목록으로 이동 (뒤로가기 방지)
-                window.location.replace('index.html');
+                window.location.replace(basePath + 'index.html');
             }
         }
         
@@ -289,18 +301,34 @@ function checkEditMode() {
     const urlParams = new URLSearchParams(window.location.search);
     const propertyId = urlParams.get('edit') || urlParams.get('id');
     
+    console.log('수정 모드 확인 - propertyId:', propertyId);
+    console.log('URL 파라미터:', window.location.search);
+    
     if (propertyId) {
         // 관리자 권한 확인
         const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+        console.log('관리자 권한:', isAdmin);
+        
         if (!isAdmin) {
             alert('관리자만 매물을 수정할 수 있습니다.');
-            window.location.href = 'index.html';
+            const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+                ? '/The-realty_hasia/' 
+                : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            window.location.href = basePath + 'index.html';
             return;
         }
         
-        loadPropertyForEdit(propertyId);
         // 페이지 제목 변경
-        document.querySelector('.page-title').textContent = '매물수정';
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = '매물수정';
+        }
+        
+        // 데이터 로드
+        console.log('매물 데이터 로드 시작...');
+        loadPropertyForEdit(propertyId);
+    } else {
+        console.log('신규 등록 모드');
     }
 }
 
@@ -339,32 +367,110 @@ async function loadPropertyForEdit(propertyId) {
 
 // 로컬 데이터에서 매물 찾기
 function getLocalPropertyById(id) {
+    console.log('매물 ID로 검색:', id);
+    
     // script.js의 currentData에서 찾기
-    if (window.currentData) {
-        return window.currentData.find(item => item.id == id);
+    if (window.currentData && Array.isArray(window.currentData)) {
+        console.log('전체 데이터 건수:', window.currentData.length);
+        const found = window.currentData.find(item => 
+            item.id == id || 
+            item.property_number == id ||
+            item.id === id
+        );
+        if (found) {
+            console.log('찾은 매물:', found);
+        } else {
+            console.log('매물을 찾을 수 없음');
+        }
+        return found;
     }
+    
+    // localStorage에서 찾기 시도
+    try {
+        const storedData = localStorage.getItem('properties');
+        if (storedData) {
+            const properties = JSON.parse(storedData);
+            const found = properties.find(item => 
+                item.id == id || 
+                item.property_number == id
+            );
+            if (found) {
+                console.log('localStorage에서 찾은 매물:', found);
+                return found;
+            }
+        }
+    } catch (error) {
+        console.error('localStorage 검색 오류:', error);
+    }
+    
+    console.log('매물을 찾을 수 없음');
     return null;
 }
 
 // 로컬 데이터로 폼 채우기
 function fillFormWithLocalData(data) {
-    document.getElementById('registerDate').value = data.date || '';
-    document.getElementById('shared').checked = data.shared || false;
-    document.getElementById('manager').value = data.manager || '';
-    document.getElementById('status').value = data.status || '';
-    document.getElementById('reRegisterReason').value = data.reason || '';
-    document.getElementById('propertyType').value = data.type || '';
-    document.getElementById('propertyName').value = data.property || '';
-    document.getElementById('dong').value = data.floor || '';
-    document.getElementById('unit').value = data.unit || '';
-    document.getElementById('address').value = data.address || '';
-    document.getElementById('tradeType').value = data.trade || '';
-    document.getElementById('price').value = data.price || '';
-    document.getElementById('supplyArea').value = data.supply || '';
-    document.getElementById('supplyPyeong').value = data.pyeong || '';
-    document.getElementById('floorInfo').value = data.households || '';
-    document.getElementById('specialNotes').value = data.special || '';
-    document.getElementById('managerMemo').value = data.memo || '';
+    console.log('로컬 데이터로 폼 채우기:', data);
+    
+    // 필드를 안전하게 설정하는 함수
+    const setFieldValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.value = value || '';
+        } else {
+            console.warn(`필드를 찾을 수 없음: ${fieldId}`);
+        }
+    };
+    
+    const setCheckboxValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.checked = value === true || value === 'true';
+        }
+    };
+    
+    // Supabase 필드명과 매핑
+    setFieldValue('registerDate', data.register_date || data.date);
+    setCheckboxValue('shared', data.shared);
+    setFieldValue('manager', data.manager);
+    setFieldValue('status', data.status);
+    setFieldValue('reRegisterReason', data.re_register_reason || data.reason);
+    setFieldValue('propertyType', data.property_type || data.type);
+    setFieldValue('propertyName', data.property_name || data.property);
+    setFieldValue('dong', data.dong);
+    setFieldValue('unit', data.ho || data.unit);
+    setFieldValue('address', data.address);
+    setFieldValue('tradeType', data.trade_type || data.trade);
+    setFieldValue('price', data.price);
+    setFieldValue('supplyArea', data.supply_area_sqm || data.supply);
+    setFieldValue('supplyPyeong', data.supply_area_pyeong || data.pyeong);
+    
+    // 층 정보 처리
+    if (data.floor_current && data.floor_total) {
+        setFieldValue('floorInfo', `${data.floor_current}/${data.floor_total}`);
+    } else if (data.households) {
+        setFieldValue('floorInfo', data.households);
+    }
+    
+    // 기타 필드
+    setFieldValue('rooms', data.rooms);
+    setFieldValue('direction', data.direction);
+    setFieldValue('management', data.management_fee);
+    setFieldValue('parking', data.parking);
+    setFieldValue('moveInDate', data.move_in_date);
+    setFieldValue('approvalDate', data.approval_date);
+    setFieldValue('specialNotes', data.special_notes || data.special);
+    setFieldValue('managerMemo', data.manager_memo || data.memo);
+    
+    // 소유자 정보 (관리자 전용) - 필드가 존재하는 경우에만
+    if (sessionStorage.getItem('admin_logged_in') === 'true') {
+        const ownerNameField = document.getElementById('ownerName');
+        const ownerPhoneField = document.getElementById('ownerPhone');
+        const contactRelField = document.getElementById('contactRelationship');
+        
+        if (ownerNameField) ownerNameField.value = data.owner_name || '';
+        if (ownerPhoneField) ownerPhoneField.value = data.owner_phone || '';
+        if (contactRelField) contactRelField.value = data.contact_relationship || '';
+    }
 }
 
 // Supabase 데이터로 폼 채우기  

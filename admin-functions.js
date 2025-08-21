@@ -58,8 +58,26 @@ function editProperty(propertyId, event) {
         event.stopPropagation(); // 행 클릭 이벤트 전파 방지
     }
     
+    // 관리자 권한 확인
+    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+    if (!isAdmin) {
+        alert('관리자만 매물을 수정할 수 있습니다.');
+        return;
+    }
+    
+    // 경로 처리 - 로컬과 GitHub Pages 모두 지원
+    let basePath = '';
+    if (window.location.pathname.includes('/The-realty_hasia/')) {
+        basePath = '/The-realty_hasia/';
+    } else if (window.location.pathname !== '/' && !window.location.pathname.endsWith('index.html')) {
+        // 현재 파일이 있는 디렉토리 경로 유지
+        basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    }
+    
     // 수정 페이지로 이동
-    window.location.href = `form.html?id=${propertyId}`;
+    const targetUrl = `${basePath}form.html?id=${propertyId}`;
+    console.log('수정 페이지로 이동:', targetUrl);
+    window.location.href = targetUrl;
 }
 
 // 매물 삭제 확인

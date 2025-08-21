@@ -47,8 +47,14 @@ function editProperty(id) {
         alert('관리자만 매물을 수정할 수 있습니다.');
         return;
     }
+    
+    // GitHub Pages와 로컬 모두 지원하는 경로 설정
+    const basePath = window.location.pathname.includes('/The-realty_hasia/') 
+        ? '/The-realty_hasia/' 
+        : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    
     // form.html은 'id' 파라미터를 사용함
-    const targetUrl = `form.html?id=${id}`;
+    const targetUrl = `${basePath}form.html?id=${id}`;
     console.log('관리자 권한 확인됨, 페이지 이동:', targetUrl);
     
     // 즉시 페이지 이동 - 더 강력한 방법 사용
