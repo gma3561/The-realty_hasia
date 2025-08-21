@@ -47,9 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // DOM이 완전히 로드된 후 날짜 설정
+    // DOM이 완전히 로드된 후 날짜 설정 (신규 등록일 때만)
     setTimeout(() => {
-        setSeoulDate();
+        const params = new URLSearchParams(window.location.search);
+        const isEdit = !!(params.get('edit') || params.get('id'));
+        if (!isEdit) {
+            setSeoulDate();
+        }
     }, 100);
     
     // Supabase 초기화 확인 - 더 긴 시간 대기
@@ -114,6 +118,10 @@ async function saveProperty() {
         console.log('Supabase 클라이언트 초기화 완료');
     }
 
+    // 수정 모드 여부 확인을 위해 먼저 URL 파라미터 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('edit') || urlParams.get('id');
+
     // 폼 데이터 수집
     const formData = {
         register_date: document.getElementById('registerDate').value,
@@ -143,7 +151,8 @@ async function saveProperty() {
     };
 
     // 필수 항목 검증
-    if (!formData.register_date) {
+    // 신규 등록 때만 등록일 필수. 수정에서는 기존값 유지 또는 제외
+    if (!propertyId && !formData.register_date) {
         alert('등록일을 입력해주세요.');
         return;
     }
@@ -161,9 +170,7 @@ async function saveProperty() {
     }
 
     try {
-        // 수정 모드 확인
-        const urlParams = new URLSearchParams(window.location.search);
-        const propertyId = urlParams.get('edit') || urlParams.get('id');
+        // 수정 모드 여부는 위에서 계산됨
         
         console.log('저장 시작 - propertyId:', propertyId);
         console.log('Supabase 클라이언트 상태:', !!window.supabaseClient);
@@ -194,6 +201,11 @@ async function saveProperty() {
             // updateProperty 함수 호출
             let result;
             
+            // 수정 시 등록일이 비어 있으면 기존값 유지: 빈 필드는 업데이트에서 제외
+            if (!formData.register_date) {
+                delete formData.register_date;
+            }
+
             // updateProperty 함수가 없으면 직접 Supabase 호출
             if (typeof window.updateProperty === 'function') {
                 console.log('window.updateProperty 함수 사용');
@@ -332,8 +344,7 @@ async function saveProperty() {
         
     } catch (error) {
         console.error('저장 오류:', error);
-        const urlParams = new URLSearchParams(window.location.search);
-        const action = urlParams.get('edit') || urlParams.get('id') ? '수정' : '등록';
+        const action = propertyId ? '수정' : '등록';
         
         // 더 친절한 에러 메시지
         let errorMessage = '';
