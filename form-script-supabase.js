@@ -162,20 +162,8 @@ async function saveProperty() {
             
             // Supabase 연결 확인
             if (!window.supabaseClient) {
-                console.warn('Supabase 연결 없음 - 로컬 저장 모드');
-                // 로컬 저장 처리
-                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
-                const index = properties.findIndex(p => p.id === propertyId);
-                if (index !== -1) {
-                    properties[index] = { ...properties[index], ...formData, id: propertyId };
-                    localStorage.setItem('properties', JSON.stringify(properties));
-                }
-                
-                alert('매물이 수정되었습니다 (로컬 모드).');
-                const basePath = window.location.pathname.includes('/The-realty_hasia/') 
-                    ? '/The-realty_hasia/' 
-                    : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                window.location.replace(basePath + 'index.html');
+                console.error('Supabase 연결 실패');
+                alert('데이터베이스 연결에 실패했습니다. 페이지를 새로고침해주세요.');
                 return;
             }
             
@@ -243,22 +231,8 @@ async function saveProperty() {
             
             // Supabase 연결 확인
             if (!window.supabaseClient) {
-                console.warn('Supabase 연결 없음 - 로컬 저장 모드');
-                // 로컬 저장 처리
-                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
-                const newProperty = {
-                    ...formData,
-                    id: 'local_' + Date.now(),
-                    property_number: '2025' + String(Date.now()).slice(-8)
-                };
-                properties.push(newProperty);
-                localStorage.setItem('properties', JSON.stringify(properties));
-                
-                alert('매물이 등록되었습니다 (로컬 모드).');
-                const basePath = window.location.pathname.includes('/The-realty_hasia/') 
-                    ? '/The-realty_hasia/' 
-                    : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                window.location.replace(basePath + 'index.html');
+                console.error('Supabase 연결 실패');
+                alert('데이터베이스 연결에 실패했습니다. 페이지를 새로고침해주세요.');
                 return;
             }
             

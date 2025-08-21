@@ -442,9 +442,12 @@
                 return;
             }
             
-            // 직접 saveProperty 호출 (모달 없이)
-            console.log('saveProperty 직접 호출');
-            window.saveProperty();
+            // 확인 모달 표시
+            showConfirmModal(
+                '매물 저장', 
+                '매물 정보를 저장하시겠습니까?', 
+                window.saveProperty
+            );
         }
         
         // ESC 키로 모달 닫기
